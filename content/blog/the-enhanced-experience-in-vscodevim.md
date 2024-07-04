@@ -2,9 +2,15 @@
 
 > 本文具有强烈个人色彩，并不适用于所有人，但是欢迎在此配置的基础上进行自己的修改、完善和分叉
 
-过去一年我通过 Vim 改善了自己的键盘输入习惯，并在浏览网页、笔记记录等场景中尝试运用 Vim 逻辑，效果显著。事实上，我对 Vim 的了解并不算多，自己并没有足够的精力完全钻入 Vim 世界，但我认可精悍、可组合的 Vim 哲学，即**序列化输入按键，而非过度依赖组合键**。
+过去一年我通过 Vim 改善了自己的键盘输入习惯，并在浏览网页 (Vimium)、笔记记录（Obsidian）等场景中尝试运用 Vim 逻辑，效果显著。
 
-熟练任何编辑器都需要肌肉记忆，但是 Vim 有更舒适的编辑体验。如果你希望获得类 Vim 的编辑体验 (只掌握有限且必要的 Vim 操作），又想要受益于 VSCode 开箱即用的插件生态，配置一个更加强大的 VSCodeVim 看起来是一个很不错的选择。
+但是，不得不说， Vim 是一个非常非常难上手的工具。Vim 精悍、可组合的哲学，减少了我对组合键的过度依赖（`ctrl` ` `alt` `command` `options` ...），但代价是 Vim 需要大量的前置知识 (建立新的肌肉记忆和记忆指令），同时配置 Vim 也占据我的很大一部分时间。
+
+<img src="/images/text-editor-learning-curves.png" alt="text-editor-learning-curves" />
+
+如图，Vim（Vi ） 的学习曲线实在过于陡峭，想要完全钻进 Vim 的世界，很难不耗费大量的时间和精力，尤其是在其他 IDE 越来越便捷的情况下，All in Vim 似乎不是一个十分有性价比的选择。
+
+如果你希望获得类 Vim 的编辑体验 (只掌握有限且必要的 Vim 操作），又想要受益于 VSCode 开箱即用的插件生态，配置一个更加强大的 VSCodeVim 看起来是一个很不错的选择。
 
 ## 准备工作
 
@@ -21,9 +27,18 @@
 
 ## 光标移动
 
-### 跳转任意字符
+### 跳转字符
 
-关于跳转我更习惯使用 flash.nvim，相较于与其他光标跳转更加自然且符合自觉。[cvim](https://marketplace.visualstudio.com/items?itemName=cuixiaorui.cvim) 在 VSCodeVim 的基础上实现了 flash.nvim 的功能并做了部分体验优化，因此与 flash.nvim 有部分差异，你可以从这篇 [issue](https://github.com/VSCodeVim/Vim/issues/8567) 详细了解 cvim 实现的功能和哲学。
+安装 cvim 后，开启 flash 插件
+
+```json
+// settings.json
+{
+  "vim.flash.enable": true
+}
+```
+
+flash.nvim 相较于与其他光标跳转更加自然且符合自觉。[cvim](https://marketplace.visualstudio.com/items?itemName=cuixiaorui.cvim) 在 VSCodeVim 的基础上实现了 flash.nvim 的功能并做了 [体验优化](https://github.com/VSCodeVim/Vim/issues/8567)
 
 ### 跳转至错误
 
@@ -107,20 +122,17 @@
 
 ## 自动隐藏
 
-vscode-autohide 是一个不错的自动隐藏插件，它可以帮助你在编辑代码的过程中自动隐藏掉侧边栏、终端等无关面板。但是 vscode-autohide 不支持键盘事件，而我通常使用键盘事件在这些面板之间跳转，为此我写了 [kevin-kwong.vscode-autohide-keyboard](https://marketplace.visualstudio.com/items?itemName=kevin-kwong.vscode-autohide-keyboard) 插件，添加了键盘事件支持和手动自动模式切换。
+`vscode-autohide` 是一个不错的自动隐藏插件，`autohide` 可以帮助你在编辑代码的过程中自动隐藏掉侧边栏、终端等无关面板。
 
-将 vscode-autohide-keyboard 设置成手动隐藏模式后，我们可以将 `autoHide.runHide` 命令与 VSCodeVim 快捷键捆绑起来以实现在特定时候隐藏掉面板。
+在 `vscode-autohide` 的基础上，  [kevin-kwong.vscode-autohide-keyboard](https://marketplace.visualstudio.com/items?itemName=kevin-kwong.vscode-autohide-keyboard) 添加了键盘事件支持和手动自动模式切换等功能
+
+将 vscode-autohide-keyboard 设置成手动隐藏模式后，我们可以将 `autoHide.runHide` 命令与 VSCodeVim 快捷键捆绑起来，实现在特定时候隐藏掉面板。
 
 例如在使用 `h` `j` `k` `l` 等命令移动光标时：
 
 ```json
 {
   "vim.normalModeKeyBindingsNonRecursive": [
-    {
-      "after": [ "i" ],
-      "before": [ "i" ],
-      "commands": [ "autoHide.runHide" ]
-    },
     {
       "after": [ "j" ],
       "before": [ "j" ],
@@ -141,21 +153,6 @@ vscode-autohide 是一个不错的自动隐藏插件，它可以帮助你在编�
       "before": [ "h" ],
       "commands": [ "autoHide.runHide" ]
     },
-    {
-      "after": [ "w" ],
-      "before": [ "w" ],
-      "commands": [ "autoHide.runHide" ]
-    },
-    {
-      "after": [ "e" ],
-      "before": [ "e" ],
-      "commands": [ "autoHide.runHide" ]
-    },
-    {
-      "after": [ "b" ],
-      "before": [ "b" ],
-      "commands": [ "autoHide.runHide" ]
-    }
   ],
 }
 
@@ -206,23 +203,38 @@ VSCodeVim 毕竟是 Vim 模拟器，本质上你还是在使用 VSCode。如果�
 
 ## 分词
 
-如果你需要编辑 TailwindCSS 风格的代码，你可能需要取消掉 `-` 分隔符。由于 Bootstrap、UnoCSS 和 TailwindCSS 等 CSS 库使用使用 `-` 符组成类名，例如 `color-black`。所以主观上我常常将每个类名视为一个整体（原子类？哈哈），而使用 `cw`、`dw` 和 `vw` 等命令编辑时这段代码时，`color-black` 被视为三块内容： `color` 、`-` 和 `black` 。因此，我去掉了 `-` 分隔符，以便更好的编辑这些类名。
+如果你经常使用 TailwindCSS/UnoCSS 等 CSS 工具类库，修改分词符能够很好的提升编码效率
+
+在分词之前
+
+```html
+<div class="bg-slate"></div>
+            ^光标
+<!-- 执行 dw 删除单词后： -->
+<div class="-slate"></div>
+            ^光标
+```
+
+```html
+<div class="bg-slate"></div>
+            ^光标
+<!-- 执行 dw 删除单词后： -->
+<div class=""></div>
+            ^光标
+```
+
+VSCode 配置：
 
 ```json
+// settings.json
 {
   "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?", // 去掉了 '-' 号： TailwindCSS 和 UnoCSS 需要
 }
 ```
 
-至于中文分词，VSCode 中没有很好的选择，Jieba（结巴）分词在 VSCode 中并不好用，甚至破坏了 VSCodeVim 的正常移动功能逻辑，不推荐使用。如果需要 Vim 编辑中文，Obsidian 的体验会更好，Jieba 分词在 Obsidian 中很适用，并且没有什么副作用，事实上，这篇文章就是用 Obsidian 写的。
-
 ## 中文输入
 
-我很少用 Vim 编辑中文，切换输入法在 Vim 中一直是个头疼的问题，通常来说 Vim 需要你在英文输入状态下使用，这意味着使用 Vim 编辑中文不仅需要来回切换输入法模式，同时也要切换 Vim 模式。来回切换导致的心智负担很重，极有可能忘记切换输入法，在有中文输入法的情况下使用 Vim。
-
-想要压缩这个繁琐步骤，你可能需要一个自动化软件 —— im-select。
-
-然而 im-select 虽然能够帮助自动切换输入法，但不能在同一个输入法中切换中英文和全角半角，而我的电脑通常只有一种输入法（微软输入法），因此我更加倾向于使用 [im-select-imm](https://github.com/PEMessage/im-select-imm)。
+ im-select 是使用 Vim 时最常用的输入法切换工具，然而 im-select 虽然能够帮助自动切换输入法，但不能在同一个输入法中切换中英文和全角半角，因此我更加倾向于使用 [im-select-imm](https://github.com/PEMessage/im-select-imm)（支持微软输入法）。
 
 ```json
 {
