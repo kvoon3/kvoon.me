@@ -1,9 +1,13 @@
 <script setup>
-const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation())
+const { data } = await useAsyncData('blog', () => fetchContentNavigation())
 
-const posts = navigation.value
-  ?.find(i => i.title === 'Post')?.children
-  ?.filter(post => post._path !== '/posts')
+consola.log('data', data.value)
+
+const posts = computed(() =>
+  data.value
+    ?.find(i => i._path === '/blog')?.children
+    ?.filter(i => i._path !== '/blog'), // remove root
+)
 </script>
 
 <template>

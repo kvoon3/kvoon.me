@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import '~/styles/markdown.css'
+// import '~/styles/markdown.css'
 </script>
 
 <template>
@@ -11,6 +11,8 @@ import '~/styles/markdown.css'
 <style>
 html, body , #__nuxt {
   height: 100dvh;
+  width: 100vw;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
   color: #222;

@@ -1,7 +1,10 @@
 # Kevin Kwong
 
-Hi, I am Kevin Kwong.
+Hi, I am Kevin Kwong. Welcome to my space.
 
----
+You can find me on
 
-[Test Page](./test.md)
+::SocialLinks
+::
+
+or email me `kvoon@duck.com`

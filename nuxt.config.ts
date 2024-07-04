@@ -15,6 +15,9 @@ export default defineNuxtConfig({
         dark: 'vitesse-dark',
       },
     },
+    markdown: {
+      // anchorLinks: false,
+    },
   },
   devtools: { enabled: true },
   css: [

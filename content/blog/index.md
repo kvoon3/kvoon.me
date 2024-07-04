@@ -1,3 +1,3 @@
-# Post
+# Blog
 
 :ListPosts
