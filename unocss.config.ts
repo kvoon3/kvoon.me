@@ -15,8 +15,8 @@ import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
 export default defineConfig({
   shortcuts: {
     'bg-base': 'bg-white dark:bg-black',
-    'icon-btn': 'inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600',
-    'btn': 'bg-neutral-100 dark:bg-neutral-800 rounded no-underline! px2.5 py1 inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100',
+    'icon-btn': 'color-neutral-800 dark:color-neutral-100 inline-block cursor-pointer select-none transition duration-200 ease-in-out op75 hover:op100',
+    'btn': 'bg-neutral-100 dark:bg-neutral-800 rounded no-underline! px2.5 py1 inline-block cursor-pointer select-none op75 transition duration-200 ease-in-out hover:opacity-100',
   },
   presets: [
     presetUno(),

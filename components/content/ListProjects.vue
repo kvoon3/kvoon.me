@@ -1,10 +1,14 @@
 <script setup lang="ts">
+type Category = string
+interface Project {
+  name: string
+  desc: string
+  link: string
+}
+
 const props = defineProps<{
-  projects: Record<string, {
-    name: string
-    desc: string
-    link: string
-  }>[]
+  projects:
+  Record<Category, Project[]>
 }>()
 
 consola.log('props', props)

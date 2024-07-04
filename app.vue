@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // import '~/styles/markdown.css'
+import { isDark } from './logic/state'
 </script>
 
 <template>
   <NuxtLayout>
     <NuxtPage />
+    <div v-if="!isDark" class="[background-size:16px_16px] absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-white -z-10" />
   </NuxtLayout>
 </template>
 
@@ -17,20 +19,19 @@ html, body , #__nuxt {
   padding: 0;
   color: #222;
   accent-color: #888;
-  background: white;
+  /* background: white; */
   color-scheme: light;
 }
 
 html.dark,
 .dark body,
 .dark #__nuxt {
-  background: black !important;
+  /* background: black !important; */
   color: #ddd !important;
   color-scheme: dark;
 }
 
 html {
-  --uno: of-x-hidden;
   font-family: Noto Sans SC, sans-serif;
 }
 </style>

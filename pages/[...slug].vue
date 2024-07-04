@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 
 <template>
-  <main prose="~ neutral" dark="prose-invert" m-auto mx-auto text-base>
+  <main dark="prose-invert" m-auto text-base prose prose-neutral>
     <ContentDoc>
       <template #not-found>
         404 Not Found
