@@ -4,7 +4,7 @@
 
 过去一年我通过 Vim 改善了自己的键盘输入习惯，并在浏览网页 (Vimium)、笔记记录（Obsidian）等场景中尝试运用 Vim 逻辑，效果显著。
 
-但是，不得不说， Vim 是一个非常非常难上手的工具。Vim 精悍、可组合的哲学，减少了我对组合键的过度依赖（`ctrl` ` `alt` `command` `options` ...），但代价是 Vim 需要大量的前置知识 (建立新的肌肉记忆和记忆指令），同时配置 Vim 也占据我的很大一部分时间。
+但是，不得不说， Vim 是一个非常非常难上手的工具。Vim 精悍、可组合的哲学，减少了我对组合键的过度依赖（`ctrl`  `alt` `command` `options` ...），但代价是 Vim 需要大量的前置知识 (建立新的肌肉记忆和记忆指令），同时配置 Vim 也占据我的很大一部分时间。
 
 <img src="/images/text-editor-learning-curves.png" alt="text-editor-learning-curves" />
 
