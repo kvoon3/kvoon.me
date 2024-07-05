@@ -6,7 +6,7 @@
 
 但是，不得不说， Vim 是一个非常非常难上手的工具。Vim 精悍、可组合的哲学，减少了我对组合键的过度依赖（`ctrl`  `alt` `command` `options` ...），但代价是 Vim 需要大量的前置知识 (建立新的肌肉记忆和记忆指令），同时配置 Vim 也占据我的很大一部分时间。
 
-<img src="/images/text-editor-learning-curves.png" alt="text-editor-learning-curves" />
+![text-editor-learning-curves](/images/text-editor-learning-curves.png)
 
 如图，Vim（Vi ） 的学习曲线实在过于陡峭，想要完全钻进 Vim 的世界，很难不耗费大量的时间和精力，尤其是在其他 IDE 越来越便捷的情况下，All in Vim 似乎不是一个十分有性价比的选择。
 

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-// import '~/styles/markdown.css'
-import { isDark } from './logic/state'
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout text-gray-700 font-sans dark:text-gray-200>
     <NuxtPage />
     <div
       class="[background-size:16px_16px] absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-white -z-10"
@@ -32,9 +30,5 @@ html.dark,
   /* background: black !important; */
   color: #ddd !important;
   color-scheme: dark;
-}
-
-html {
-  font-family: Noto Sans SC, sans-serif;
 }
 </style>

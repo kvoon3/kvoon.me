@@ -1,4 +1,5 @@
 import {
+  type CSSObject,
   defineConfig,
   presetAttributify,
   presetIcons,
@@ -11,6 +12,7 @@ import {
 
 // loader helpers
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
+import type { CSSProperties } from 'vue'
 
 export default defineConfig({
   shortcuts: {
@@ -22,7 +24,6 @@ export default defineConfig({
     presetUno(),
     presetAttributify(),
     presetIcons({
-      scale: 1.2,
       collections: {
         carbon: () => import('@iconify-json/carbon/icons.json').then(i => i.default),
         iconoir: () => import('@iconify-json/iconoir/icons.json').then(i => i.default),
@@ -31,15 +32,44 @@ export default defineConfig({
           svg => svg.replace(/#fff/, 'currentColor'),
         ),
       },
+      extraProperties: {
+        'display': 'inline-block',
+        'height': '1.2em',
+        'width': '1.2em',
+        'vertical-align': 'text-bottom',
+      },
     }),
     presetTypography({
-      cssExtend: {},
+      cssExtend: ({
+        'a': {
+          'text-decoration': 'none',
+          'transition': 'all ease-in-out 0.2s',
+          'border-bottom': '1px solid rgba(125, 125, 125, 0.3)',
+        },
+        'a:hover': {
+          'border-bottom': '1px solid #bbb',
+        },
+        'p > code': {
+          'background': 'rgba(125, 125, 125, 0.1)',
+          'padding': '0.1rem 0.2rem',
+          'border-radius': '0.2rem',
+        },
+        '.dark p > code': {
+          background: 'rgba(125, 125, 125, 0.4)',
+        },
+        'p > code::before': {
+          content: '""',
+        },
+        'p > code::after': {
+          content: '""',
+        },
+      } as Record<string, CSSProperties>) as Record<string, CSSObject>,
     }),
     presetWebFonts({
       fonts: {
-        sans: 'Noto Sans',
-        serif: 'Noto Serif',
-        mono: ['Fira Code', 'Fira Mono:400,700'],
+        sans: 'Poppins::400,600,800',
+        serif: 'Roboto',
+        mono: ['Fira Mono:400,600'],
       },
     }),
   ],

@@ -21,7 +21,7 @@ const links = {
 
 <template>
   <div>
-    <a v-for="{ url, iconClass }, label, key in links" :key :href="url" mb1 mr1 w-fit inline-flex items-center btn space-x-1>
+    <a v-for="{ url, iconClass }, label, key in links" :key :href="url" mb1 mr4 w-fit inline-flex items-center space-x-1>
       <i :class="iconClass" inline-block />
       <span>{{ label }}</span>
     </a>
