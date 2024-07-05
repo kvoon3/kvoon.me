@@ -6,7 +6,10 @@ import { isDark } from './logic/state'
 <template>
   <NuxtLayout>
     <NuxtPage />
-    <div v-if="!isDark" class="[background-size:16px_16px] absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-white -z-10" />
+    <div
+      class="[background-size:16px_16px] absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-white -z-10"
+      dark="bg-[radial-gradient(#333_0.5px,transparent_0px)] bg-black"
+    />
   </NuxtLayout>
 </template>
 
