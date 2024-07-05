@@ -29,7 +29,7 @@ const route = useRoute()
         <button i-iconoir-sun-light dark:i-iconoir-half-moon icon-btn @click="() => toggleDark()" />
       </section>
     </header>
-    <section px4>
+    <section px7>
       <slot />
     </section>
     <footer h-20 p4>
