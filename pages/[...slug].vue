@@ -5,11 +5,16 @@ definePageMeta({
 </script>
 
 <template>
-  <article dark="prose-invert" m-auto text-base prose prose-neutral>
+  <main dark="prose-invert" m-auto text-base prose prose-neutral>
     <ContentDoc>
+      <template #default="{ doc }">
+        <article>
+          <ContentRenderer :value="doc" />
+        </article>
+      </template>
       <template #not-found>
-        404 Not Found
+        <h1>Document not found</h1>
       </template>
     </ContentDoc>
-  </article>
+  </main>
 </template>
