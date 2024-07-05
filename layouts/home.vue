@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { toggleDark } from '~/logic/state'
+const colorMode = useColorMode()
+
+function toggleDark() {
+  colorMode.preference = colorMode.value === 'light' ? 'dark' : 'light'
+}
 
 const router = useRouter()
 const route = useRoute()

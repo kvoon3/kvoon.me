@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Zdog from 'zdog'
-import { isDark } from '~/logic/state'
 import { rotateIlloZ } from '~/utils/animate'
 
 const props = withDefaults(defineProps<{
@@ -9,6 +8,14 @@ const props = withDefaults(defineProps<{
 }>(), {
   size: 40,
   weight: 15,
+})
+
+const colorMode = useColorMode()
+
+const iconColor = computed(() => colorMode.value === 'light' ? 'black' : 'white')
+
+watchEffect(() => {
+  consola.log('iconColor.value', iconColor.value)
 })
 
 const height = computed(() => props.size)
@@ -48,11 +55,11 @@ function renderZDogCanvas() {
       addTo: illo.value,
       path,
       stroke: props.weight,
-      color: isDark.value ? 'white' : 'black',
+      color: iconColor.value,
     }),
   )
 
-  watch(isDark, v => lines.forEach(line => line.color = v ? 'white' : 'black'))
+  watch(iconColor, color => lines.forEach(line => line.color = color))
 
   rotateIlloZ(illo.value)
 

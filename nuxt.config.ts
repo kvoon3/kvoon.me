@@ -7,6 +7,9 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     'floating-vue/nuxt',
   ],
+  colorMode: {
+    classSuffix: '',
+  },
   content: {
     documentDriven: true,
     highlight: {
