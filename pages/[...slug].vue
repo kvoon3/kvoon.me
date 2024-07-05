@@ -9,6 +9,7 @@ definePageMeta({
     <ContentDoc>
       <template #default="{ doc }">
         <article>
+          <PageToc fixed left-0 top-30 pl4 />
           <ContentRenderer :value="doc" />
         </article>
       </template>
