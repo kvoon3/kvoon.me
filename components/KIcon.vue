@@ -3,47 +3,60 @@ import Zdog from 'zdog'
 import { isDark } from '~/logic/state'
 import { rotateIlloZ } from '~/utils/animate'
 
+const props = withDefaults(defineProps<{
+  size?: number
+  weight?: number
+}>(), {
+  size: 40,
+  weight: 15,
+})
+
+const height = computed(() => props.size)
+const width = computed(() => props.size / 2)
+
 const zdogRef = shallowRef<HTMLCanvasElement | undefined>()
+const illo = shallowRef<Zdog.Illustration | undefined>()
 
 function renderZDogCanvas() {
   if (!zdogRef.value)
     return
 
-  const illo = new Zdog.Illustration({
+  if (illo.value)
+    illo.value.remove()
+
+  illo.value = new Zdog.Illustration({
     element: zdogRef.value,
     zoom: 0.3,
     dragRotate: true,
   })
 
-  const height = 40
-
   const lines = [
     [
-      { x: -10, y: height / 2 },
-      { x: -10, y: -height / 2 },
+      { x: -width.value / 2, y: height.value / 2 },
+      { x: -width.value / 2, y: -height.value / 2 },
     ],
     [
       { x: -1, y: 0 },
-      { x: 10, y: -height / 2 },
+      { x: width.value / 2, y: -height.value / 2 },
     ],
     [
-      { x: 2, y: 0 },
-      { x: 10, y: height / 2 },
+      { x: -2, y: 0 },
+      { x: width.value / 2, y: height.value / 2 },
     ],
   ].map(path =>
     new Zdog.Shape({
-      addTo: illo,
+      addTo: illo.value,
       path,
-      stroke: 15,
+      stroke: props.weight,
       color: isDark.value ? 'white' : 'black',
     }),
   )
 
   watch(isDark, v => lines.forEach(line => line.color = v ? 'white' : 'black'))
 
-  rotateIlloZ(illo)
+  rotateIlloZ(illo.value)
 
-  illo.updateRenderGraph()
+  illo.value.updateRenderGraph()
 }
 
 onMounted(() => {
@@ -53,5 +66,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <canvas ref="zdogRef" class="zdog-canvans" width="50" height="50" float-left cursor-grab border rounded-full active:cursor-grabbing />
+  <canvas
+    ref="zdogRef"
+    class="zdog-canvans"
+    :width="height"
+    :height="height"
+    float-left cursor-grab border rounded-full active:cursor-grabbing
+  />
 </template>

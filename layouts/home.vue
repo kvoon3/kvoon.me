@@ -7,10 +7,10 @@ const route = useRoute()
 
 <template>
   <div id="home" text-slate-4>
-    <header flex items-center justify-between px4>
+    <header flex items-center justify-between p4>
       <section>
         <NuxtLink flex items-center gap-1 title="Home" to="/">
-          <KIcon my6 animate-fade-in animate-duration-2000 hover="shadow-green" />
+          <KIcon animate-fade-in animate-duration-2000 hover="shadow-green" />
         </NuxtLink>
       </section>
       <section flex items-center decoration-none space-x-4>
