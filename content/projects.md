@@ -25,6 +25,10 @@ projects:
     - name: unplugin-create-dir
       desc: Recursively create directory in project
       link: 'https://github.com/kvoon3/unplugin-create-dir'
+  UserScript:
+    - name: bili-cleaner
+      desc: Clean up Bilibili resource quickly
+      link: 'https://github.com/kvoon3/bili-cleaner'
 ---
 
 # Projects
