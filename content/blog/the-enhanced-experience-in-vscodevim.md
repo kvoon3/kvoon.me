@@ -46,23 +46,25 @@ flash.nvim 相较于与其他光标跳转更加自然且符合自觉。[cvim](ht
 
 ```json
 // leader: next/prev error
-{
-  "before": [ "leader", "e" ],
-  "commands": [ "go-to-next-error.next.error" ]
-},
-{
-  "before": [ "leader", "E" ],
-  "commands": [ "go-to-next-error.prev.error" ]
-},
-// leader: next/prev warning
-{
-  "before": [ "leader", "w" ],
-  "commands": [ "go-to-next-error.next.warning" ]
-},
-{
-  "before": [ "leader", "W" ],
-  "commands": [ "go-to-next-error.prev.warning" ]
-}
+[
+  {
+    "before": ["leader", "e"],
+    "commands": ["go-to-next-error.next.error"]
+  },
+  {
+    "before": ["leader", "E"],
+    "commands": ["go-to-next-error.prev.error"]
+  },
+  // leader: next/prev warning
+  {
+    "before": ["leader", "w"],
+    "commands": ["go-to-next-error.next.warning"]
+  },
+  {
+    "before": ["leader", "W"],
+    "commands": ["go-to-next-error.prev.warning"]
+  }
+]
 ```
 
 ### 跳转至待办事项
@@ -70,14 +72,16 @@ flash.nvim 相较于与其他光标跳转更加自然且符合自觉。[cvim](ht
 利用 [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree) 中的 `todo-tree.xxx` 命令，我们可以方便的跳转至最近的待办事项
 
 ```json
-{
- "before": [ "leader", "t" ],
- "commands": [ "todo-tree.goToNext" ]
-},
-{
- "before": [ "leader", "T" ],
- "commands": [ "todo-tree.goToPrevious" ]
-},
+[
+  {
+    "before": ["leader", "t"],
+    "commands": ["todo-tree.goToNext"]
+  },
+  {
+    "before": ["leader", "T"],
+    "commands": ["todo-tree.goToPrevious"]
+  }
+]
 ```
 
 ### 跳转到上下文
@@ -85,39 +89,45 @@ flash.nvim 相较于与其他光标跳转更加自然且符合自觉。[cvim](ht
 打开或查看类型定义
 
 ```json
-{
- // checkout type definition
- "before": [ "g", "t" ],
- "commands": [ "editor.action.goToTypeDefinition" ]
-},
-{
- // peek 类型
- "before": [ "g", "p", "t" ],
- "commands": [ "editor.action.peekTypeDefinition" ]
-}
+[
+  {
+  // checkout type definition
+    "before": ["g", "t"],
+    "commands": ["editor.action.goToTypeDefinition"]
+  },
+  {
+  // peek 类型
+    "before": ["g", "p", "t"],
+    "commands": ["editor.action.peekTypeDefinition"]
+  }
+]
 ```
 
 打开或查看实现
 
 ```json
-{
- "before": [ "g", "i" ],
- "commands": [ "editor.action.goToImplementation" ]
-},
-{
- "before": [ "g", "p", "i" ],
- "commands": [ "editor.action.peekImplementation" ]
-}
+[
+  {
+    "before": ["g", "i"],
+    "commands": ["editor.action.goToImplementation"]
+  },
+  {
+    "before": ["g", "p", "i"],
+    "commands": ["editor.action.peekImplementation"]
+  }
+]
 ```
 
 查看引用情况
 
 ```json
-{
- // search reference
- "before": [ "g", "r" ],
- "commands": [ "editor.action.referenceSearch.trigger" ]
-},
+[
+  {
+  // search reference
+    "before": ["g", "r"],
+    "commands": ["editor.action.referenceSearch.trigger"]
+  }
+]
 ```
 
 ## 自动隐藏
@@ -134,28 +144,27 @@ flash.nvim 相较于与其他光标跳转更加自然且符合自觉。[cvim](ht
 {
   "vim.normalModeKeyBindingsNonRecursive": [
     {
-      "after": [ "j" ],
-      "before": [ "j" ],
-      "commands": [ "autoHide.runHide" ]
+      "after": ["j"],
+      "before": ["j"],
+      "commands": ["autoHide.runHide"]
     },
     {
-      "after": [ "k" ],
-      "before": [ "k" ],
-      "commands": [ "autoHide.runHide" ]
+      "after": ["k"],
+      "before": ["k"],
+      "commands": ["autoHide.runHide"]
     },
     {
-      "after": [ "l" ],
-      "before": [ "l" ],
-      "commands": [ "autoHide.runHide" ]
+      "after": ["l"],
+      "before": ["l"],
+      "commands": ["autoHide.runHide"]
     },
     {
-      "after": [ "h" ],
-      "before": [ "h" ],
-      "commands": [ "autoHide.runHide" ]
-    },
-  ],
+      "after": ["h"],
+      "before": ["h"],
+      "commands": ["autoHide.runHide"]
+    }
+  ]
 }
-
 ```
 
 ## 缩进
@@ -170,14 +179,16 @@ xnoremap < <gv
 而在 VSCodeVim 中， `.vimrc` 的支持是实验性的，因此我在 `settings.json` 中配置了该功能
 
 ```json
-{
- "before": [ ">" ],
- "commands": [ "editor.action.indentLines" ]
-},
-{
- "before": [ "<" ],
- "commands": [ "editor.action.outdentLines" ]
-}
+[
+  {
+    "before": [">"],
+    "commands": ["editor.action.indentLines"]
+  },
+  {
+    "before": ["<"],
+    "commands": ["editor.action.outdentLines"]
+  }
+]
 ```
 
 ## 折叠
@@ -190,15 +201,17 @@ VSCodeVim 毕竟是 Vim 模拟器，本质上你还是在使用 VSCode。如果�
 
 ```json
 // 扩大选择区
-{
- "before": [ "a", "f" ],
- "commands": [ "editor.action.smartSelect.expand" ]
-},
-// 缩小选择区
-{
- "before": [ "a", "a" ],
- "commands": [ "editor.action.smartSelect.shrink" ]
-}
+[
+  {
+    "before": ["a", "f"],
+    "commands": ["editor.action.smartSelect.expand"]
+  },
+  // 缩小选择区
+  {
+    "before": ["a", "a"],
+    "commands": ["editor.action.smartSelect.shrink"]
+  }
+]
 ```
 
 ## 分词
@@ -228,7 +241,7 @@ VSCode 配置：
 ```json
 // settings.json
 {
-  "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?", // 去掉了 '-' 号： TailwindCSS 和 UnoCSS 需要
+  "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?" // 去掉了 '-' 号： TailwindCSS 和 UnoCSS 需要
 }
 ```
 
@@ -241,7 +254,7 @@ VSCode 配置：
   "vim.autoSwitchInputMethod.defaultIM": "2053-0",
   "vim.autoSwitchInputMethod.enable": true,
   "vim.autoSwitchInputMethod.obtainIMCmd": "...path\\to\\im-select-imm.exe",
-  "vim.autoSwitchInputMethod.switchIMCmd": "...path\\to\\im-select-imm.exe {im}",
+  "vim.autoSwitchInputMethod.switchIMCmd": "...path\\to\\im-select-imm.exe {im}"
 }
 ```
 
@@ -252,8 +265,8 @@ VSCode 配置：
 ```json
 // delete all highlight
 {
-  "before": [ "d", "a", "h" ],
-  "commands": [ ":nohl" ]
+  "before": ["d", "a", "h"],
+  "commands": [":nohl"]
 }
 ```
 
@@ -261,8 +274,8 @@ VSCode 配置：
 
 ```json
 {
- "before": [ "d", "a", "m" ],
- "commands": [ ":delm!" ]
+  "before": ["d", "a", "m"],
+  "commands": [":delm!"]
 }
 ```
 
@@ -270,8 +283,8 @@ VSCode 配置：
 
 ```json
 {
- "before": [ "g", "m" ],
- "commands": [ ":marks" ]
+  "before": ["g", "m"],
+  "commands": [":marks"]
 }
 ```
 
@@ -281,18 +294,20 @@ VSCode 配置：
 
 ```json
 {
- "before": [ "leader", "f" ],
- "commands": [ "workbench.action.experimental.quickTextSearch" ]
+  "before": ["leader", "f"],
+  "commands": ["workbench.action.experimental.quickTextSearch"]
 }
 ```
 
 ## 全文选中
 
 ```json
-{
- "before": [ "<C-a>" ],
- "after": [ "g", "g", "V", "G" ]
-},
+[
+  {
+    "before": ["<C-a>"],
+    "after": ["g", "g", "V", "G"]
+  }
+]
 ```
 
 ## 超链接
@@ -302,8 +317,8 @@ VSCode 配置：
 ```json
 // leader: open link with default browser
 {
- "before": [ "leader", "l" ],
- "commands": [ "editor.action.openLink" ]
+  "before": ["leader", "l"],
+  "commands": ["editor.action.openLink"]
 }
 ```
 
@@ -317,46 +332,49 @@ VSCode 配置：
 
 ```json
 // keybindings.json
-{
-  "key": "h",
-  "command": "editor.action.scrollLeftHover",
-  "when": "editorHoverFocused"
-},
-{
-  "key": "j",
-  "command": "editor.action.scrollDownHover",
-  "when": "editorHoverFocused"
-},
-{
-  "key": "k",
-  "command": "editor.action.scrollUpHover",
-  "when": "editorHoverFocused"
-},
-{
-  "key": "l",
-  "command": "editor.action.scrollRightHover",
-  "when": "editorHoverFocused"
-},
-{
-  "key": "g g",
-  "command": "editor.action.goToTopHover",
-  "when": "editorHoverFocused"
-},
-{
-  "key": "ctrl+up",
-  "command": "-editor.action.goToTopHover",
-  "when": "editorHoverFocused"
-}，
-{
-  "key": "shift+g",
-  "command": "editor.action.goToBottomHover",
-  "when": "editorHoverFocused"
-},
-{
-  "key": "ctrl+down",
-  "command": "-editor.action.goToBottomHover",
-  "when": "editorHoverFocused"
-}
+[
+
+  {
+    "key": "h",
+    "command": "editor.action.scrollLeftHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "j",
+    "command": "editor.action.scrollDownHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "k",
+    "command": "editor.action.scrollUpHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "l",
+    "command": "editor.action.scrollRightHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "g g",
+    "command": "editor.action.goToTopHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "ctrl+up",
+    "command": "-editor.action.goToTopHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "shift+g",
+    "command": "editor.action.goToBottomHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "ctrl+down",
+    "command": "-editor.action.goToBottomHover",
+    "when": "editorHoverFocused"
+  }
+]
 ```
 
 ### 文件
@@ -376,47 +394,49 @@ VSCode 配置：
 
 ```json
 // keybindings.json
+[
 
-{
-  "command": "explorer.newFile",
-  "key": "a",
-  "when": "filesExplorerFocus && !inputFocus"
-},
-{
-  "command": "filesExplorer.copy",
-  "key": "y",
-  "when": "filesExplorerFocus && !inputFocus"
-},
-{
-  "command": "filesExplorer.paste",
-  "key": "p",
-  "when": "filesExplorerFocus && !inputFocus"
-},
-{
-  "command": "filesExplorer.findInFolder",
-  "key": "f",
-  "when": "filesExplorerFocus && !inputFocus"
-},
-{
-  "command": "renameFile",
-  "key": "r",
-  "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceReadonly && !inputFocus && !inputValidation"
-},
-{
-  "key": "t",
-  "command": "openInIntegratedTerminal",
-  "when": "filesExplorerFocus && !inputFocus"
-},
-{
-  "command": "explorer.newFolder",
-  "key": "shift+a",
-  "when": "filesExplorerFocus && !inputFocus"
-},
-{
-  "command": "deleteFile",
-  "key": "d",
-  "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceReadonly && !inputFocus"
-},
+  {
+    "command": "explorer.newFile",
+    "key": "a",
+    "when": "filesExplorerFocus && !inputFocus"
+  },
+  {
+    "command": "filesExplorer.copy",
+    "key": "y",
+    "when": "filesExplorerFocus && !inputFocus"
+  },
+  {
+    "command": "filesExplorer.paste",
+    "key": "p",
+    "when": "filesExplorerFocus && !inputFocus"
+  },
+  {
+    "command": "filesExplorer.findInFolder",
+    "key": "f",
+    "when": "filesExplorerFocus && !inputFocus"
+  },
+  {
+    "command": "renameFile",
+    "key": "r",
+    "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceReadonly && !inputFocus && !inputValidation"
+  },
+  {
+    "key": "t",
+    "command": "openInIntegratedTerminal",
+    "when": "filesExplorerFocus && !inputFocus"
+  },
+  {
+    "command": "explorer.newFolder",
+    "key": "shift+a",
+    "when": "filesExplorerFocus && !inputFocus"
+  },
+  {
+    "command": "deleteFile",
+    "key": "d",
+    "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceReadonly && !inputFocus"
+  }
+]
 ```
 
 ### 终端
@@ -427,9 +447,9 @@ Alacritty 是一款非常好用的终端应用，Alacritty 内置了 Vi Mode 以
 
 ```json
 {
- "key": "ctrl+t c",
- "command": "extension.terminalCapture.runCapture",
- "when": "terminalFocus"
+  "key": "ctrl+t c",
+  "command": "extension.terminalCapture.runCapture",
+  "when": "terminalFocus"
 }
 ```
 
@@ -437,30 +457,32 @@ kill 终端、重命名终端、终端面板最大化：
 
 ```json
 // keybindings.json
-{
-  "key": "ctrl+t d",
-  "command": "workbench.action.terminal.kill"
-},
-{
-  "key": "shift+alt+r",
-  "command": "-revealFileInOS",
-  "when": "!editorFocus"
-},
-{
-  "key": "ctrl+r",
-  "command": "workbench.action.terminal.renameActiveTab",
-  "when": "terminalHasBeenCreated && terminalTabsFocus && terminalTabsSingularSelection || terminalProcessSupported && terminalTabsFocus && terminalTabsSingularSelection"
-},
-{
-  "key": "f2",
-  "command": "-workbench.action.terminal.renameActiveTab",
-  "when": "terminalHasBeenCreated && terminalTabsFocus && terminalTabsSingularSelection || terminalProcessSupported && terminalTabsFocus && terminalTabsSingularSelection"
-},
-{
-  "key": "ctrl+m",
-  "command": "workbench.action.toggleMaximizedPanel",
-  "when": "terminalFocus && !filesExplorerFocus && !editorFocus"
-},
+[
+  {
+    "key": "ctrl+t d",
+    "command": "workbench.action.terminal.kill"
+  },
+  {
+    "key": "shift+alt+r",
+    "command": "-revealFileInOS",
+    "when": "!editorFocus"
+  },
+  {
+    "key": "ctrl+r",
+    "command": "workbench.action.terminal.renameActiveTab",
+    "when": "terminalHasBeenCreated && terminalTabsFocus && terminalTabsSingularSelection || terminalProcessSupported && terminalTabsFocus && terminalTabsSingularSelection"
+  },
+  {
+    "key": "f2",
+    "command": "-workbench.action.terminal.renameActiveTab",
+    "when": "terminalHasBeenCreated && terminalTabsFocus && terminalTabsSingularSelection || terminalProcessSupported && terminalTabsFocus && terminalTabsSingularSelection"
+  },
+  {
+    "key": "ctrl+m",
+    "command": "workbench.action.toggleMaximizedPanel",
+    "when": "terminalFocus && !filesExplorerFocus && !editorFocus"
+  }
+]
 ```
 
 ### 标签页
@@ -469,26 +491,28 @@ kill 终端、重命名终端、终端面板最大化：
 
 ```json
 // keybindings.json
-{
-  "command": "workbench.action.nextEditor",
-  "key": "ctrl+l",
-},
-{
-  "command": "workbench.action.previousEditor",
-  "key": "ctrl+h",
-},
-{
-  "command": "workbench.action.closeActiveEditor",
-  "key": "ctrl+oem_7"
-},
-{
-  "command": "-workbench.action.closeActiveEditor",
-  "key": "ctrl+w"
-},
-{
-  "key": "ctrl+shift+oem_7",
-  "command": "workbench.action.closeOtherEditors"
-},
+[
+  {
+    "command": "workbench.action.nextEditor",
+    "key": "ctrl+l"
+  },
+  {
+    "command": "workbench.action.previousEditor",
+    "key": "ctrl+h"
+  },
+  {
+    "command": "workbench.action.closeActiveEditor",
+    "key": "ctrl+oem_7"
+  },
+  {
+    "command": "-workbench.action.closeActiveEditor",
+    "key": "ctrl+w"
+  },
+  {
+    "key": "ctrl+shift+oem_7",
+    "command": "workbench.action.closeOtherEditors"
+  }
+]
 ```
 
 固定标签页：
@@ -496,39 +520,43 @@ kill 终端、重命名终端、终端面板最大化：
 ```json
 // settings.json vim
 // leader: pin/unpin edit
-{
- "before": [ "leader", "p" ],
- "commands": [
-  "workbench.action.pinEditor"
- ]
-},
-{
- "before": [ "leader", "P" ],
- "commands": [
-  "workbench.action.unpinEditor"
- ]
-},
+[
+  {
+    "before": ["leader", "p"],
+    "commands": [
+      "workbench.action.pinEditor"
+    ]
+  },
+  {
+    "before": ["leader", "P"],
+    "commands": [
+      "workbench.action.unpinEditor"
+    ]
+  }
+]
 ```
 
 移动标签页：
 
 ```json
-{
-  "key": "alt+h",
-  "command": "workbench.action.moveEditorLeftInGroup"
-},
-{
-  "key": "ctrl+shift+pageup",
-  "command": "-workbench.action.moveEditorLeftInGroup"
-},
-{
-  "key": "alt+l",
-  "command": "workbench.action.moveEditorRightInGroup"
-},
-{
-  "key": "ctrl+shift+pagedown",
-  "command": "-workbench.action.moveEditorRightInGroup"
-},
+[
+  {
+    "key": "alt+h",
+    "command": "workbench.action.moveEditorLeftInGroup"
+  },
+  {
+    "key": "ctrl+shift+pageup",
+    "command": "-workbench.action.moveEditorLeftInGroup"
+  },
+  {
+    "key": "alt+l",
+    "command": "workbench.action.moveEditorRightInGroup"
+  },
+  {
+    "key": "ctrl+shift+pagedown",
+    "command": "-workbench.action.moveEditorRightInGroup"
+  }
+]
 ```
 
 ### Git
@@ -538,8 +566,8 @@ kill 终端、重命名终端、终端面板最大化：
 ```json
 // leader: open git change
 {
- "before": [ "leader", "c" ],
- "commands": [ "git.openChange" ]
+  "before": ["leader", "c"],
+  "commands": ["git.openChange"]
 }
 ```
 
@@ -547,12 +575,12 @@ kill 终端、重命名终端、终端面板最大化：
 
 ```json
 {
- "before": [
-  "leader",
-  "g"
- ],
- "commands": [
-  "git-graph.view"
- ]
+  "before": [
+    "leader",
+    "g"
+  ],
+  "commands": [
+    "git-graph.view"
+  ]
 }
 ```

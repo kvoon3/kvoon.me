@@ -20,7 +20,7 @@ consola.log('props', props)
       {{ category }}
     </div>
     <ul>
-      <li v-for="{ name, desc, link }, key in project" :key>
+      <li v-for="{ name, desc, link }, k in project" :key="k">
         <a :href="link" link no-underline>
           {{ name }} <span text-sm op70> - {{ desc }}</span>
         </a>

@@ -1,32 +1,13 @@
 import antfu from '@antfu/eslint-config'
-import unocss from '@unocss/eslint-plugin'
+import nuxt from './.nuxt/eslint.config.mjs'
 
-export default await antfu(
-  {
-    // Or customize the stylistic rules
-    stylistic: {
-      indent: 2, // 4, or 'tab'
-      quotes: 'single', // or 'double'
-    },
-
-    // TypeScript and Vue are auto-detected, you can also explicitly enable them:
+export default nuxt(
+  antfu({
     typescript: true,
-    vue: true,
-
-    // Disable jsonc and yaml support
-    jsonc: false,
-    yaml: false,
-
-    // `.eslintignore` is no longer supported in Flat config, use `ignores` instead
-    ignores: [
-      './fixtures',
-    // ...globs
-    ],
-  },
-  {
-    rules: {
-      'no-undef': 'off',
+    unocss: true,
+    formatters: {
+      css: true,
+      markdown: false,
     },
-  },
-  unocss.configs.flat,
+  }),
 )

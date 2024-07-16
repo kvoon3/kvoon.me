@@ -11,7 +11,14 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/color-mode',
     'floating-vue/nuxt',
+    '@nuxt/eslint',
+    '@nuxt/image',
   ],
+  eslint: {
+    config: {
+      standalone: false,
+    },
+  },
   colorMode: {
     classSuffix: '',
   },
@@ -27,8 +34,12 @@ export default defineNuxtConfig({
       // anchorLinks: false,
     },
   },
+
   devtools: { enabled: true },
+
   css: [
     '@unocss/reset/tailwind.css',
   ],
+
+  compatibilityDate: '2024-07-16',
 })

@@ -12,7 +12,9 @@
 </template>
 
 <style>
-html, body , #__nuxt {
+html,
+body,
+#__nuxt {
   height: 100dvh;
   width: 100vw;
   overflow-x: hidden;
