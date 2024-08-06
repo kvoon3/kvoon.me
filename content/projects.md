@@ -14,6 +14,9 @@ projects:
     - name: 'AutoHide KB'
       desc: 'Auto Hide VSCode sidebar, panel and notifications.'
       link: 'https://github.com/kvoon3/vscode-autohide-kb'
+    - name: 'Which Key Config Gen'
+      desc: 'Generate vscode which-key config automatically'
+      link: 'https://github.com/kvoon3/vscode-which-key-config-gen'
   Tools:
     - name: Img Min Toolkit
       desc: Compress images in batches at the terminal
