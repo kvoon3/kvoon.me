@@ -32,6 +32,10 @@ projects:
     - name: bili-cleaner
       desc: Clean up Bilibili resource quickly
       link: 'https://github.com/kvoon3/bili-cleaner'
+  CSS:
+    - name: vimium-theme-vitesse
+      desc: Vitesse theme for Vimium
+      link: 'https://github.com/kvoon3/vimium-theme-vitesse'
 ---
 
 # Projects
