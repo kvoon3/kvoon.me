@@ -24,6 +24,9 @@ importers:
       '@iconify-json/iconoir':
         specifier: ^1.1.46
         version: 1.1.46
+      '@iconify-json/ph':
+        specifier: ^1.1.14
+        version: 1.1.14
       '@iconify/utils':
         specifier: ^2.1.31
         version: 2.1.31
@@ -1162,6 +1165,9 @@ packages:
 
   '@iconify-json/iconoir@1.1.46':
     resolution: {integrity: sha512-6JP4ufiU6kP48NEcBT3FR7pGStpJ8PYoAkkTvzvk4qVd8ObDJU9cEULnStOGs4VmZ0LMNtmmmMQlApXBKHl+jA==}
+
+  '@iconify-json/ph@1.1.14':
+    resolution: {integrity: sha512-s1hZVaxIpl40qLEhjqPRMcZl4A3M4fZ+77Fi+VuOb/eKkIHIMutAoBHIR+0a3l7psUweZQGj9hSyL2P5CIj6qA==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -8566,6 +8572,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/iconoir@1.1.46':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/ph@1.1.14':
     dependencies:
       '@iconify/types': 2.0.0
 
