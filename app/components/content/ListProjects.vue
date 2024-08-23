@@ -10,8 +10,6 @@ const props = defineProps<{
   projects:
   Record<Category, Project[]>
 }>()
-
-consola.log('props', props)
 </script>
 
 <template>

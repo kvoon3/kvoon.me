@@ -14,10 +14,6 @@ const colorMode = useColorMode()
 
 const iconColor = computed(() => colorMode.value === 'light' ? 'black' : 'white')
 
-watchEffect(() => {
-  consola.log('iconColor.value', iconColor.value)
-})
-
 const height = computed(() => props.size)
 const width = computed(() => props.size / 2)
 

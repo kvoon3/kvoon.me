@@ -1,8 +1,6 @@
 <script setup>
 const { data } = await useAsyncData('blog', () => fetchContentNavigation())
 
-consola.log('data', data.value)
-
 const posts = computed(() =>
   data.value
     ?.find(i => i._path === '/blog')?.children
