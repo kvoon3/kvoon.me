@@ -1,3 +1,5 @@
-# Note
+---
+title: Note
+---
 
 WIP

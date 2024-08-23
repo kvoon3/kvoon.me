@@ -43,8 +43,6 @@ projects:
       link: 'https://github.com/kvoon3/img-min-toolkit'
 ---
 
-# Projects
-
 :PrButton
 
 :ListProjects{:projects="projects"}

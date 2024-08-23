@@ -1,4 +1,7 @@
-# The Enhanced Experience in VSCodeVim
+---
+title: 增强的 VSCodeVim 使用体验
+created: 2024-03-29 01:47:24
+---
 
 > 本文具有强烈个人色彩，并不适用于所有人，但是欢迎在此配置的基础上进行自己的修改、完善和分叉
 

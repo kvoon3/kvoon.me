@@ -1,3 +1,5 @@
-# Blog
+---
+title: Blog
+---
 
 :ListPosts

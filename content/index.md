@@ -1,4 +1,6 @@
-# Kevin Kwong
+---
+title: Kevin Kwong
+---
 
 :TheAvatar
 

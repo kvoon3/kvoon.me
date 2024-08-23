@@ -1,10 +1,10 @@
 <script setup>
-const { data } = await useAsyncData('blog', () => fetchContentNavigation())
+const { data } = await useAsyncData('blog', () => queryContent('/').find())
 
 const posts = computed(() =>
-  data.value
-    ?.find(i => i._path === '/blog')?.children
-    ?.filter(i => i._path !== '/blog'), // remove root
+  data.value.filter(d =>
+    d._path.startsWith('/blog') && d._path !== '/blog',
+  ),
 )
 </script>
 
@@ -12,7 +12,7 @@ const posts = computed(() =>
   <ul>
     <li v-for="post, key in posts" :key="key">
       <NuxtLink :to="post._path">
-        {{ post.title }}
+        {{ post.alias || post.title }}
       </NuxtLink>
     </li>
   </ul>

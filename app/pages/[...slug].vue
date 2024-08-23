@@ -11,6 +11,10 @@ definePageMeta({
         <template #default="{ doc }">
           <article>
             <PageToc fixed left-0 top-30 pl4 max-lg:hidden />
+            <h1>{{ doc.title }}</h1>
+            <p text-neutral-4>
+              {{ doc.created }}
+            </p>
             <ContentRenderer :value="doc" />
           </article>
         </template>
