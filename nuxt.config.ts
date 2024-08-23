@@ -2,12 +2,14 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+
   // extends: '@nuxt-themes/typography',
   app: {
     head: {
       link: [{ rel: 'icon', type: 'image/svg', href: '/favicon.svg' }],
     },
   },
+
   modules: [
     '@unocss/nuxt',
     '@nuxt/content',
@@ -48,6 +50,12 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
+
+  components: [
+    '~/icons',
+    '~/components'
+  ],
+  
   css: [
     '@unocss/reset/tailwind.css',
   ],
