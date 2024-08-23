@@ -2,13 +2,11 @@
 </script>
 
 <template>
-  <NuxtLayout text-gray-700 font-sans dark:text-gray-200>
-    <NuxtPage />
-    <div
-      class="[background-size:16px_16px] absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-white -z-10"
-      dark="bg-[radial-gradient(#333_0.5px,transparent_0px)] bg-black"
-    />
-  </NuxtLayout>
+  <NuxtPage />
+  <div
+    class="[background-size:16px_16px] absolute inset-0 h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-white -z-10"
+    dark="bg-[radial-gradient(#333_0.5px,transparent_0px)] bg-black"
+  />
 </template>
 
 <style>
