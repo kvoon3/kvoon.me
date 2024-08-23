@@ -14,17 +14,20 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/color-mode',
     'floating-vue/nuxt',
-    '@nuxt/eslint',
     '@nuxt/image',
+    '@nuxt/eslint',
   ],
+
   eslint: {
     config: {
       standalone: false,
     },
   },
+
   colorMode: {
     classSuffix: '',
   },
+
   content: {
     documentDriven: true,
     highlight: {
@@ -39,6 +42,11 @@ export default defineNuxtConfig({
   },
 
   devtools: { enabled: true },
+
+  experimental: {
+    renderJsonPayloads: true,
+    typedPages: true,
+  },
 
   css: [
     '@unocss/reset/tailwind.css',

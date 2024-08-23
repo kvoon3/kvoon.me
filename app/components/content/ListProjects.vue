@@ -14,15 +14,17 @@ const props = defineProps<{
 
 <template>
   <div v-for="project, category, key in props.projects" :key>
-    <div text-xl>
-      {{ category }}
-    </div>
-    <ul>
-      <li v-for="{ name, desc, link }, k in project" :key="k">
-        <a :href="link" link no-underline>
-          {{ name }} <span text-sm op70> - {{ desc }}</span>
-        </a>
-      </li>
-    </ul>
+    <h3>{{ category }}</h3>
+    <section space-y-4>
+      <a
+        v-for="{ name, desc, link }, k in project" :key="k" border-none
+        btn hover:border-none
+        :link
+        target="_blank"
+      >
+        <header>{{ name }}</header>
+        <span text-sm op70>{{ desc }}</span>
+      </a>
+    </section>
   </div>
 </template>

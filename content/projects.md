@@ -42,7 +42,4 @@ projects:
 
 :PrButton
 
-<br>
-<br>
-
 :ListProjects{:projects="projects"}
