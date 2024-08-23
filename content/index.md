@@ -10,4 +10,4 @@ You can find me on
 
 :SocialLinks
 
-or email me `kvoon@duck.com`
+or email me <a href="mailto:kvoon@duck.com">kvoon@duck.com</a>
