@@ -31,7 +31,7 @@ export default defineConfig({
         carbon: () => import('@iconify-json/carbon/icons.json').then(i => i.default),
         iconoir: () => import('@iconify-json/iconoir/icons.json').then(i => i.default),
         custom: FileSystemIconLoader(
-          './assets/icons',
+          './app/assets/icons',
           svg => svg.replace(/#fff/, 'currentColor'),
         ),
       },

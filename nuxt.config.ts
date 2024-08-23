@@ -1,4 +1,7 @@
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4,
+  },
   // extends: '@nuxt-themes/typography',
   app: {
     head: {
