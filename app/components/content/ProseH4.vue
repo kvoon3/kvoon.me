@@ -17,7 +17,7 @@ const generate = computed(() => props.id && ((typeof headings?.anchorLinks === '
         v-if="id && generate"
         transition="all 200 ease-in-out"
         translate-x="-130%"
-        absolute left-0 top-0 cursor-pointer font-bold op0 class="group-active:op30 group-hover:op30"
+        absolute left-0 top-0 font-bold op0 class="group-active:op30 group-hover:op30"
         :href="`#${id}`"
       >#</a>
       <slot />

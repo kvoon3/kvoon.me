@@ -17,8 +17,8 @@ import type { CSSProperties } from 'vue'
 export default defineConfig({
   shortcuts: {
     'bg-base': 'bg-white dark:bg-black',
-    'icon-btn': 'color-neutral-800 dark:color-neutral-100 inline-block cursor-pointer select-none transition duration-200 ease-in-out op75 hover:op100',
-    'btn': 'bg-neutral-100 dark:bg-neutral-800 rounded no-underline! px2.5 py1 inline-block cursor-pointer select-none op75 transition duration-200 ease-in-out hover:opacity-100',
+    'icon-btn': 'color-neutral-800 dark:color-neutral-100 inline-block select-none transition duration-200 ease-in-out op75 hover:op100',
+    'btn': 'bg-neutral-100 dark:bg-neutral-800 rounded no-underline! px2.5 py1 inline-block select-none op75 transition duration-200 ease-in-out hover:opacity-100',
     'position-y-center': 'absolute top-1/2 -translate-y-1/2',
     'position-x-center': 'absolute left-1/2 -translate-x-1/2',
     'position-center': 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',

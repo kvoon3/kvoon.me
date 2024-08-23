@@ -18,7 +18,7 @@ const props = defineProps<{
     <section grid gap2 lg-sm:grid-cols-2>
       <a
         v-for="{ name, desc, link }, k in project" :key="k"
-        :link target="_blank"
+        :href="link" target="_blank"
         flex border-none btn hover:border-none
       >
         <figure>
