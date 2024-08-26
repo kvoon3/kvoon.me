@@ -6,11 +6,11 @@ definePageMeta({
 
 <template>
   <NuxtLayout text-gray-700 font-sans dark:text-gray-200>
-    <main dark="prose-invert" m-auto text-base prose prose-neutral>
+    <main>
       <ContentDoc>
         <template #default="{ doc }">
-          <article>
-            <PageToc fixed left-0 top-30 pl4 max-lg:hidden />
+          <PageToc fixed left-0 top-20 pl4 max-lg:hidden />
+          <article dark="prose-invert" m-auto text-base prose prose-neutral>
             <h1>{{ doc.title }}</h1>
             <p text-neutral-4>
               {{ doc.created }}
