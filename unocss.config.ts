@@ -82,4 +82,12 @@ export default defineConfig({
     transformerDirectives(),
     transformerVariantGroup(),
   ],
+  safelist: [
+    'i-carbon-keyboard',
+    'i-carbon-code',
+    'i-carbon-paint-brush',
+    'i-carbon-chart-bubble-packed',
+    'i-custom-bilibili',
+    'i-carbon-image',
+  ],
 })
