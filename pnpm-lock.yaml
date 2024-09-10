@@ -21,12 +21,18 @@ importers:
       '@antfu/eslint-config':
         specifier: ^2.27.0
         version: 2.27.0(@typescript-eslint/utils@8.2.0(eslint@9.9.0(jiti@1.21.6))(typescript@5.5.4))(@unocss/eslint-plugin@0.62.2(eslint@9.9.0(jiti@1.21.6))(typescript@5.5.4))(@vue/compiler-sfc@3.4.38)(eslint-plugin-format@0.1.2(eslint@9.9.0(jiti@1.21.6)))(eslint@9.9.0(jiti@1.21.6))(typescript@5.5.4)
+      '@iconify-json/bxl':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@iconify-json/carbon':
         specifier: ^1.1.37
         version: 1.1.37
       '@iconify-json/iconoir':
         specifier: ^1.1.46
         version: 1.1.46
+      '@iconify-json/logos':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@iconify-json/ph':
         specifier: ^1.1.14
         version: 1.1.14
@@ -1163,11 +1169,17 @@ packages:
   '@iarna/toml@2.2.5':
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
 
+  '@iconify-json/bxl@1.2.0':
+    resolution: {integrity: sha512-qIBKOJClhiHqdHBdlw8SQlrlslP0QbcI2nTQ9UKqAB/60FTfkLyPm+CeRXwg871ypbMTuPMBbLAYMlIL2zLLLQ==}
+
   '@iconify-json/carbon@1.1.37':
     resolution: {integrity: sha512-Hj9oZtRmN63yt29YovqgqOJQhaoVMNMTkFLT3HKAJm4HjvI405Juez5UfdysYmLjF708U7gJNx4U6K1k5+fTBw==}
 
   '@iconify-json/iconoir@1.1.46':
     resolution: {integrity: sha512-6JP4ufiU6kP48NEcBT3FR7pGStpJ8PYoAkkTvzvk4qVd8ObDJU9cEULnStOGs4VmZ0LMNtmmmMQlApXBKHl+jA==}
+
+  '@iconify-json/logos@1.2.0':
+    resolution: {integrity: sha512-VkU9QSqeZR2guWbecdqkcoZEAJfgJJTUm6QAsypuZQ7Cve6zy39wOXDjp2H31I8QyQy4O3Cz96+pNji6UQFg4w==}
 
   '@iconify-json/ph@1.1.14':
     resolution: {integrity: sha512-s1hZVaxIpl40qLEhjqPRMcZl4A3M4fZ+77Fi+VuOb/eKkIHIMutAoBHIR+0a3l7psUweZQGj9hSyL2P5CIj6qA==}
@@ -8590,11 +8602,19 @@ snapshots:
 
   '@iarna/toml@2.2.5': {}
 
+  '@iconify-json/bxl@1.2.0':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/carbon@1.1.37':
     dependencies:
       '@iconify/types': 2.0.0
 
   '@iconify-json/iconoir@1.1.46':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/logos@1.2.0':
     dependencies:
       '@iconify/types': 2.0.0
 

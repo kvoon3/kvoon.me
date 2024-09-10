@@ -1,36 +1,37 @@
 <script setup lang="ts">
+import { iconMatch } from '~/shared/constants'
+
 type Category = string
-interface Project {
-  name: string
-  desc: string
-  link: string
-  icon?: string
-}
 
 const props = defineProps<{
-  projects: Record<Category, Project[]>
+  projects: Record<Category, Record<string, string>[]>
 }>()
 </script>
 
 <template>
-  <div v-for="project, category, key in props.projects" :key>
+  <div v-for="project, category, key in props.projects" :key="key">
     <h3>{{ category }}</h3>
     <section grid gap2 lg-sm:grid-cols-2>
       <a
-        v-for="{ name, desc, link }, k in project" :key="k"
-        :href="link" target="_blank"
-        flex border-none btn hover:border-none
+        v-for="item, k in project" :key="k"
+        :href="item.link" target="_blank"
+        flex items-center border-none py4 btn-neutral hover:border-none
       >
-        <figure>
-          <!-- TODO: fit all icons -->
-          <!-- <Vim v-if="icon === 'vim'" v="base" mr4 inline size-6 />
-          <i v-else mr2 v="base" :class="[icon || 'i-carbon-unknown']" /> -->
+        <figure m0 mr4 saturate-0>
+          <i
+            size-10
+            :class="[
+              item.icon
+                || iconMatch.find(([re]) => re.test(item.link?.split('/').at(-1)!))?.[1]
+                || 'i-carbon-unknown-filled',
+            ]"
+          />
         </figure>
         <aside>
           <header>
-            <span>{{ name }}</span>
+            <span>{{ item.name }}</span>
           </header>
-          <span text-xs op70>{{ desc }}</span>
+          <span text-xs op70>{{ item.desc }}</span>
         </aside>
       </a>
     </section>
