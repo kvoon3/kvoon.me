@@ -1,0 +1,17 @@
+@import './vars.css';
+
+html,
+body,
+#__nuxt {
+  color: var(--k-color-primary);
+  background: var(--k-background-color);
+  --uno: font-sans;
+  height: 100dvh;
+}
+
+html.dark,
+body.dark,
+#__nuxt.dark {
+  color: var(--k-color-secondary);
+  background: var(--k-background-color);
+}

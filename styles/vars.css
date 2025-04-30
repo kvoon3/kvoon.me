@@ -1,0 +1,11 @@
+html {
+  --k-color-primary: #000;
+  --k-color-secondary: #333;
+  --k-background-color: #fff;
+}
+
+html.dark {
+  --k-color-primary: #fff;
+  --k-color-secondary: #333;
+  --k-background-color: #000;
+}
