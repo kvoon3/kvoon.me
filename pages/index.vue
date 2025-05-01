@@ -16,7 +16,7 @@ useSeoMeta({
     <div prose p4>
       <div relative>
         <div z-1 border size-30 relative rounded-full of-hidden>
-          <img src="/avatar.jpg" alt="avatar" w-full h-full object-cover>
+          <NuxtImg src="/avatar.jpg" alt="avatar" w-full h-full object-cover />
         </div>
         <MyIcon absolute top-0 left-20 :size="120" :weight="50" />
       </div>
