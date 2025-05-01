@@ -14,6 +14,9 @@ import {
 export default defineConfig({
   shortcuts: [
     ['color-base', 'color-$k-color-primary'],
+    ['position-x-center', 'left-1/2 -translate-x-1/2'],
+    ['position-y-center', 'top-1/2 -translate-y-1/2'],
+    ['position-center', 'position-x-center position-y-center'],
   ],
   presets: [
     presetWind3(),
