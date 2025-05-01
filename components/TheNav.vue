@@ -10,7 +10,7 @@
 
     <div flex-auto />
 
-    <NuxtLink to="/projects">
+    <!-- <NuxtLink to="/projects">
       Projects
     </NuxtLink>
 
@@ -20,7 +20,7 @@
       About
     </NuxtLink>
 
-    <span>/</span>
+    <span>/</span> -->
 
     <NuxtLink to="/photos">
       Photos

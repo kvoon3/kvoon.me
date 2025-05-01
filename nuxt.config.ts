@@ -13,11 +13,12 @@ export default defineNuxtConfig({
   css: [
     '~/styles/global.css',
     '@unocss/reset/tailwind.css',
-
   ],
 
   colorMode: {
     classSuffix: '',
+    storage: 'cookie',
+    fallback: 'dark',
   },
 
   compatibilityDate: '2024-11-01',
