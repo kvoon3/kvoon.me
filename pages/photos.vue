@@ -29,10 +29,12 @@ const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
         inset-0 flex="~ items-center justify-center"
         @click="selectedPhoto = null"
       >
-        <div absolute z-10 w-full md:max-w60vw>
+        <div absolute z-10 w-full md:max-w70vw>
           <img
             :src="selectedPhoto.url" alt="photo"
             object-cover
+            mxa
+            md:max-h95vh
           >
           <div text-center text-white>
             {{ selectedPhoto.name }}
