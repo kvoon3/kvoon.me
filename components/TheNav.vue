@@ -10,6 +10,12 @@
 
     <div flex-auto />
 
+    <NuxtLink to="/">
+      Home
+    </NuxtLink>
+
+    <span>/</span>
+
     <!-- <NuxtLink to="/projects">
       Projects
     </NuxtLink>
