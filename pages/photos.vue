@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { parseFilename } from 'ufo'
 
-const photos = Object.entries(import.meta.glob<{ default: string }>('~/assets/photos/*', {
+const photos = Object.entries(import.meta.glob<{ default: string }>('../public/photos/*', {
   eager: true,
 })).map(([key, value]) => {
   return {
     name: parseFilename(key),
-    url: value.default,
+    url: value.default?.replace('/_nuxt/public', ''),
   }
 }).reverse()
 
@@ -20,7 +20,7 @@ const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
       aspect-square bg-neutral:10
       @click="selectedPhoto = photo"
     >
-      <img :src="photo.url" alt="photo" w-full h-full object-cover>
+      <NuxtImg :quality="70" :width="720" :src="photo.url" alt="photo" w-full h-full object-cover />
     </div>
     <Teleport to="body">
       <div
@@ -30,12 +30,12 @@ const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
         @click="selectedPhoto = null"
       >
         <div absolute z-10 w-full md:max-w70vw>
-          <img
+          <NuxtImg
             :src="selectedPhoto.url" alt="photo"
             object-cover
             mxa
             md:max-h95vh
-          >
+          />
           <div text-center text-white>
             {{ selectedPhoto.name }}
           </div>

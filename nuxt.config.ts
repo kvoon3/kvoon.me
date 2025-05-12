@@ -22,8 +22,6 @@ export default defineNuxtConfig({
     fallback: 'dark',
   },
 
-  compatibilityDate: '2024-11-01',
-
   eslint: {
     config: {
       standalone: false,
