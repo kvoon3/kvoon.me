@@ -38,7 +38,7 @@ useSeoMeta({
           <h2 text-xl font-semibold mb2 color-neutral>
             {{ category }}
           </h2>
-          <div grid="~ sm:cols-2 gap-4">
+          <div grid="~ lg:cols-2 gap-4">
             <a
               v-for="project in categoryProjects"
               :key="project.name"
@@ -52,8 +52,8 @@ useSeoMeta({
               dark:hover:bg-neutral-800
               transition-colors
             >
-              <div flex items-center gap-2>
-                <Icon :name="project.icon" shrink-0 size-10 />
+              <div flex gap-4>
+                <Icon :name="project.icon" shrink-0 size-10 mya />
                 <div>
                   <h3 font-medium group-hover:text-primary>{{ project.name }}</h3>
                   <p text-sm text-gray-500 dark:text-gray-400>{{ project.desc }}</p>
