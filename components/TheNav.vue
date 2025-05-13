@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <nav p4 bg-neutral:10 flex="~ items-center gap-4">
+  <nav p4 bg-neutral:10 flex="~ items-center gap4">
     <NuxtLink to="/">
       kvoon.me
     </NuxtLink>
@@ -35,3 +35,9 @@
     <ToggleDark />
   </nav>
 </template>
+
+<style scoped>
+nav > span {
+  --uno: text-neutral-800 dark: text-neutral-600;
+}
+</style>

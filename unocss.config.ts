@@ -14,6 +14,8 @@ import {
 export default defineConfig({
   shortcuts: [
     ['color-base', 'color-$k-color-primary'],
+    ['bg-base', 'bg-$k-background-color'],
+    ['bg-active', 'bg-neutral:10'],
     ['position-x-center', 'left-1/2 -translate-x-1/2'],
     ['position-y-center', 'top-1/2 -translate-y-1/2'],
     ['position-center', 'position-x-center position-y-center'],
@@ -23,9 +25,10 @@ export default defineConfig({
     presetWebFonts({
       fonts: {
         provider: 'google',
-        sans: ['Pixelify Sans', 'DM Sans'],
-        // serif: 'DM Serif Display',
-        // mono: 'DM Mono',
+        sans: ['DM Sans'],
+        // sans: ['Pixelify Sans', 'DM Sans'],
+        serif: 'DM Serif Display',
+        mono: 'DM Mono',
       },
       processors: createLocalFontProcessor({
         fontAssetsDir: fileURLToPath(new URL('./public/fonts', import.meta.url)),
