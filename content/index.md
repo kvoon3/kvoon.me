@@ -4,8 +4,21 @@ Hi, I am Kevin Kwong. Welcome to my space.
 
 You can find me on
 
-- [Github](https://github.com/kvoon3)
-- [BiliBili](https://space.bilibili.com/17061099)
-- [NetEase Music](https://y.music.163.com/m/user?id=98588392)
+
+
+::SocialMediaList
+---
+items: 
+  Github: 
+    url: https://github.com/kvoon3
+    icon: simple-icons:github
+  NetEase Music:
+    url: https://y.music.163.com/m/user?id=98588392
+    icon: simple-icons:neteasecloudmusic
+  BiliBili:
+    url: https://space.bilibili.com/17061099
+    icon: simple-icons:bilibili
+---
+::
 
 or email me kvoon@duck.com

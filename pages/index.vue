@@ -12,8 +12,8 @@ useSeoMeta({
 </script>
 
 <template>
-  <div grid="~ md:cols-2" container mxa>
-    <div prose p4>
+  <div grid="~ md:cols-2" container mxa pt12>
+    <div prose px4>
       <div relative>
         <div z-1 border size-30 relative rounded-full of-hidden>
           <NuxtImg src="/avatar.jpg" alt="avatar" w-full h-full object-cover />
@@ -29,13 +29,13 @@ useSeoMeta({
         404 not found
       </div>
     </div>
-    <div p4 grid="~ rows-[min-content_1fr]">
+    <div px4 grid="~ rows-[min-content_1fr]">
       <h1 text-2xl font-bold mb4>
         Projects
       </h1>
       <div overflow-y-auto>
         <div v-for="(categoryProjects, category) in projects" :key="category" mb6>
-          <h2 text-xl font-semibold mb2>
+          <h2 text-xl font-semibold mb2 color-neutral>
             {{ category }}
           </h2>
           <div grid="~ sm:cols-2 gap-4">

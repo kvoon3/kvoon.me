@@ -13,8 +13,8 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    ['color-base', 'color-$k-color-primary'],
-    ['bg-base', 'bg-$k-background-color'],
+    ['color-base', 'color-$c-primary'],
+    ['bg-base', 'bg-$c-bg'],
     ['bg-active', 'bg-neutral:10'],
     ['position-x-center', 'left-1/2 -translate-x-1/2'],
     ['position-y-center', 'top-1/2 -translate-y-1/2'],

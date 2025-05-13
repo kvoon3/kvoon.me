@@ -1,11 +1,15 @@
 html {
-  --k-color-primary: #555;
-  --k-color-secondary: #333;
-  --k-background-color: #fff;
+  --c-primary: #555;
+  --c-secondary: #333;
+  --c-bg: #fff;
+
+  --c-scrollbar: rgb(163 163 163 / 0.2);
+  --c-scrollbar-bg: rgb(163 163 163 / 0.1);
+  --c-scrollbar-hover: rgb(163 163 163 / 0.3);
 }
 
 html.dark {
-  --k-color-primary: #fff;
-  --k-color-secondary: #333;
-  --k-background-color: #000;
+  --c-primary: #fff;
+  --c-secondary: #333;
+  --c-bg: #000;
 }

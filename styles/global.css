@@ -3,8 +3,8 @@
 html,
 body,
 #__nuxt {
-  color: var(--k-color-primary);
-  background: var(--k-background-color);
+  color: var(--c-primary);
+  background: var(--c-bg);
   --uno: font-sans;
   height: 100dvh;
 }
@@ -12,6 +12,24 @@ body,
 html.dark,
 body.dark,
 #__nuxt.dark {
-  color: var(--k-color-secondary);
-  background: var(--k-background-color);
+  color: var(--c-secondary);
+  background: var(--c-bg);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: var(--c-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--c-scrollbar);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-scrollbar-hover);
 }
