@@ -39,7 +39,7 @@ const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
             :custom="true"
           >
             <img v-if="isLoaded" v-bind="imgAttrs" :src>
-            <Icon v-else bg-base block name="svg-spinners:bars-fade" mxa size-40 v-bind="imgAttrs" />
+            <Icon v-else bg-white block name="svg-spinners:bars-fade" mxa size-40 v-bind="imgAttrs" />
           </NuxtImg>
         </div>
         <div absolute inset-0 backdrop-blur-lg />
