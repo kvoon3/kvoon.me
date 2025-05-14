@@ -22,6 +22,6 @@ function toggleColorMode() {
         : colorMode.preference === 'light'
           ? 'pixelarticons:sun'
           : 'pixelarticons:monitor'
-    " px2 py1 border-1 rounded @click="toggleColorMode"
+    " px2 py1 border-1 rounded class="bg-$c-primary" @click="toggleColorMode"
   />
 </template>
