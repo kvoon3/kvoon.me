@@ -14,7 +14,7 @@ const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
 </script>
 
 <template>
-  <div p2 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
+  <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
     <div
       v-for="photo in photos" :key="photo.name"
       aspect-square bg-neutral:10
