@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { StreamTextOptions } from '@xsai/stream-text'
-import { ChatText } from '#components'
 import { streamText } from '@xsai/stream-text'
 import { smoothStream } from '@xsai/utils-stream'
 

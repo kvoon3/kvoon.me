@@ -5,6 +5,8 @@ import nuxt from './.nuxt/eslint.config.mjs'
 export default antfu(
   {
     formatters: true,
+    typescript: true,
+    vue: true,
   },
 )
   .append(nuxt({

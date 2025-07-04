@@ -15,6 +15,9 @@ items:
   NetEase Music:
     url: https://y.music.163.com/m/user?id=98588392
     icon: simple-icons:neteasecloudmusic
+  Bluesky:
+    url: https://bsky.app/profile/kvoon.bsky.social
+    icon: simple-icons:bluesky
   BiliBili:
     url: https://space.bilibili.com/17061099
     icon: simple-icons:bilibili
