@@ -13,6 +13,7 @@ import {
 
 export default defineConfig({
   shortcuts: [
+    ['icon-btn', 'inline-block flex transition-all duration-300 op-75 hover:op-90 items-center justify-center gap2'],
     ['color-base', 'color-$c-primary'],
     ['bg-base', 'bg-$c-bg'],
     ['bg-active', 'bg-neutral:10'],

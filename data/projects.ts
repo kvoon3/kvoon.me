@@ -15,19 +15,19 @@ export const projects: ProjectCategory = {
       name: 'ESLint Codemod',
       desc: 'Supercharge eslint-plugin-command in VS Code',
       link: 'https://github.com/kvoon3/vscode-eslint-codemod',
-      icon: 'pixelarticons:code',
+      icon: 'ph:code-block-duotone',
     },
     {
       name: 'AutoHide KB',
       desc: 'Auto Hide VSCode sidebar, panel and notifications.',
       link: 'https://github.com/kvoon3/vscode-autohide-kb',
-      icon: 'pixelarticons:keyboard',
+      icon: 'ph:app-window-duotone',
     },
     {
       name: 'Which Key Config Gen',
       desc: 'Generate vscode which-key config automatically',
       link: 'https://github.com/kvoon3/vscode-which-key-config-gen',
-      icon: 'pixelarticons:reciept',
+      icon: 'ph:key-duotone',
     },
   ],
 }
