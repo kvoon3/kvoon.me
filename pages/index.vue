@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { projects } from '~/data/projects'
+import { projects } from '~/data/projects';
 
 const { data } = await useAsyncData(
   () => queryCollection('content').path('/').first(),
@@ -32,7 +32,7 @@ useSeoMeta({
 
     <section space-y-12>
       <CategoryCard name="Recent Active">
-        <NuxtLink w-fit target="_black" href="https://my-pull-requests-kvoon3.nuxt.dev" backdrop-blur class="icon-btn">
+        <NuxtLink w-fit target="_black" href="https://my-pull-requests.kvoon.me" backdrop-blur class="icon-btn">
           <Icon name="ph:git-pull-request" />
           My Open Pull Requests
         </NuxtLink>
