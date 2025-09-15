@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { parseFilename } from 'ufo'
 
-const photos = Object.entries(import.meta.glob<{ default: string }>('../public/photos/*', {
+const photos = Object.entries(import.meta.glob<{ default: string }>('../../public/photos/*', {
   eager: true,
-})).map(([key, value]) => {
+})).map(([key, _]) => {
+  const name = parseFilename(key)
   return {
-    name: parseFilename(key),
-    url: value.default?.replace('/_nuxt/public', ''),
+    name,
+    url: `/photos/${name}`,
   }
 }).reverse()
 
