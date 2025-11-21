@@ -1,4 +1,6 @@
 export default defineNuxtConfig({
+  compatibilityDate: 'latest',
+
   modules: [
     '@nuxt/content',
     '@nuxt/eslint',

@@ -21,7 +21,7 @@ const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
       aspect-square bg-neutral:10
       @click="selectedPhoto = photo"
     >
-      <NuxtImg loading="lazy" :quality="70" :width="720" :src="photo.url" alt="photo" w-full h-full object-cover />
+      <LazyNuxtImg loading="lazy" :quality="70" :width="720" :src="photo.url" alt="photo" w-full h-full object-cover />
     </div>
     <Teleport to="body">
       <div
