@@ -32,6 +32,12 @@
       Photos
     </NuxtLink>
 
+    <span>/</span>
+
+    <NuxtLink to="/experiments">
+      Experiments
+    </NuxtLink>
+
     <ToggleDark />
   </nav>
 </template>
