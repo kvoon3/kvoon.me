@@ -6,7 +6,7 @@ const experiments = [
     description: 'Full Vim editor running in WebAssembly with complete Vim functionality',
     link: '/experiments/vim-wasm',
     icon: 'ph:terminal',
-    tags: ['WebAssembly', 'Vim', 'TypeScript']
+    tags: ['WebAssembly', 'Vim', 'TypeScript'],
   },
 ]
 
@@ -66,8 +66,12 @@ useSeoMeta({
 
     <div v-if="experiments.length === 0" text-center py-20>
       <Icon name="ph:flask" size-20 op-50 mb-4 mxa />
-      <h3 text-xl mb-2>No experiments yet</h3>
-      <p op-75>Preparing some interesting frontend experiments...</p>
+      <h3 text-xl mb-2>
+        No experiments yet
+      </h3>
+      <p op-75>
+        Preparing some interesting frontend experiments...
+      </p>
     </div>
   </div>
 </template>

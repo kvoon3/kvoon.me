@@ -10,8 +10,9 @@ const vimStarted = ref(false)
 const isFullscreen = ref(false)
 
 // Initialize Vim
-const initVim = async () => {
-  if (!canvas.value || !input.value) return
+async function initVim() {
+  if (!canvas.value || !input.value)
+    return
 
   loading.value = true
   error.value = null
@@ -25,13 +26,11 @@ const initVim = async () => {
 
     // Setup callbacks
     vim.onVimInit = () => {
-      console.log('Vim initialized')
       vimStarted.value = true
       loading.value = false
     }
 
     vim.onVimExit = () => {
-      console.log('Vim exited')
       vimStarted.value = false
     }
 
@@ -57,8 +56,8 @@ colorscheme onedark
 
 " Key mappings for better browser experience
 nnoremap <C-s> :export<CR>
-`
-      }
+`,
+      },
     })
 
     // Handle drag and drop
@@ -91,8 +90,8 @@ nnoremap <C-s> :export<CR>
       canvas.value?.removeEventListener('drop', handleDrop)
       canvas.value?.removeEventListener('dragover', handleDragOver)
     })
-
-  } catch (err) {
+  }
+  catch (err) {
     console.error('Failed to initialize Vim:', err)
     error.value = `Failed to initialize Vim: ${err instanceof Error ? err.message : 'Unknown error'}`
     loading.value = false
@@ -100,35 +99,36 @@ nnoremap <C-s> :export<CR>
 }
 
 // Focus input when canvas is clicked
-const focusInput = () => {
+function focusInput() {
   input.value?.focus()
 }
 
 // Handle key events
-const handleKeydown = (e: KeyboardEvent) => {
+function handleKeydown(e: KeyboardEvent) {
   // Prevent browser shortcuts that might interfere
   if (e.ctrlKey && (e.key === 's' || e.key === 'o' || e.key === 'n')) {
     e.preventDefault()
   }
 }
 
-const handleKeyup = () => {
+function handleKeyup() {
   // Additional key handling if needed
 }
 
 // Reset Vim
-const resetVim = () => {
+function resetVim() {
   // This would require restarting the Web Worker
   // For now, we'll just reload the page
   window.location.reload()
 }
 
 // Toggle fullscreen
-const toggleFullscreen = () => {
+function toggleFullscreen() {
   if (!document.fullscreenElement) {
     canvas.value?.parentElement?.requestFullscreen()
     isFullscreen.value = true
-  } else {
+  }
+  else {
     document.exitFullscreen()
     isFullscreen.value = false
   }
@@ -154,18 +154,18 @@ onMounted(() => {
       </div>
       <div class="vim-controls" flex items-center gap-2>
         <button
-          @click="resetVim"
           class="control-btn"
-          p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700
-          title="Reset Vim"
+          p-2
+          rounded hover:bg-gray-200 dark:hover:bg-gray-700 title="Reset Vim"
+          @click="resetVim"
         >
           <Icon name="ph:arrow-clockwise" size-4 />
         </button>
         <button
-          @click="toggleFullscreen"
           class="control-btn"
-          p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700
-          :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'"
+          p-2
+          rounded hover:bg-gray-200 dark:hover:bg-gray-700 :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'"
+          @click="toggleFullscreen"
         >
           <Icon :name="isFullscreen ? 'ph:arrows-in-simple' : 'ph:arrows-out-simple'" size-4 />
         </button>
@@ -183,8 +183,10 @@ onMounted(() => {
       <div v-if="error" class="error-overlay" absolute inset-0 bg-red-50 dark:bg-red-900 flex items-center justify-center>
         <div text-center>
           <Icon name="ph:warning-circle" size-8 text-red-500 mb-2 />
-          <p text-red-700 dark:text-red-300>{{ error }}</p>
-          <button @click="initVim" mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600>
+          <p text-red-700 dark:text-red-300>
+            {{ error }}
+          </p>
+          <button mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 @click="initVim">
             Retry
           </button>
         </div>
@@ -204,7 +206,7 @@ onMounted(() => {
         autocomplete="off"
         @keydown="handleKeydown"
         @keyup="handleKeyup"
-      />
+      >
     </div>
   </div>
 </template>

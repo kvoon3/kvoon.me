@@ -5,9 +5,9 @@ export function useKeyboardNavigation() {
   const slideDirection = ref<'next' | 'prev'>('next')
 
   const handleKeydown = (event: KeyboardEvent, options: {
-    onArrowLeft?: () => void,
-    onArrowRight?: () => void,
-    onEscape?: () => void,
+    onArrowLeft?: () => void
+    onArrowRight?: () => void
+    onEscape?: () => void
     onEnter?: () => void
   }) => {
     switch (event.key) {
@@ -32,6 +32,6 @@ export function useKeyboardNavigation() {
 
   return {
     slideDirection,
-    handleKeydown
+    handleKeydown,
   }
 }

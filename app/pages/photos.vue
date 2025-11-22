@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { parseFilename } from 'ufo'
 import {
   DialogClose,
   DialogContent,
@@ -7,6 +6,7 @@ import {
   DialogPortal,
   DialogRoot,
 } from 'reka-ui'
+import { parseFilename } from 'ufo'
 
 // Import composables
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen()
@@ -31,8 +31,9 @@ const showInfo = ref(true)
 const userHiddenInfo = ref(false)
 
 // Keyboard navigation handler
-const handlePhotoKeydown = (event: KeyboardEvent) => {
-  if (!selectedPhoto.value) return
+function handlePhotoKeydown(event: KeyboardEvent) {
+  if (!selectedPhoto.value)
+    return
 
   const currentIndex = photos.findIndex(photo => photo.name === selectedPhoto.value?.name)
 
@@ -78,13 +79,14 @@ const handlePhotoKeydown = (event: KeyboardEvent) => {
     },
     onEnter: () => {
       toggleFullScreen()
-    }
+    },
   })
 }
 
 // Navigation function
-const navigatePhoto = (direction: number) => {
-  if (!selectedPhoto.value) return
+function navigatePhoto(direction: number) {
+  if (!selectedPhoto.value)
+    return
 
   const currentIndex = photos.findIndex(photo => photo.name === selectedPhoto.value?.name)
   const newIndex = currentIndex + direction
@@ -110,14 +112,15 @@ const navigatePhoto = (direction: number) => {
 
 // Calculate current photo position
 const currentPhotoIndex = computed(() => {
-  if (!selectedPhoto.value) return -1
+  if (!selectedPhoto.value)
+    return -1
   return photos.findIndex(photo => photo.name === selectedPhoto.value?.name)
 })
 
 const totalPhotos = computed(() => photos.length)
 
 // Preview photo click handler
-const selectPreviewPhoto = (photo: typeof photos[number]) => {
+function selectPreviewPhoto(photo: typeof photos[number]) {
   const newIndex = photos.findIndex(p => p.name === photo.name)
   const currentIndex = currentPhotoIndex.value
 
@@ -140,22 +143,20 @@ const selectPreviewPhoto = (photo: typeof photos[number]) => {
 }
 
 // Toggle info display on image click
-const toggleInfo = () => {
+function toggleInfo() {
   showInfo.value = !showInfo.value
   userHiddenInfo.value = !showInfo.value
 }
-
-
 
 // Listen for keyboard events
 watch(selectedPhoto, (newValue) => {
   if (newValue) {
     document.addEventListener('keydown', handlePhotoKeydown)
-  } else {
+  }
+  else {
     document.removeEventListener('keydown', handlePhotoKeydown)
   }
 })
-
 </script>
 
 <template>
@@ -165,17 +166,22 @@ watch(selectedPhoto, (newValue) => {
     </div>
     <DialogRoot v-model:open="isDialogOpen">
       <DialogPortal>
-        <DialogOverlay class="fixed inset-0 bg-black/50 backdrop-blur-lg transition-opacity duration-300"
-          @click="selectedPhoto = null" />
-        <DialogContent class="fixed inset-0 flex outline-none" @pointer-down-outside="selectedPhoto = null"
-          @escape-key-down="selectedPhoto = null">
+        <DialogOverlay
+          class="fixed inset-0 bg-black/50 backdrop-blur-lg transition-opacity duration-300"
+          @click="selectedPhoto = null"
+        />
+        <DialogContent
+          class="fixed inset-0 flex outline-none" @pointer-down-outside="selectedPhoto = null"
+          @escape-key-down="selectedPhoto = null"
+        >
           <div class="flex justify-center items-center w-full h-full">
             <!-- Top control buttons -->
             <div class="absolute right-4 top-4 z-20 flex gap-2">
               <!-- Fullscreen button (hidden on mobile) -->
               <button
                 class="size-10 justify-center items-center flex aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full hidden sm:flex"
-                @click="toggleFullScreen">
+                @click="toggleFullScreen"
+              >
                 <Icon :name="isFullscreen ? 'carbon:close-filled' : 'carbon:maximize'" />
                 <span class="sr-only">{{ isFullscreen ? 'Exit fullscreen' : 'Fullscreen' }}</span>
               </button>
@@ -183,35 +189,41 @@ watch(selectedPhoto, (newValue) => {
               <!-- Close button -->
               <DialogClose
                 class="size-10 justify-center items-center flex aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
-                @click="selectedPhoto = null">
+                @click="selectedPhoto = null"
+              >
                 <Icon name="carbon:close" />
                 <span class="sr-only">Close</span>
               </DialogClose>
             </div>
 
             <!-- Left navigation button -->
-            <button v-if="currentPhotoIndex > 0"
+            <button
+              v-if="currentPhotoIndex > 0"
               class="absolute  left-4 z-10 flex items-center justify-center w-16 h-16 opacity-0 hover:opacity-30 transition-all duration-300 bg-black/20 backdrop-blur-sm rounded-full"
-              lg="h-80 w-50" @click.stop="navigatePhoto(-1)">
+              lg="h-80 w-50" @click.stop="navigatePhoto(-1)"
+            >
               <Icon name="carbon:chevron-left" size-24 class="text-white" />
               <span class="sr-only">Previous photo</span>
             </button>
 
             <!-- Right navigation button -->
-            <button v-if="currentPhotoIndex < photos.length - 1"
+            <button
+              v-if="currentPhotoIndex < photos.length - 1"
               class="absolute right-4 z-10 flex items-center justify-center w-16 h-16 opacity-0 hover:opacity-30 transition-all duration-300 bg-black/20 backdrop-blur-sm rounded-full"
-              lg="h-80 w-50" @click.stop="navigatePhoto(1)">
+              lg="h-80 w-50" @click.stop="navigatePhoto(1)"
+            >
               <Icon name="carbon:chevron-right" size-24 class="text-white" />
               <span class="sr-only">Next photo</span>
             </button>
 
             <!-- Main content area - Image -->
-            <div @click="toggleInfo" class="relative w-full h-full flex items-center justify-center">
-
+            <div class="relative w-full h-full flex items-center justify-center" @click="toggleInfo">
               <Transition :name="slideDirection === 'next' ? 'photo-slide' : 'photo-slide-reverse'" mode="out-in">
                 <div :key="selectedPhoto?.name">
-                  <NuxtImg v-slot="{ isLoaded, src, imgAttrs }" :src="selectedPhoto?.url" alt="photo"
-                    class="rounded-lg shadow-2xl" :custom="true">
+                  <NuxtImg
+                    v-slot="{ isLoaded, src, imgAttrs }" :src="selectedPhoto?.url" alt="photo"
+                    class="rounded-lg shadow-2xl" :custom="true"
+                  >
                     <img v-if="isLoaded" v-bind="imgAttrs" :src class="max-w-90vw max-h-80vh object-contain">
                     <div v-else class="flex items-center justify-center w-full h-64">
                       <Icon name="svg-spinners:bars-fade" size-40 class="text-neutral-400" />
@@ -223,7 +235,8 @@ watch(selectedPhoto, (newValue) => {
 
             <!-- Bottom control bar -->
             <div
-              class="absolute bottom-4 rounded-lg flex flex-col gap-4 p-4 bg-gradient-to-t from-black/20 to-transparent">
+              class="absolute bottom-4 rounded-lg flex flex-col gap-4 p-4 bg-gradient-to-t from-black/20 to-transparent"
+            >
               <!-- Photo info -->
               <Transition name="info-fade">
                 <div v-if="showInfo" class="flex justify-between items-center text-white/50 text-sm px-2">
@@ -235,15 +248,19 @@ watch(selectedPhoto, (newValue) => {
                   </div>
                   <div class="flex items-center gap-4">
                     <!-- Navigation buttons -->
-                    <button v-if="photos.findIndex(photo => photo.name === selectedPhoto?.name) > 0"
+                    <button
+                      v-if="photos.findIndex(photo => photo.name === selectedPhoto?.name) > 0"
                       class="flex size-10 justify-center items-center aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
-                      @click="navigatePhoto(-1)">
+                      @click="navigatePhoto(-1)"
+                    >
                       <Icon name="carbon:chevron-left" />
                       <span class="sr-only">Previous photo</span>
                     </button>
-                    <button v-if="photos.findIndex(photo => photo.name === selectedPhoto?.name) < photos.length - 1"
+                    <button
+                      v-if="photos.findIndex(photo => photo.name === selectedPhoto?.name) < photos.length - 1"
                       class="flex justify-center items-center size-10 aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
-                      @click="navigatePhoto(1)">
+                      @click="navigatePhoto(1)"
+                    >
                       <Icon name="carbon:chevron-right" />
                       <span class="sr-only">Next photo</span>
                     </button>

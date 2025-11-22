@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { projects } from '~/data/projects';
+import { projects } from '~/data/projects'
 
 const { data } = await useAsyncData(
   () => queryCollection('content').path('/').first(),

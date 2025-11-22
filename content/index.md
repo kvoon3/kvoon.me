@@ -4,12 +4,10 @@ Hi, I am Kevin Kwong. Welcome to my space.
 
 You can find me on
 
-
-
 ::SocialMediaList
 ---
-items: 
-  Github: 
+items:
+  Github:
     url: https://github.com/kvoon3
     icon: simple-icons:github
   NetEase Music:

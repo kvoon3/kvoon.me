@@ -1,27 +1,27 @@
 <script setup lang="ts">
-  import {
-    NavigationMenuRoot,
-    NavigationMenuList,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuIndicator,
-  } from 'reka-ui'
-  import { useRoute } from '#imports'
+import { useRoute } from '#imports'
+import {
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuRoot,
+} from 'reka-ui'
 
-  const route = useRoute()
+const route = useRoute()
 
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/photos', label: 'Photos' },
-    { path: '/experiments', label: 'Experiments' },
-  ]
+const navItems = [
+  { path: '/', label: 'Home' },
+  { path: '/photos', label: 'Photos' },
+  { path: '/experiments', label: 'Experiments' },
+]
 
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return route.path === '/'
-    }
-    return route.path.startsWith(path)
+function isActive(path: string) {
+  if (path === '/') {
+    return route.path === '/'
   }
+  return route.path.startsWith(path)
+}
 </script>
 
 <template>
@@ -40,9 +40,8 @@
           <NavigationMenuLink as-child>
             <NuxtLink
               :to="item.path"
-              :class="[
-                'inline-flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-active',
-                isActive(item.path) ? 'bg-active text-primary' : ''
+              class="inline-flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-active" :class="[
+                isActive(item.path) ? 'bg-active text-primary' : '',
               ]"
             >
               {{ item.label }}
@@ -59,4 +58,3 @@
     <ToggleDark />
   </nav>
 </template>
-

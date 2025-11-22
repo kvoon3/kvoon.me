@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { checkBrowserCompatibility } from 'vim-wasm'
+
+const compatibilityError = ref<string | undefined>()
+const isHttps = ref(true)
+
+useSeoMeta({
+  title: 'Vim in Browser - Experiments - kvoon.me',
+  description: 'Full Vim editor running in WebAssembly in your browser',
+})
+
+// Check browser compatibility and HTTPS
+onMounted(() => {
+  compatibilityError.value = checkBrowserCompatibility()
+  isHttps.value = window.location.protocol === 'https:' || window.location.hostname === 'localhost'
+})
+</script>
+
 <template>
   <div container mxa pt12>
     <div prose px4>
@@ -7,7 +25,7 @@
         that runs entirely in your browser.
       </p>
 
-      <div class="browser-warning" v-if="compatibilityError || !isHttps" bg-yellow-100 dark:bg-yellow-900 p-4 rounded mb-4>
+      <div v-if="compatibilityError || !isHttps" class="browser-warning" bg-yellow-100 dark:bg-yellow-900 p-4 rounded mb-4>
         <p class="text-yellow-800 dark:text-yellow-200">
           <Icon name="ph:warning" class="inline mr-2" />
           <span v-if="!isHttps">
@@ -54,24 +72,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { checkBrowserCompatibility } from 'vim-wasm'
-
-const compatibilityError = ref<string | undefined>()
-const isHttps = ref(true)
-
-useSeoMeta({
-  title: 'Vim in Browser - Experiments - kvoon.me',
-  description: 'Full Vim editor running in WebAssembly in your browser',
-})
-
-// Check browser compatibility and HTTPS
-onMounted(() => {
-  compatibilityError.value = checkBrowserCompatibility()
-  isHttps.value = window.location.protocol === 'https:' || window.location.hostname === 'localhost'
-})
-</script>
 
 <style scoped>
 .browser-warning {
