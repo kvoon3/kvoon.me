@@ -2,19 +2,12 @@
 // Add your experiment projects data here
 const experiments = [
   {
-    name: 'Example Experiment 1',
-    description: 'A frontend experiment project description',
-    link: '/experiments/demo1',
-    icon: 'ph:code',
-    tags: ['Vue', 'TypeScript']
+    name: 'Vim in Browser',
+    description: 'Full Vim editor running in WebAssembly with complete Vim functionality',
+    link: '/experiments/vim-wasm',
+    icon: 'ph:terminal',
+    tags: ['WebAssembly', 'Vim', 'TypeScript']
   },
-  {
-    name: 'Example Experiment 2',
-    description: 'Another interesting frontend experiment',
-    link: '/experiments/demo2',
-    icon: 'ph:rocket',
-    tags: ['React', 'CSS']
-  }
 ]
 
 useSeoMeta({

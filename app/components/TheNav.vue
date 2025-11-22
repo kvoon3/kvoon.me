@@ -1,8 +1,15 @@
 <script setup lang="ts">
+  import { Separator } from 'reka-ui'
+  import { createReusableTemplate } from '@vueuse/core'
 
+  const [DefineSeparator, ReuseSeparator] = createReusableTemplate()
 </script>
 
 <template>
+  <DefineSeparator>
+    <Separator w0.5 h4 bg-neutral:20 />
+  </DefineSeparator>
+
   <nav p4 bg-neutral:10 flex="~ items-center gap4">
     <NuxtLink to="/">
       kvoon.me
@@ -14,25 +21,25 @@
       Home
     </NuxtLink>
 
-    <span>/</span>
+    <ReuseSeparator />
 
     <!-- <NuxtLink to="/projects">
       Projects
     </NuxtLink>
 
-    <span>/</span>
+    <ReuseSeparator />
 
     <NuxtLink to="/about">
       About
     </NuxtLink>
 
-    <span>/</span> -->
+    <ReuseSeparator /> -->
 
     <NuxtLink to="/photos">
       Photos
     </NuxtLink>
 
-    <span>/</span>
+    <ReuseSeparator />
 
     <NuxtLink to="/experiments">
       Experiments
