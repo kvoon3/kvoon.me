@@ -11,7 +11,7 @@
   </DefineSeparator>
 
   <nav p4 bg-neutral:10 flex="~ items-center gap4">
-    <NuxtLink to="/">
+    <NuxtLink to="/" class="sm:block hidden">
       kvoon.me
     </NuxtLink>
 
