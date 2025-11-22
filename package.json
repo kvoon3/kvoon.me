@@ -11,7 +11,8 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "up": "taze -I major"
+    "up": "taze -I major",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/content": "3.5.1",
@@ -44,7 +45,8 @@
     "@vueuse/nuxt": "^14.0.0",
     "eslint": "^9.39.1",
     "eslint-plugin-format": "^1.0.2",
-    "lint-staged": "^16.2.7"
+    "lint-staged": "^16.2.7",
+    "vue-tsc": "^3.1.1"
   },
   "lint-staged": {
     "*": [

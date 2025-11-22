@@ -27,6 +27,15 @@ export default defineNuxtConfig({
   eslint: {
     config: {
       standalone: false,
+      nuxt: {
+        sortConfigKeys: true,
+      },
     },
+  },
+
+  // Expose dev server to local network
+  devServer: {
+    host: '0.0.0.0',
+    port: 3000,
   },
 })

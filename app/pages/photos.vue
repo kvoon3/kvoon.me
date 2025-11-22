@@ -3,14 +3,16 @@ import { parseFilename } from 'ufo'
 import {
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogOverlay,
   DialogPortal,
   DialogRoot,
-  DialogTitle,
 } from 'reka-ui'
 
-// 导入组件
+// Import composables
+const { isFullscreen, toggle: toggleFullScreen } = useFullscreen()
+const { slideDirection, handleKeydown } = useKeyboardNavigation()
+
+// Import component
 const PhotoPreview = defineAsyncComponent(() => import('../components/PhotoPreview.vue'))
 
 const photos = Object.entries(import.meta.glob<{ default: string }>('../../public/photos/*', {
@@ -25,27 +27,23 @@ const photos = Object.entries(import.meta.glob<{ default: string }>('../../publi
 
 const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
 const isDialogOpen = computed(() => !!selectedPhoto.value)
-const slideDirection = ref<'next' | 'prev'>('next')
 const showInfo = ref(true)
 const userHiddenInfo = ref(false)
-const isFullscreen = ref(false)
 
-// 键盘导航支持
-const handleKeydown = (event: KeyboardEvent) => {
+// Keyboard navigation handler
+const handlePhotoKeydown = (event: KeyboardEvent) => {
   if (!selectedPhoto.value) return
 
   const currentIndex = photos.findIndex(photo => photo.name === selectedPhoto.value?.name)
 
-  switch (event.key) {
-    case 'ArrowLeft':
-      event.preventDefault()
+  handleKeydown(event, {
+    onArrowLeft: () => {
       if (currentIndex > 0) {
         slideDirection.value = 'prev'
 
-        // 切换图片时短暂显示信息
+        // Temporarily show info when switching photos
         if (userHiddenInfo.value) {
           showInfo.value = true
-          // 2.5秒后自动隐藏信息
           setTimeout(() => {
             const prevPhoto = photos[currentIndex - 1]
             if (selectedPhoto.value?.name === prevPhoto?.name) {
@@ -56,16 +54,14 @@ const handleKeydown = (event: KeyboardEvent) => {
 
         selectedPhoto.value = photos[currentIndex - 1] || null
       }
-      break
-    case 'ArrowRight':
-      event.preventDefault()
+    },
+    onArrowRight: () => {
       if (currentIndex < photos.length - 1) {
         slideDirection.value = 'next'
 
-        // 切换图片时短暂显示信息
+        // Temporarily show info when switching photos
         if (userHiddenInfo.value) {
           showInfo.value = true
-          // 2.5秒后自动隐藏信息
           setTimeout(() => {
             const nextPhoto = photos[currentIndex + 1]
             if (selectedPhoto.value?.name === nextPhoto?.name) {
@@ -76,14 +72,17 @@ const handleKeydown = (event: KeyboardEvent) => {
 
         selectedPhoto.value = photos[currentIndex + 1] || null
       }
-      break
-    case 'Escape':
+    },
+    onEscape: () => {
       selectedPhoto.value = null
-      break
-  }
+    },
+    onEnter: () => {
+      toggleFullScreen()
+    }
+  })
 }
 
-// 导航函数
+// Navigation function
 const navigatePhoto = (direction: number) => {
   if (!selectedPhoto.value) return
 
@@ -93,10 +92,10 @@ const navigatePhoto = (direction: number) => {
   if (newIndex >= 0 && newIndex < photos.length) {
     slideDirection.value = direction > 0 ? 'next' : 'prev'
 
-    // 切换图片时短暂显示信息
+    // Temporarily show info when switching photos
     if (userHiddenInfo.value) {
       showInfo.value = true
-      // 2.5秒后自动隐藏信息
+      // Auto hide info after 2.5 seconds
       setTimeout(() => {
         const targetPhoto = photos[newIndex]
         if (selectedPhoto.value?.name === targetPhoto?.name) {
@@ -109,7 +108,7 @@ const navigatePhoto = (direction: number) => {
   }
 }
 
-// 计算当前图片位置
+// Calculate current photo position
 const currentPhotoIndex = computed(() => {
   if (!selectedPhoto.value) return -1
   return photos.findIndex(photo => photo.name === selectedPhoto.value?.name)
@@ -117,7 +116,7 @@ const currentPhotoIndex = computed(() => {
 
 const totalPhotos = computed(() => photos.length)
 
-// 预览图片点击切换
+// Preview photo click handler
 const selectPreviewPhoto = (photo: typeof photos[number]) => {
   const newIndex = photos.findIndex(p => p.name === photo.name)
   const currentIndex = currentPhotoIndex.value
@@ -125,10 +124,10 @@ const selectPreviewPhoto = (photo: typeof photos[number]) => {
   if (newIndex !== currentIndex) {
     slideDirection.value = newIndex > currentIndex ? 'next' : 'prev'
 
-    // 切换图片时短暂显示信息
+    // Temporarily show info when switching photos
     if (userHiddenInfo.value) {
       showInfo.value = true
-      // 2.5秒后自动隐藏信息
+      // Auto hide info after 2.5 seconds
       setTimeout(() => {
         if (selectedPhoto.value?.name === photo.name) {
           showInfo.value = false
@@ -140,48 +139,23 @@ const selectPreviewPhoto = (photo: typeof photos[number]) => {
   }
 }
 
-// 点击图片切换信息显示
+// Toggle info display on image click
 const toggleInfo = () => {
   showInfo.value = !showInfo.value
   userHiddenInfo.value = !showInfo.value
 }
 
-// 切换全屏模式
-const toggleFullscreen = () => {
-  if (!document.fullscreenElement) {
-    // 进入全屏
-    document.documentElement.requestFullscreen().then(() => {
-      isFullscreen.value = true
-    }).catch(err => {
-      console.error('全屏失败:', err)
-    })
-  } else {
-    // 退出全屏
-    document.exitFullscreen().then(() => {
-      isFullscreen.value = false
-    }).catch(err => {
-      console.error('退出全屏失败:', err)
-    })
-  }
-}
 
 
-// 监听键盘事件
+// Listen for keyboard events
 watch(selectedPhoto, (newValue) => {
   if (newValue) {
-    document.addEventListener('keydown', handleKeydown)
-    // 监听全屏状态变化
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    document.addEventListener('keydown', handlePhotoKeydown)
   } else {
-    document.removeEventListener('keydown', handleKeydown)
-    document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    document.removeEventListener('keydown', handlePhotoKeydown)
   }
 })
 
-// 处理全屏状态变化
-const handleFullscreenChange = () => {
-  isFullscreen.value = !!document.fullscreenElement
-}
 </script>
 
 <template>
@@ -196,42 +170,42 @@ const handleFullscreenChange = () => {
         <DialogContent class="fixed inset-0 flex outline-none" @pointer-down-outside="selectedPhoto = null"
           @escape-key-down="selectedPhoto = null">
           <div class="flex justify-center items-center w-full h-full">
-            <!-- 顶部控制按钮 -->
+            <!-- Top control buttons -->
             <div class="absolute right-4 top-4 z-20 flex gap-2">
-              <!-- 全屏按钮 -->
+              <!-- Fullscreen button (hidden on mobile) -->
               <button
-                class="size-10 justify-center items-center flex aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
-                @click="toggleFullscreen">
+                class="size-10 justify-center items-center flex aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full hidden sm:flex"
+                @click="toggleFullScreen">
                 <Icon :name="isFullscreen ? 'carbon:close-filled' : 'carbon:maximize'" />
-                <span class="sr-only">{{ isFullscreen ? '退出全屏' : '全屏' }}</span>
+                <span class="sr-only">{{ isFullscreen ? 'Exit fullscreen' : 'Fullscreen' }}</span>
               </button>
 
-              <!-- 关闭按钮 -->
+              <!-- Close button -->
               <DialogClose
                 class="size-10 justify-center items-center flex aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
                 @click="selectedPhoto = null">
                 <Icon name="carbon:close" />
-                <span class="sr-only">关闭</span>
+                <span class="sr-only">Close</span>
               </DialogClose>
             </div>
 
-            <!-- 左侧导航按钮 -->
+            <!-- Left navigation button -->
             <button v-if="currentPhotoIndex > 0"
               class="absolute  left-4 z-10 flex items-center justify-center w-16 h-16 opacity-0 hover:opacity-30 transition-all duration-300 bg-black/20 backdrop-blur-sm rounded-full"
               lg="h-80 w-50" @click.stop="navigatePhoto(-1)">
               <Icon name="carbon:chevron-left" size-24 class="text-white" />
-              <span class="sr-only">上一张</span>
+              <span class="sr-only">Previous photo</span>
             </button>
 
-            <!-- 右侧导航按钮 -->
+            <!-- Right navigation button -->
             <button v-if="currentPhotoIndex < photos.length - 1"
               class="absolute right-4 z-10 flex items-center justify-center w-16 h-16 opacity-0 hover:opacity-30 transition-all duration-300 bg-black/20 backdrop-blur-sm rounded-full"
               lg="h-80 w-50" @click.stop="navigatePhoto(1)">
               <Icon name="carbon:chevron-right" size-24 class="text-white" />
-              <span class="sr-only">下一张</span>
+              <span class="sr-only">Next photo</span>
             </button>
 
-            <!-- 主内容区域 - 图片 -->
+            <!-- Main content area - Image -->
             <div @click="toggleInfo" class="relative w-full h-full flex items-center justify-center">
 
               <Transition :name="slideDirection === 'next' ? 'photo-slide' : 'photo-slide-reverse'" mode="out-in">
@@ -247,10 +221,10 @@ const handleFullscreenChange = () => {
               </Transition>
             </div>
 
-            <!-- 底部控制栏 -->
+            <!-- Bottom control bar -->
             <div
               class="absolute bottom-4 rounded-lg flex flex-col gap-4 p-4 bg-gradient-to-t from-black/20 to-transparent">
-              <!-- 图片信息 -->
+              <!-- Photo info -->
               <Transition name="info-fade">
                 <div v-if="showInfo" class="flex justify-between items-center text-white/50 text-sm px-2">
                   <div class="flex items-center gap-2">
@@ -260,24 +234,24 @@ const handleFullscreenChange = () => {
                     </span>
                   </div>
                   <div class="flex items-center gap-4">
-                    <!-- 导航按钮 -->
+                    <!-- Navigation buttons -->
                     <button v-if="photos.findIndex(photo => photo.name === selectedPhoto?.name) > 0"
                       class="flex size-10 justify-center items-center aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
                       @click="navigatePhoto(-1)">
                       <Icon name="carbon:chevron-left" />
-                      <span class="sr-only">上一张</span>
+                      <span class="sr-only">Previous photo</span>
                     </button>
                     <button v-if="photos.findIndex(photo => photo.name === selectedPhoto?.name) < photos.length - 1"
                       class="flex justify-center items-center size-10 aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full"
                       @click="navigatePhoto(1)">
                       <Icon name="carbon:chevron-right" />
-                      <span class="sr-only">下一张</span>
+                      <span class="sr-only">Next photo</span>
                     </button>
                   </div>
                 </div>
               </Transition>
 
-              <!-- 预览图片 -->
+              <!-- Preview images -->
               <Transition name="info-fade">
                 <div v-if="showInfo">
                   <PhotoPreview
@@ -288,11 +262,11 @@ const handleFullscreenChange = () => {
                 </div>
               </Transition>
 
-              <!-- 操作提示 -->
+              <!-- Operation hints -->
               <Transition name="info-fade">
                 <div v-if="showInfo" class="text-center text-xs text-white/60 px-2">
-                  <span class="hidden sm:inline">使用 ← → 键切换图片，点击图片显示/隐藏信息</span>
-                  <span class="sm:hidden">点击图片显示/隐藏信息</span>
+                  <span class="hidden sm:inline">Use ← → keys to navigate, click image to toggle info</span>
+                  <span class="sm:hidden">Click image to toggle info</span>
                 </div>
               </Transition>
             </div>
