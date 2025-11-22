@@ -81,7 +81,7 @@ onMounted(() => {
   <div class="flex justify-center">
     <div
       ref="containerRef"
-      class="flex gap-2 overflow-x-auto py-2 scrollbar-hide px-4 max-w-2xl"
+      class="flex gap-2 overflow-x-auto py-2 px-4 max-w-2xl custom-scrollbar"
     >
       <div
         v-for="(photo, index) in photos"
@@ -110,3 +110,23 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+</style>

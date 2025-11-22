@@ -234,12 +234,13 @@ watch(selectedPhoto, (newValue) => {
             </div>
 
             <!-- Bottom control bar -->
-            <div
-              class="absolute bottom-4 rounded-lg flex flex-col gap-4 p-4 bg-gradient-to-t from-black/20 to-transparent"
-            >
-              <!-- Photo info -->
-              <Transition name="info-fade">
-                <div v-if="showInfo" class="flex justify-between items-center text-white/50 text-sm px-2">
+            <Transition name="info-fade">
+              <div
+                v-if="showInfo"
+                class="absolute bottom-4 rounded-lg flex flex-col gap-4 p-4 bg-gradient-to-t from-black/20 to-transparent"
+              >
+                <!-- Photo info -->
+                <div class="flex justify-between items-center text-white/50 text-sm px-2">
                   <div class="flex items-center gap-2">
                     <span>{{ selectedPhoto?.name }}</span>
                     <span class="text-xs opacity-60">
@@ -266,30 +267,39 @@ watch(selectedPhoto, (newValue) => {
                     </button>
                   </div>
                 </div>
-              </Transition>
 
-              <!-- Preview images -->
-              <Transition name="info-fade">
-                <div v-if="showInfo">
+                <!-- Preview images -->
+                <div>
                   <PhotoPreview
                     :photos="photos"
                     :current-photo-index="currentPhotoIndex"
                     :select-preview-photo="selectPreviewPhoto"
                   />
                 </div>
-              </Transition>
 
-              <!-- Operation hints -->
-              <Transition name="info-fade">
-                <div v-if="showInfo" class="text-center text-xs text-white/60 px-2">
+                <!-- Operation hints -->
+                <div class="text-center text-xs text-white/60 px-2">
                   <span class="hidden sm:inline">Use ← → keys to navigate, click image to toggle info</span>
                   <span class="sm:hidden">Click image to toggle info</span>
                 </div>
-              </Transition>
-            </div>
+              </div>
+            </Transition>
           </div>
         </DialogContent>
       </DialogPortal>
     </DialogRoot>
   </div>
 </template>
+
+<style scoped>
+.info-fade-enter-active,
+.info-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.info-fade-enter-from,
+.info-fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>
