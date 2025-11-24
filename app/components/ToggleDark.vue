@@ -32,17 +32,18 @@ function toggleColorMode() {
 </script>
 
 <template>
-  <Icon
-    :name="
-      colorMode.preference === 'dark'
-        ? 'pixelarticons:moon'
-        : colorMode.preference === 'light'
-          ? 'pixelarticons:sun'
-          : 'pixelarticons:monitor'
-    "
-    px2 py1 border-1 rounded
-    class="bg-$c-primary transition-all duration-200 ease-in-out hover:scale-105"
-    :class="{ 'opacity-70': isTransitioning }"
-    @click="toggleColorMode"
-  />
+  <button p2 rounded flex="~ items-center justify-center" hover:bg-active @click="toggleColorMode">
+    <Icon
+      :name="
+        colorMode.preference === 'dark'
+          ? 'pixelarticons:moon'
+          : colorMode.preference === 'light'
+            ? 'pixelarticons:sun'
+            : 'pixelarticons:monitor'
+      "
+      px2 py1 border-1 rounded
+      class="bg-$c-primary transition-all duration-200 ease-in-out hover:scale-105"
+      :class="{ 'opacity-70': isTransitioning }"
+    />
+  </button>
 </template>
