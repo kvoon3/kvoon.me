@@ -1,4 +1,6 @@
 @import './vars.css';
+@import './theme-transitions.css';
+@import './router-transitions.css';
 
 html,
 body,

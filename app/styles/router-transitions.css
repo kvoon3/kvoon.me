@@ -1,0 +1,110 @@
+/* Router navigation transition configuration */
+:root {
+  --router-transition-duration: 300ms;
+  --router-transition-timing: ease-in-out;
+  --router-transition-delay: 0ms;
+}
+
+/* Page transition animations */
+.page-enter-active,
+.page-leave-active {
+  transition: all var(--router-transition-duration) var(--router-transition-timing) var(--router-transition-delay);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.page-enter-to,
+.page-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Layout transition animations */
+.layout-enter-active,
+.layout-leave-active {
+  transition: all var(--router-transition-duration) var(--router-transition-timing) var(--router-transition-delay);
+}
+
+.layout-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.layout-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.layout-enter-to,
+.layout-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fade transition for simple content */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--router-transition-duration) var(--router-transition-timing) var(--router-transition-delay);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+/* Slide transition from bottom */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all var(--router-transition-duration) var(--router-transition-timing) var(--router-transition-delay);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scale transition */
+.scale-enter-active,
+.scale-leave-active {
+  transition: all var(--router-transition-duration) var(--router-transition-timing) var(--router-transition-delay);
+}
+
+.scale-enter-from {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+.scale-enter-to,
+.scale-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}

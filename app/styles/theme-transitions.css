@@ -1,0 +1,55 @@
+/* Theme transition configuration */
+:root {
+  --theme-transition-duration: 200ms;
+  --theme-transition-timing: ease;
+  --theme-transition-delay: 0ms;
+}
+
+/* Theme transitions for HTML elements */
+html {
+  transition:
+    color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    border-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}
+
+html.dark {
+  transition:
+    color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    border-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}
+
+/* Background wave pattern transitions */
+.bg-wave {
+  transition:
+    background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    background-image var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}
+
+/* Global page transitions */
+html,
+body,
+#__nuxt {
+  transition:
+    color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}
+
+html.dark,
+body.dark,
+#__nuxt.dark {
+  transition:
+    color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay),
+    background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}
+
+/* Scrollbar transitions */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  transition: background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}
+
+::-webkit-scrollbar-thumb {
+  transition: background-color var(--theme-transition-duration) var(--theme-transition-timing) var(--theme-transition-delay);
+}

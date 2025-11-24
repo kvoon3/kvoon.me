@@ -38,4 +38,18 @@ export default defineNuxtConfig({
     host: '0.0.0.0',
     port: 3000,
   },
+
+  // Page transitions
+  app: {
+    pageTransition: {
+      name: 'page',
+      mode: 'out-in',
+      duration: 300,
+    },
+    layoutTransition: {
+      name: 'layout',
+      mode: 'out-in',
+      duration: 300,
+    },
+  },
 })
