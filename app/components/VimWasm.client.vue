@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { VimWasm } from 'vim-wasm'
 
-const canvas = ref<HTMLCanvasElement>()
-const input = ref<HTMLInputElement>()
+const vimContainer = useTemplateRef<HTMLCanvasElement>('vim-container')
+const canvas = useTemplateRef<HTMLCanvasElement>('vim-canvas')
+const input = useTemplateRef<HTMLInputElement>('vim-input')
+const { toggle: toggleFullScreen, isFullscreen } = useFullscreen(vimContainer)
 
 const loading = ref(true)
 const error = ref<string | null>(null)
 const vimStarted = ref(false)
-const isFullscreen = ref(false)
 
 // Initialize Vim
 async function initVim() {
@@ -24,6 +25,8 @@ async function initVim() {
       workerScriptPath: '/node_modules/vim-wasm/vim.js',
     })
 
+    vim.onError = console.error
+
     // Setup callbacks
     vim.onVimInit = () => {
       vimStarted.value = true
@@ -36,27 +39,27 @@ async function initVim() {
 
     // Start Vim with some initial configuration
     vim.start({
-      debug: false,
+      debug: true,
       cmdArgs: ['~/.vim/vimrc'],
       dirs: ['/.vim'],
       files: {
         '/.vim/vimrc': `
-" Basic Vim configuration for browser
-set number
-set relativenumber
-set expandtab
-set tabstop=2
-set shiftwidth=2
-set autoindent
-set clipboard=unnamed
-syntax on
+    " Basic Vim configuration for browser
+    set number
+    set relativenumber
+    set expandtab
+    set tabstop=2
+    set shiftwidth=2
+    set autoindent
+    set clipboard=unnamed
+    syntax on
 
-" Colorscheme
-colorscheme onedark
+    " Colorscheme
+    colorscheme onedark
 
-" Key mappings for better browser experience
-nnoremap <C-s> :export<CR>
-`,
+    " Key mappings for better browser experience
+    nnoremap <C-s> :export<CR>
+    `,
       },
     })
 
@@ -85,11 +88,12 @@ nnoremap <C-s> :export<CR>
     canvas.value.addEventListener('drop', handleDrop)
     canvas.value.addEventListener('dragover', handleDragOver)
 
+    // todo
     // Cleanup
-    onUnmounted(() => {
-      canvas.value?.removeEventListener('drop', handleDrop)
-      canvas.value?.removeEventListener('dragover', handleDragOver)
-    })
+    // onUnmounted(() => {
+    //   canvas.value?.removeEventListener('drop', handleDrop)
+    //   canvas.value?.removeEventListener('dragover', handleDragOver)
+    // })
   }
   catch (err) {
     console.error('Failed to initialize Vim:', err)
@@ -122,31 +126,18 @@ function resetVim() {
   window.location.reload()
 }
 
-// Toggle fullscreen
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    canvas.value?.parentElement?.requestFullscreen()
-    isFullscreen.value = true
+const { stop } = watch([canvas, input], () => {
+  if (canvas.value && input.value) {
+    initVim().catch((error) => {
+      console.error('error', error)
+    })
+    stop()
   }
-  else {
-    document.exitFullscreen()
-    isFullscreen.value = false
-  }
-}
-
-// Handle fullscreen change
-onMounted(() => {
-  document.addEventListener('fullscreenchange', () => {
-    isFullscreen.value = !!document.fullscreenElement
-  })
-
-  // Initialize Vim after component is mounted
-  initVim()
 })
 </script>
 
 <template>
-  <div class="vim-container" border rounded overflow-hidden>
+  <div ref="vim-container" class="vim-container" border rounded overflow-hidden>
     <div class="vim-toolbar" bg-gray-100 dark:bg-gray-800 p-2 border-b flex items-center justify-between>
       <div class="vim-title" flex items-center gap-2>
         <Icon name="ph:terminal" size-5 />
@@ -165,7 +156,7 @@ onMounted(() => {
           class="control-btn"
           p-2
           rounded hover:bg-gray-200 dark:hover:bg-gray-700 :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'"
-          @click="toggleFullscreen"
+          @click="toggleFullScreen"
         >
           <Icon :name="isFullscreen ? 'ph:arrows-in-simple' : 'ph:arrows-out-simple'" size-4 />
         </button>
@@ -193,14 +184,14 @@ onMounted(() => {
       </div>
 
       <canvas
-        ref="canvas"
+        ref="vim-canvas"
         class="vim-canvas"
         w-full
         :class="{ 'cursor-none': vimStarted }"
         @click="focusInput"
       />
       <input
-        ref="input"
+        ref="vim-input"
         class="vim-input"
         absolute opacity-0 pointer-events-none
         autocomplete="off"

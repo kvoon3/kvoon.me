@@ -182,7 +182,7 @@ watch(selectedPhoto, (newValue) => {
                 class="size-10 justify-center items-center flex aspect-square bg-black/50 hover:bg-black/70 text-white p-2 transition-all duration-200 backdrop-blur-sm rounded-full hidden sm:flex"
                 @click="toggleFullScreen"
               >
-                <Icon :name="isFullscreen ? 'carbon:close-filled' : 'carbon:maximize'" />
+                <Icon :name="isFullscreen ? 'ph:arrows-in-simple' : 'ph:arrows-out-simple'" />
                 <span class="sr-only">{{ isFullscreen ? 'Exit fullscreen' : 'Fullscreen' }}</span>
               </button>
 
