@@ -3,6 +3,8 @@
 </script>
 
 <template>
+  <NuxtRouteAnnouncer />
+  <NuxtLoadingIndicator />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
