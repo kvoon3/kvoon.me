@@ -3,6 +3,7 @@ const props = defineProps<{
   disabled?: boolean
   placeholder?: string
   typingUsers?: string[]
+  isSending?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -13,7 +14,7 @@ const emit = defineEmits<{
 const modelValue = defineModel('message', { type: String })
 
 const placeholder = computed(() => {
-  return props.placeholder || '输入消息...'
+  return props.placeholder || 'Type a message...'
 })
 
 const typingHint = computed(() => {
@@ -22,28 +23,28 @@ const typingHint = computed(() => {
   }
 
   if (props.typingUsers.length === 1) {
-    return `${props.typingUsers[0]} 正在输入...`
+    return `${props.typingUsers[0]} is typing...`
   }
 
   if (props.typingUsers.length === 2) {
-    return `${props.typingUsers[0]} 和 ${props.typingUsers[1]} 正在输入...`
+    return `${props.typingUsers[0]} and ${props.typingUsers[1]} are typing...`
   }
 
-  return `${props.typingUsers[0]} 等 ${props.typingUsers.length} 人正在输入...`
+  return `${props.typingUsers[0]} and ${props.typingUsers.length - 1} others are typing...`
 })
 
 let typingTimeout: NodeJS.Timeout | null = null
 
 function handleInputChange() {
-  // 触发正在输入事件
+  // Trigger typing event
   emit('typing', true)
 
-  // 清除之前的定时器
+  // Clear previous timeout
   if (typingTimeout) {
     clearTimeout(typingTimeout)
   }
 
-  // 3秒后停止正在输入状态
+  // Stop typing after 3 seconds
   typingTimeout = setTimeout(() => {
     emit('typing', false)
   }, 3000)
@@ -58,7 +59,7 @@ function handleSubmit() {
   emit('send', msg)
   modelValue.value = ''
 
-  // 清除正在输入状态
+  // Clear typing status
   emit('typing', false)
   if (typingTimeout) {
     clearTimeout(typingTimeout)
@@ -76,20 +77,21 @@ onUnmounted(() => {
 <template>
   <div class="w-full">
     <form class="flex flex-col gap-2" @submit.prevent="handleSubmit">
-      <div class="flex rounded-lg overflow-hidden">
+      <div class="flex rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-700">
         <input
           v-model="modelValue"
           :placeholder="placeholder"
           :disabled="disabled"
-          class="flex-1 px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none"
           @input="handleInputChange"
         >
         <button
           type="submit"
-          :disabled="disabled || !modelValue?.trim()"
-          class="px-6 py-3 bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          :disabled="disabled || !modelValue?.trim() || isSending"
+          class="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-none focus:outline-none flex items-center justify-center gap-2"
         >
-          发送
+          <span v-if="isSending" class="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+          <span>{{ isSending ? 'Sending...' : 'Send' }}</span>
         </button>
       </div>
       <div v-if="typingHint" class="text-sm text-neutral-500 dark:text-neutral-400 h-5">

@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import {
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+} from 'reka-ui'
+
 const {
-  // 状态
   newMessage,
   isLoading,
+  isSending,
   error,
   formattedMessages,
   otherTypingUsers,
@@ -11,7 +19,6 @@ const {
   isConnected,
   onlineUsers,
 
-  // 方法
   sendMessage,
   loadMessages,
   cleanup,
@@ -19,8 +26,8 @@ const {
 } = useChat()
 
 const messagesEnd = ref<HTMLElement>()
+const showOnlineUsers = ref(false)
 
-// 滚动到底部
 function scrollToBottom() {
   nextTick(() => {
     if (messagesEnd.value) {
@@ -32,26 +39,19 @@ watch(formattedMessages, () => {
   scrollToBottom()
 }, { deep: true })
 
-// 处理登出
 function handleLogout() {
   logout()
-  // 可以添加重定向逻辑
 }
 
-// 处理正在输入
 function handleTyping(_isTyping: boolean) {
-  // 这里可以调用 API 或直接通过 Pusher 发送
-  // 已经在 useChat 中处理了
 }
 
-// 初始化
 onMounted(() => {
   if (isAuthenticated) {
     loadMessages()
   }
 })
 
-// 清理
 onUnmounted(() => {
   cleanup()
 })
@@ -59,41 +59,70 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col min-h-0 flex-1">
-    <div class="flex justify-between items-center px-6 py-4 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
+    <div class="flex justify-between items-center px-6 py-4 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
       <div class="flex items-center gap-4">
-        <h1 class="text-2xl font-bold text-neutral-900 dark:text-white m-0">
+        <h1 class="text-2xl font-bold text-black dark:text-white m-0">
           Chat
         </h1>
-        <div class="border rounded-full px-4 py-1 font-mono text-sm">
-          <span class="text-current">{{ isConnected ? 'connected' : 'connecting...' }}</span>
+        <div class="border border-neutral-300 dark:border-neutral-700 rounded-full px-4 py-1 font-mono text-sm">
+          <span class="text-black dark:text-white">{{ isConnected ? 'connected' : 'connecting...' }}</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
         <div v-if="username" class="flex items-center gap-3">
-          <span class="font-medium text-neutral-900 dark:text-white">{{ username }}</span>
-          <button @click="handleLogout">
-            退出
+          <span class="font-medium text-black dark:text-white">{{ username }}</span>
+          <button
+            class="px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            @click="handleLogout"
+          >
+            Logout
+          </button>
+          <button
+            class="px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            @click="showOnlineUsers = true"
+          >
+            {{ onlineUsers.length }} online
           </button>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-1 min-h-0 overflow-hidden p-6 gap-6">
-      <div class="flex-1 flex flex-col overflow-hidden bg-white dark:bg-neutral-900 rounded-xl shadow-sm relative">
-        <div class="flex-1 overflow-y-auto p-6 pb-24">
-          <div v-if="error" class="bg-red-500 text-white px-4 py-3 rounded-lg mb-4 text-sm">
+    <div class="flex flex-1 min-h-0 overflow-hidden">
+      <div class="w-64 shrink-0 border-r border-neutral-200 dark:border-neutral-800">
+        <!-- Channel panel will go here -->
+        <div class="p-4">
+          <h3 class="text-sm font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
+            Channels
+          </h3>
+          <div class="space-y-1">
+            <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
+              #General
+            </div>
+            <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
+              #Random
+            </div>
+            <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
+              #@kvoon(ai)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 overflow-y-auto p-6">
+          <div v-if="error" class="bg-black dark:bg-white text-white dark:text-black px-4 py-3 rounded mb-4 text-sm">
             {{ error }}
           </div>
 
           <div v-if="isLoading && formattedMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-base">
-            加载中...
+            Loading...
           </div>
 
           <div v-else-if="formattedMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-base">
-            还没有消息，开始聊天吧！
+            No messages yet. Start chatting!
           </div>
 
-          <div v-else class="space-y-4">
+          <div v-else class="space-y-6">
             <ChatMessage
               v-for="message in formattedMessages"
               :key="message.id"
@@ -104,23 +133,64 @@ onUnmounted(() => {
           <div ref="messagesEnd" class="h-1 shrink-0" />
         </div>
 
-        <div class="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-white via-white to-transparent dark:from-neutral-900 dark:via-neutral-900 dark:to-transparent">
+        <div class="p-6 border-t border-neutral-200 dark:border-neutral-800">
           <ChatInput
             v-model:message="newMessage"
             :disabled="!isConnected || isLoading"
+            :is-sending="isSending"
             :typing-users="otherTypingUsers"
             @send="sendMessage"
             @typing="handleTyping"
           />
         </div>
       </div>
-
-      <div class="w-80 shrink-0">
-        <OnlineUsers
-          :users="onlineUsers"
-          :current-user="username || undefined"
-        />
-      </div>
     </div>
+
+    <DialogRoot v-model:open="showOnlineUsers">
+      <DialogPortal>
+        <DialogOverlay class="fixed inset-0 bg-black/50" />
+        <DialogContent class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-full max-w-md p-0">
+          <div class="p-6 border-b border-neutral-200 dark:border-neutral-800">
+            <div class="flex justify-between items-center">
+              <h2 class="text-xl font-bold text-black dark:text-white">
+                Online Users
+              </h2>
+              <DialogClose class="text-neutral-500 hover:text-black dark:hover:text-white">
+                <span class="sr-only">Close</span>
+                ×
+              </DialogClose>
+            </div>
+            <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+              {{ onlineUsers.length }} users online
+            </p>
+          </div>
+          <div class="p-6">
+            <div class="space-y-3">
+              <div
+                v-for="user in onlineUsers"
+                :key="user"
+                class="flex items-center gap-3 p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+              >
+                <div class="w-8 h-8 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-semibold text-sm shrink-0 rounded-full">
+                  {{ user.charAt(0).toUpperCase() }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-black dark:text-white truncate">
+                    {{ user }}
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-neutral-500" />
+                    <span class="text-xs text-neutral-500 dark:text-neutral-400">online</span>
+                  </div>
+                </div>
+              </div>
+              <div v-if="onlineUsers.length === 0" class="text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
+                No users online
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </DialogPortal>
+    </DialogRoot>
   </div>
 </template>

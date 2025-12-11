@@ -8,9 +8,10 @@ export function useChat() {
 
   const newMessage = ref('')
   const isLoading = ref(false)
+  const isSending = ref(false)
   const error = ref<string | null>(null)
 
-  // 计算属性：格式化消息
+  // Formatted messages
   const formattedMessages = computed(() => {
     return pusher.messages.value.map(msg => ({
       ...msg,
@@ -19,21 +20,21 @@ export function useChat() {
     }))
   })
 
-  // 计算属性：在线用户数量
+  // Online user count
   const onlineCount = computed(() => pusher.onlineUsers.value.length)
 
-  // 计算属性：正在输入的用户（排除自己）
+  // Typing users (excluding self)
   const otherTypingUsers = computed(() => {
     return pusher.typingUsers.value.filter(user => user !== auth.username.value)
   })
 
-  // 发送消息
+  // Send message
   const sendMessage = async () => {
     if (!newMessage.value.trim() || !auth.isAuthenticated.value) {
       return
     }
 
-    isLoading.value = true
+    isSending.value = true
     error.value = null
 
     try {
@@ -41,14 +42,14 @@ export function useChat() {
       newMessage.value = ''
     }
     catch (err: any) {
-      error.value = err.message || '发送消息失败'
+      error.value = err.message || 'Failed to send message'
     }
     finally {
-      isLoading.value = false
+      isSending.value = false
     }
   }
 
-  // 加载消息历史
+  // Load message history
   const loadMessages = async () => {
     isLoading.value = true
     try {
@@ -56,38 +57,38 @@ export function useChat() {
     }
     catch (err: any) {
       console.error('err', err)
-      error.value = '加载消息失败'
+      error.value = 'Failed to load messages'
     }
     finally {
       isLoading.value = false
     }
   }
 
-  // 处理输入变化（设置正在输入状态）
+  // Handle input changes (set typing status)
   let typingTimeout: NodeJS.Timeout | null = null
   const handleInput = () => {
-    // 设置正在输入状态
+    // Set typing status
     pusher.setTyping(true)
 
-    // 清除之前的定时器
+    // Clear previous timeout
     if (typingTimeout) {
       clearTimeout(typingTimeout)
     }
 
-    // 3秒后清除正在输入状态
+    // Clear typing status after 3 seconds
     typingTimeout = setTimeout(() => {
       pusher.setTyping(false)
     }, 3000)
   }
 
-  // 监听认证状态，自动加载消息
+  // Watch authentication status, auto-load messages
   watch(() => auth.isAuthenticated.value, (authenticated) => {
     if (authenticated) {
       loadMessages()
     }
   })
 
-  // 组件卸载时清理
+  // Cleanup on component unmount
   const cleanup = () => {
     if (typingTimeout) {
       clearTimeout(typingTimeout)
@@ -96,9 +97,10 @@ export function useChat() {
   }
 
   return {
-    // 状态
+    // State
     newMessage,
     isLoading,
+    isSending,
     error,
     formattedMessages,
     onlineCount,
@@ -106,17 +108,17 @@ export function useChat() {
     isAuthenticated: auth.isAuthenticated,
     username: auth.username,
 
-    // Pusher 状态
+    // Pusher state
     isConnected: pusher.isConnected,
     onlineUsers: pusher.onlineUsers,
 
-    // 方法
+    // Methods
     sendMessage,
     loadMessages,
     handleInput,
     cleanup,
 
-    // 认证方法
+    // Auth methods
     login: auth.setAuth,
     logout: auth.logout,
   }

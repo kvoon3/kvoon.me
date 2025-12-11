@@ -16,14 +16,14 @@ function getUserInitial(username: string) {
 </script>
 
 <template>
-  <div class="bg-white dark:bg-neutral-900 rounded-xl p-6 h-full shadow-sm">
+  <div class="bg-white dark:bg-neutral-900 rounded-xl p-6 h-full">
     <div class="flex justify-between items-center mb-6 pb-4 border-b border-neutral-200 dark:border-neutral-800">
-      <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">
-        在线用户
+      <h3 class="text-lg font-semibold text-black dark:text-white">
+        Online Users
       </h3>
       <div class="flex items-baseline gap-1">
-        <span class="text-2xl font-bold text-blue-500">{{ onlineCount }}</span>
-        <span class="text-sm text-neutral-500 dark:text-neutral-400">人在线</span>
+        <span class="text-2xl font-bold text-black dark:text-white">{{ onlineCount }}</span>
+        <span class="text-sm text-neutral-500 dark:text-neutral-400">online</span>
       </div>
     </div>
 
@@ -31,24 +31,24 @@ function getUserInitial(username: string) {
       <div
         v-for="user in users"
         :key="user"
-        class="flex items-center gap-3 p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+        class="flex items-center gap-3 p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
       >
-        <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center font-semibold text-base shrink-0 rounded-full">
+        <div class="w-10 h-10 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-semibold text-base shrink-0 rounded-full">
           {{ getUserInitial(user) }}
         </div>
         <div class="flex-1 min-w-0">
-          <div class="font-medium text-neutral-900 dark:text-white truncate">
+          <div class="font-medium text-black dark:text-white truncate">
             {{ user }}
           </div>
           <div class="flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-500" />
-            <span class="text-xs text-neutral-500 dark:text-neutral-400">在线</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-neutral-500" />
+            <span class="text-xs text-neutral-500 dark:text-neutral-400">online</span>
           </div>
         </div>
       </div>
 
       <div v-if="users.length === 0" class="text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
-        暂无在线用户
+        No users online
       </div>
     </div>
   </div>
