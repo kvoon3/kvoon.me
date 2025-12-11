@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
+    '@pinia/nuxt',
   ],
 
   devtools: { enabled: true },
@@ -61,6 +62,13 @@ export default defineNuxtConfig({
           'Cross-Origin-Opener-Policy': 'same-origin',
         },
       },
+    },
+  },
+
+  runtimeConfig: {
+    public: {
+      pusherKey: import.meta.env.PUSHER_KEY,
+      pusherCluster: import.meta.env.PUSHER_CLUSTER,
     },
   },
 })

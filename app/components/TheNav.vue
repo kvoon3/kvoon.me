@@ -40,7 +40,7 @@ function isActive(path: string) {
           <NavigationMenuLink as-child>
             <NuxtLink
               :to="item.path"
-              class="inline-flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-active" :class="[
+              class="btn" :class="[
                 isActive(item.path) ? 'bg-active text-primary' : '',
               ]"
             >
