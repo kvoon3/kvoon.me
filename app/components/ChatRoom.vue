@@ -102,7 +102,7 @@ onUnmounted(() => {
               #Random
             </div>
             <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
-              #@kvoon(ai)
+              #@kvoon
             </div>
           </div>
         </div>
