@@ -32,11 +32,11 @@ useSeoMeta({
 
     <section space-y-12>
       <CategoryCard name="Recent Active" text-xl>
-        <NuxtLink leading-loose w-fit target="_black" href="https://my-pull-requests.kvoon.me" bg-op-0 class="icon-btn">
+        <NuxtLink block leading-loose w-fit target="_black" href="https://my-pull-requests.kvoon.me" bg-op-0 class="icon-btn">
           <Icon name="ph:git-pull-request" />
           My Open Pull Requests
         </NuxtLink>
-        <NuxtLink leading-loose w-fit target="_black" href="https://releases-bmz.pages.dev" bg-op-0 class="icon-btn">
+        <NuxtLink block leading-loose w-fit target="_black" href="https://releases-bmz.pages.dev" bg-op-0 class="icon-btn">
           <Icon name="ph:git-commit-duotone" />
           My Releases
         </NuxtLink>
