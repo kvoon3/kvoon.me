@@ -33,12 +33,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // Expose dev server to local network
-  devServer: {
-    host: '0.0.0.0',
-    port: 3000,
-  },
-
   // Page transitions
   app: {
     pageTransition: {
@@ -54,6 +48,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    static: true,
     routeRules: {
       '**': {
         headers: {
