@@ -28,6 +28,7 @@ useSeoMeta({
       <div v-else>
         404 not found
       </div>
+      <LicenseLink />
     </div>
 
     <section space-y-12>

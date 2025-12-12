@@ -7,7 +7,6 @@
     <TheNav />
     <div of-auto>
       <slot />
-      <TheFooter />
     </div>
   </div>
 </template>
