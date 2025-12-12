@@ -20,6 +20,7 @@ export default defineConfig({
     ['position-x-center', 'left-1/2 -translate-x-1/2'],
     ['position-y-center', 'top-1/2 -translate-y-1/2'],
     ['position-center', 'position-x-center position-y-center'],
+    ['border-base', 'border border-neutral-300 dark:border-neutral-500 border-op-75 hover:border-op-100 transition-colors duration-300'],
   ],
   presets: [
     presetWind4(),

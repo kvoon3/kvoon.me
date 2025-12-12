@@ -15,11 +15,11 @@ useSeoMeta({
   <div grid="~ md:cols-2 gap-8" container mxa pt12>
     <div prose px4>
       <div relative>
-        <div z-1 border size-30 relative rounded-full of-hidden>
+        <div z-1 border-base size-30 relative rounded-full of-hidden>
           <NuxtImg src="/avatar.jpg" alt="avatar" w-full h-full object-cover />
         </div>
         <div absolute top-0 left-20>
-          <div backdrop-blur-4 size-30 border="~ dashed neutral-3 dark:neutral-7" rounded-full absolute />
+          <div backdrop-blur-4 size-30 border="~ dashed base" rounded-full absolute />
           <MyIcon :size="120" :weight="50" />
         </div>
       </div>
@@ -55,11 +55,7 @@ useSeoMeta({
               target="_blank"
               rel="noopener noreferrer"
               p4
-              border
-              op-75
-              hover:op-100
-              transition-all
-              duration-300
+              border-base
             >
               <div flex gap-4>
                 <Icon :name="project.icon" shrink-0 size-10 mya />

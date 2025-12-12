@@ -30,10 +30,7 @@ useSeoMeta({
         :to="experiment.link"
         :title="experiment.name"
         p-6
-        border
-        hover:shadow-lg
-        transition-all
-        duration-300
+        border-base
         bg-white:10
         dark:bg-dark:10
       >
