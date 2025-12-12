@@ -19,7 +19,7 @@ useSeoMeta({
     <div prose px4>
       <div relative>
         <div z-1 border-base size-30 relative rounded-full of-hidden>
-          <LazyNuxtImg src="/avatar.jpg" alt="avatar" w-full h-full object-cover />
+          <NuxtImg src="/avatar.jpg" width="360" alt="avatar" w-full h-full object-cover />
         </div>
         <div absolute top-0 left-20>
           <div backdrop-blur-4 size-30 border="~ dashed base" rounded-full absolute />
