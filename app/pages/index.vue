@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { projects } from '~/data/projects'
 
+const route = useRoute()
+
 const { data } = await useAsyncData(
+  route.path,
   () => queryCollection('content').path('/').first(),
 )
 
@@ -28,7 +31,6 @@ useSeoMeta({
       <div v-else>
         404 not found
       </div>
-      <LicenseLink />
     </div>
 
     <section space-y-12>
@@ -74,5 +76,6 @@ useSeoMeta({
         </div>
       </CategoryCard>
     </section>
+    <LicenseLink px4 />
   </div>
 </template>
