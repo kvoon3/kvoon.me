@@ -23,7 +23,11 @@ export default defineConfig({
     ['border-base', 'border border-neutral-300 dark:border-neutral-500 border-op-75 hover:border-op-100 transition-colors duration-300'],
   ],
   presets: [
-    presetWind4(),
+    presetWind4({
+      preflights: {
+        reset: true,
+      },
+    }),
     presetWebFonts({
       fonts: {
         provider: 'google',
