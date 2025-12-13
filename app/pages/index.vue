@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { projects } from '~/data/projects'
 
-const { data } = useAsyncData(
+const { data, error } = useAsyncData(
   '/intro',
   async () => {
     const res = await queryCollection('content').path('/intro').first().catch((error) => {
@@ -24,17 +24,24 @@ useSeoMeta({
     <div prose px4>
       <div relative>
         <div z-1 border-base size-30 relative rounded-full of-hidden>
-          <NuxtImg src="/avatar.JPG" width="360" alt="avatar" w-full h-full object-cover />
+          <NuxtImg src="/avatar.JPG" :quality="70" alt="avatar" w-full h-full object-cover />
         </div>
         <div absolute top-0 left-20>
           <div size-30 border="~ dashed base" rounded-full absolute />
           <MyIcon id="icon" :size="120" :weight="50" />
         </div>
       </div>
-      <ContentRenderer v-if="data" :value="data" />
+      <div>
+        <div v-if="error" flex items-center my8 py4 px2 bg-neutral:10 role="alert">
+          <Icon name="ph:warning-circle" size="24" class="mr-2" />
+          <span>Failed to load content. Please try again later.</span>
+        </div>
 
-      <div v-else>
-        404 not found
+        <Transition name="fade" mode="out-in">
+          <div v-if="data" key="content">
+            <ContentRenderer :value="data" />
+          </div>
+        </Transition>
       </div>
     </div>
 
@@ -105,5 +112,30 @@ useSeoMeta({
   100% {
     filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--blur-green))
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 0.5rem;
+  color: #c00;
+  margin: 1rem 0;
+}
+
+.error-message .icon {
+  flex-shrink: 0;
 }
 </style>
