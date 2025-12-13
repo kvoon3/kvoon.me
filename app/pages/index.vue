@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { projects } from '~/data/projects'
 
-const route = useRoute()
-
 const { data } = await useAsyncData(
-  route.path,
+  '/intro',
   () => queryCollection('content').path('/intro').first(),
 )
 
