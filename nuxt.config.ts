@@ -48,7 +48,6 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    static: true,
     routeRules: {
       '**': {
         headers: {
