@@ -3,14 +3,7 @@ import { projects } from '~/data/projects'
 
 const { data, error } = useAsyncData(
   '/intro',
-  async () => {
-    const res = await queryCollection('content').path('/intro').first().catch((error) => {
-      console.error('error', error)
-    })
-    console.error('res', res)
-
-    return res
-  },
+  () => queryCollection('content').path('/intro').first(),
 )
 
 useSeoMeta({
