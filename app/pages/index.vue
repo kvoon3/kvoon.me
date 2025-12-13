@@ -5,7 +5,7 @@ const route = useRoute()
 
 const { data } = await useAsyncData(
   route.path,
-  () => queryCollection('content').path('/').first(),
+  () => queryCollection('content').path('/intro').first(),
 )
 
 useSeoMeta({
@@ -22,8 +22,8 @@ useSeoMeta({
           <NuxtImg src="/avatar.JPG" width="360" alt="avatar" w-full h-full object-cover />
         </div>
         <div absolute top-0 left-20>
-          <div backdrop-blur-4 size-30 border="~ dashed base" rounded-full absolute />
-          <MyIcon :size="120" :weight="50" />
+          <div size-30 border="~ dashed base" rounded-full absolute />
+          <MyIcon id="icon" :size="120" :weight="50" />
         </div>
       </div>
       <ContentRenderer v-if="data" :value="data" />
@@ -79,3 +79,26 @@ useSeoMeta({
     <LicenseLink px4 />
   </div>
 </template>
+
+<style scoped>
+#icon {
+  --blur-green: #a0f0eccd;
+  --blur-min-range: 2px;
+  --blur-max-range: 20px;
+  animation: blur-loop 5s infinite
+}
+
+@keyframes blur-loop {
+  0% {
+    filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--blur-green))
+  }
+
+  50% {
+    filter: blur(var(--blur-max-range))
+  }
+
+  100% {
+    filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--blur-green))
+  }
+}
+</style>
