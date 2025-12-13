@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { projects } from '~/data/projects'
 
-const { data } = await useAsyncData(
+const { data } = useAsyncData(
   '/intro',
-  () => queryCollection('content').path('/intro').first(),
+  async () => {
+    const res = await queryCollection('content').path('/intro').first().catch((error) => {
+      console.error('error', error)
+    })
+    console.error('res', res)
+
+    return res
+  },
 )
 
 useSeoMeta({
