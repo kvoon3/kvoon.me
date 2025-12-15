@@ -1,10 +1,10 @@
 import { computed, ref, watch } from 'vue'
 import { useAuth } from './useAuth'
-import { usePusher } from './usePusher'
 
 export function useChat() {
   const auth = useAuth()
-  const pusher = usePusher()
+  const pusher = usePusherStore()
+  const { messages, onlineUsers, typingUsers, isConnected } = storeToRefs(pusher)
 
   const newMessage = ref('')
   const isLoading = ref(false)
@@ -13,7 +13,7 @@ export function useChat() {
 
   // Formatted messages
   const formattedMessages = computed(() => {
-    return pusher.messages.value.map(msg => ({
+    return messages.value.map(msg => ({
       ...msg,
       time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isOwn: msg.username === auth.username.value,
@@ -21,11 +21,11 @@ export function useChat() {
   })
 
   // Online user count
-  const onlineCount = computed(() => pusher.onlineUsers.value.length)
+  const onlineCount = computed(() => onlineUsers.value.length)
 
   // Typing users (excluding self)
   const otherTypingUsers = computed(() => {
-    return pusher.typingUsers.value.filter(user => user !== auth.username.value)
+    return typingUsers.value.filter(user => user !== auth.username.value)
   })
 
   // Send message
@@ -109,8 +109,8 @@ export function useChat() {
     username: auth.username,
 
     // Pusher state
-    isConnected: pusher.isConnected,
-    onlineUsers: pusher.onlineUsers,
+    isConnected,
+    onlineUsers,
 
     // Methods
     sendMessage,

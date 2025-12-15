@@ -1,16 +1,18 @@
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import Pusher from 'pusher-js'
 
-export function usePusher() {
+export const usePusherStore = defineStore('Pusher', () => {
   const auth = useAuth()
-  const pusher = ref<Pusher | null>(null)
   const channel = ref<any>(null)
+  const pusher = ref<Pusher | null>(null)
   const isConnected = ref(false)
   const messages = ref<any[]>([])
   const onlineUsers = ref<string[]>([])
   const typingUsers = ref<string[]>([])
 
-  // 连接 Pusher
-  const connect = () => {
+  connect()
+
+  function connect() {
     if (!auth.isAuthenticated.value || !import.meta.browser) {
       return
     }
@@ -97,11 +99,11 @@ export function usePusher() {
     }
   }
 
-  // 断开连接
-  const disconnect = () => {
+  function disconnect() {
     if (channel.value) {
       channel.value.unsubscribe()
     }
+
     if (pusher.value) {
       pusher.value.disconnect()
     }
@@ -110,8 +112,7 @@ export function usePusher() {
     isConnected.value = false
   }
 
-  // 发送消息
-  const sendMessage = async (content: string) => {
+  async function sendMessage(content: string) {
     if (!auth.isAuthenticated.value) {
       throw new Error('需要认证')
     }
@@ -131,8 +132,7 @@ export function usePusher() {
     }
   }
 
-  // 获取消息历史
-  const fetchMessages = async (limit: number = 50) => {
+  async function fetchMessages(limit: number = 50) {
     try {
       const options: any = {
         query: { limit },
@@ -154,8 +154,7 @@ export function usePusher() {
     }
   }
 
-  // 设置正在输入状态
-  const setTyping = async (isTyping: boolean) => {
+  async function setTyping(isTyping: boolean) {
     if (!auth.isAuthenticated.value) {
       return
     }
@@ -175,7 +174,6 @@ export function usePusher() {
     }
   }
 
-  // 监听认证状态变化
   watch(() => auth.isAuthenticated.value, (authenticated) => {
     if (authenticated) {
       connect()
@@ -185,15 +183,9 @@ export function usePusher() {
     }
   })
 
-  // 组件卸载时断开连接
-  onUnmounted(() => {
-    disconnect()
-  })
-
-  // 初始化连接
-  if (auth.isAuthenticated.value && import.meta.browser) {
-    connect()
-  }
+  // onUnmounted(() => {
+  //   disconnect()
+  // })
 
   return {
     pusher,
@@ -208,4 +200,8 @@ export function usePusher() {
     fetchMessages,
     setTyping,
   }
+})
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(usePusherStore, import.meta.hot))
 }
