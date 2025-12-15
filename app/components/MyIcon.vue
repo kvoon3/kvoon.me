@@ -81,6 +81,6 @@ onMounted(() => {
     class="zdog-canvans"
     :width="height"
     :height="height"
-    float-left cursor-grab rounded-full active:cursor-grabbing
+    float-left cursor-move rounded-full active:cursor-grabbing
   />
 </template>
