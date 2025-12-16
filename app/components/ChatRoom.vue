@@ -31,7 +31,7 @@ const showOnlineUsers = ref(false)
 function scrollToBottom() {
   nextTick(() => {
     if (messagesEnd.value) {
-      messagesEnd.value.scrollIntoView({ behavior: 'smooth' })
+      messagesEnd.value.scrollIntoView({ behavior: 'instant' })
     }
   })
 }
