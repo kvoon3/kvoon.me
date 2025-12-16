@@ -1,29 +1,23 @@
 <script setup lang="ts">
-// Add your experiment projects data here
-const experiments = [
-  {
-    name: 'Vim in Browser',
-    description: 'Full Vim editor running in WebAssembly with complete Vim functionality',
-    link: '/experiments/vim-wasm',
-    icon: 'ph:terminal',
-    tags: ['WebAssembly', 'Vim', 'TypeScript'],
-  },
-]
+interface Experiment {
+  name: string
+  description: string
+  link: string
+  icon: string
+  tags: string[]
+}
 
-useSeoMeta({
-  title: 'Experiments - kvoon.me',
-  description: 'A collection of frontend experiments and tools',
+const { experiments } = withDefaults(defineProps<{
+  experiments?: Experiment[]
+}>(), {
+  experiments: () => [],
 })
 </script>
 
 <template>
-  <div container mxa pt12>
-    <div prose px4>
-      <h1>Experiments</h1>
-      <p>A collection of my frontend experiments and tools.</p>
-    </div>
-
-    <div grid="~ cols-1 md:cols-2 lg:cols-3 gap-6" mt-8>
+  <!-- !NOTE: 'not-prose' is only available in class -->
+  <div class="not-prose">
+    <div grid="~ cols-1 gap-6" mt-8>
       <NuxtLink
         v-for="experiment in experiments"
         :key="experiment.name"

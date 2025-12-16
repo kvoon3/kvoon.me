@@ -18,7 +18,7 @@ onMounted(() => {
 
 <template>
   <div container mxa pt12>
-    <div prose px4>
+    <div prose px4 dark:prose-invert>
       <h1>Vim in Browser</h1>
       <p>
         A full Vim editor running in WebAssembly. This is an experimental port of Vim to WebAssembly

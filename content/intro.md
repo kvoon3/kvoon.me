@@ -1,4 +1,8 @@
-# Kevin Kwong
+---
+title: Kevin Kwong
+description: Kevin Kwong's personal website
+layout: home
+---
 
 Hi, I am Kevin Kwong. Welcome to my space.
 
