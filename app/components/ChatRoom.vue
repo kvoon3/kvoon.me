@@ -149,7 +149,7 @@ onUnmounted(() => {
     <DialogRoot v-model:open="showOnlineUsers">
       <DialogPortal>
         <DialogOverlay class="fixed inset-0 bg-black/50" />
-        <DialogContent class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-full max-w-md p-0">
+        <DialogContent class="fixed position-center bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-full max-w-md p-0">
           <div class="p-6 border-b border-neutral-200 dark:border-neutral-800">
             <div class="flex justify-between items-center">
               <h2 class="text-xl font-bold text-black dark:text-white">
