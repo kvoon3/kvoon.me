@@ -87,7 +87,7 @@ onMounted(() => {
         v-for="(photo, index) in photos"
         :key="photo.name"
         :data-photo-index="index"
-        class="shrink-0 cursor-pointer transition-all duration-200 relative rounded-lg transition-transform duration-200"
+        class="shrink-0 cursor-pointer transition-all relative rounded-lg ransition-transform duration-200"
         :class="[
           getOpacityClass(index),
           getScaleClass(index),

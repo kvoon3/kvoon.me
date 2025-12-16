@@ -8,9 +8,9 @@ const { data } = await useAsyncData(route.path, () => {
 
 <template>
   <div>
-    <div mxa prose>
+    <main mxa prose pt12>
       <ContentRenderer v-if="data" w-fit :value="data" />
       <LicenseLink mt30 />
-    </div>
+    </main>
   </div>
 </template>
