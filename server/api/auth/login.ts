@@ -1,28 +1,70 @@
-import { loginUser } from '~~/lib/auth'
+import { redis, REDIS_KEYS, TOKEN_TTL } from '#shared/redis'
+import bcrypt from 'bcryptjs'
+import { nanoid } from 'nanoid'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const body = await readBody(event)
-    const { username, password } = body
+  const body = await readBody(event)
+  const { username, password } = body
 
-    if (!username || !password) {
-      throw createError({
-        statusCode: 400,
-        message: '用户名和密码不能为空',
-      })
-    }
-
-    const result = await loginUser(username, password)
-
-    return {
-      success: true,
-      data: result,
-    }
-  }
-  catch (error: any) {
+  if (!username || !password) {
     throw createError({
-      statusCode: 401,
-      message: error.message || '登录失败',
+      statusCode: 400,
+      message: 'Username and password cannot be empty',
     })
   }
+
+  const result = await loginUser(username, password)
+    .catch((error: any) => {
+      console.error('Database error in login:', error)
+      throw createError({
+        statusCode: 500,
+        message: 'Database error occurred',
+      })
+    })
+
+  return {
+    success: true,
+    data: result,
+  }
 })
+
+/**
+ * User login
+ */
+async function loginUser(username: string, password: string) {
+  // Get stored hashed password
+  const hashedPassword = await redis.get<string>(REDIS_KEYS.PASSWORD(username))
+  if (!hashedPassword) {
+    throw new Error('User does not exist')
+  }
+
+  // Verify password
+  const isValid = await bcrypt.compare(password, hashedPassword)
+  if (!isValid) {
+    throw new Error('Incorrect password')
+  }
+
+  // Generate token
+  const token = nanoid(32)
+  const tokenKey = REDIS_KEYS.USER_TOKEN(username, token)
+
+  // Store token (with TTL)
+  await redis.set(tokenKey, 'valid', { ex: TOKEN_TTL })
+
+  // Update user last login time
+  const userInfo = await redis.get<{ username: string, createdAt: number, lastLogin: number }>(REDIS_KEYS.USER_INFO(username))
+
+  let updatedUserInfo = { username, createdAt: Date.now(), lastLogin: Date.now() }
+
+  if (userInfo && typeof userInfo === 'object') {
+    // If user info exists, update last login time
+    updatedUserInfo = { ...userInfo, lastLogin: Date.now() }
+  }
+
+  await redis.set(REDIS_KEYS.USER_INFO(username), updatedUserInfo)
+
+  // Set online status
+  await redis.set(REDIS_KEYS.ONLINE_USER(username), 'online', { ex: 300 }) // 5 minutes
+
+  return { success: true, token, username }
+}

@@ -1,23 +1,23 @@
-import { verifyToken } from '~~/lib/auth'
+import { redis, REDIS_KEYS, TOKEN_TTL } from '#shared/redis'
 
 export default defineEventHandler(async (event) => {
-  // 只拦截 API 请求，不拦截页面路由
+  // Only intercept API requests, not page routes
   if (!event.path.startsWith('/api/')) {
     return
   }
 
-  // 不需要认证的 API 路径
+  // API paths that don't require authentication
   const publicPaths = ['/api/auth/register', '/api/auth/login']
   if (publicPaths.some(path => event.path.startsWith(path))) {
     return
   }
 
-  // 对于聊天消息获取，可以允许公开访问
+  // For chat message retrieval, allow public access
   if (event.path.startsWith('/api/chat/messages')) {
     return
   }
 
-  // 检查认证头
+  // Check authentication headers
   const headers = getHeaders(event)
   const username = headers['x-username'] as string
   const token = headers['x-token'] as string
@@ -25,19 +25,47 @@ export default defineEventHandler(async (event) => {
   if (!username || !token) {
     throw createError({
       statusCode: 401,
-      message: '需要认证',
+      message: 'Authentication required',
     })
   }
 
-  // 验证 token
+  // Verify token
   const authResult = await verifyToken(username, token)
+    .catch((error: any) => {
+      console.error('Database error in middleware auth:', error)
+      throw createError({
+        statusCode: 500,
+        message: 'Database error occurred',
+      })
+    })
+
   if (!authResult.valid) {
     throw createError({
       statusCode: 401,
-      message: '认证无效或已过期',
+      message: 'Authentication invalid or expired',
     })
   }
 
-  // 将用户信息添加到事件上下文
+  // Add user information to event context
   event.context.user = { username }
 })
+
+/**
+ * Verify token
+ */
+async function verifyToken(username: string, token: string) {
+  const tokenKey = REDIS_KEYS.USER_TOKEN(username, token)
+  const isValid = await redis.get(tokenKey)
+
+  if (isValid) {
+    // Automatically renew token
+    await redis.expire(tokenKey, TOKEN_TTL)
+
+    // Update online status
+    await redis.set(REDIS_KEYS.ONLINE_USER(username), 'online', { ex: 300 })
+
+    return { valid: true }
+  }
+
+  return { valid: false }
+}

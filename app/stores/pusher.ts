@@ -1,3 +1,5 @@
+import type { ChatMessageEvent, UserTypingEvent } from '#shared/pusher'
+import { PUSHER_CHANNELS, PUSHER_EVENTS } from '#shared/pusher'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import Pusher from 'pusher-js'
 
@@ -6,7 +8,7 @@ export const usePusherStore = defineStore('Pusher', () => {
   const channel = ref<any>(null)
   const pusher = ref<Pusher | null>(null)
   const isConnected = ref(false)
-  const messages = ref<any[]>([])
+  const messages = ref<ChatMessageEvent[]>([])
   const onlineUsers = ref<string[]>([])
   const typingUsers = ref<string[]>([])
 
@@ -40,7 +42,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       })
 
       // 订阅频道
-      channel.value = pusher.value.subscribe('presence-chatroom')
+      channel.value = pusher.value.subscribe(PUSHER_CHANNELS.PRESENCE_CHATROOM)
 
       // 监听连接状态
       pusher.value.connection.bind('state_change', (states: any) => {
@@ -58,7 +60,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       })
 
       // 监听消息事件
-      channel.value.bind('chat-message', (data: any) => {
+      channel.value.bind(PUSHER_EVENTS.CHAT_MESSAGE, (data: ChatMessageEvent) => {
         messages.value.push(data)
       })
 
@@ -83,7 +85,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       })
 
       // 监听用户正在输入（客户端事件）
-      channel.value.bind('client-user-typing', (data: any) => {
+      channel.value.bind(`client-${PUSHER_EVENTS.USER_TYPING}`, (data: UserTypingEvent) => {
         if (data.isTyping) {
           if (!typingUsers.value.includes(data.username)) {
             typingUsers.value.push(data.username)
@@ -163,7 +165,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       // 这里可以调用 API 或直接通过 Pusher 发送
       // 简化处理：直接通过 Pusher 发送
       if (channel.value) {
-        channel.value.trigger('client-user-typing', {
+        channel.value.trigger(`client-${PUSHER_EVENTS.USER_TYPING}`, {
           username: auth.username.value,
           isTyping,
         })
