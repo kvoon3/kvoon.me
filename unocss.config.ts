@@ -21,6 +21,7 @@ export default defineConfig({
     ['position-y-center', 'top-1/2 -translate-y-1/2'],
     ['position-center', 'position-x-center position-y-center'],
     ['border-base', 'border border-neutral-300 dark:border-neutral-500 border-op-75 hover:border-op-100 transition-colors duration-300'],
+    ['shadow-highlight', 'shadow-[0_0_10px_#a0f0eccd] transition-shadow duration-300'],
   ],
   presets: [
     presetWind4({

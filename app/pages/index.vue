@@ -14,13 +14,11 @@ useSeoMeta({
 
 <template>
   <div grid="~ md:cols-2 gap-8" container mxa pt12>
-    <div prose px4>
+    <div prose dark:prose-invert px4>
       <div relative>
-        <div z-1 border-base size-30 relative rounded-full of-hidden>
-          <NuxtImg src="/avatar.JPG" :quality="70" alt="avatar" w-full h-full object-cover />
-        </div>
-        <div absolute top-0 left-20>
-          <div size-30 border="~ dashed base" rounded-full absolute />
+        <NuxtImg src="/avatar_cropped.JPG" :quality="70" alt="avatar" object-cover rounded-full border-base size-30 />
+        <!-- border="~ dashed base" -->
+        <div absolute top-0 left-20 shadow-sm dark:shadow-neutral-500 rounded-full>
           <MyIcon id="icon" :size="120" :weight="50" />
         </div>
       </div>
