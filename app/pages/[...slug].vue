@@ -15,11 +15,7 @@ useSeoMeta({
 
 <template>
   <div>
-    <main
-      :class="{
-        'mxa prose dark:prose-invert p8': data?.layout !== 'full',
-      }"
-    >
+    <main mxa prose dark:prose-invert p8>
       <h1> {{ data?.title }} </h1>
 
       <ContentRenderer v-if="data" w-fit :value="data" />

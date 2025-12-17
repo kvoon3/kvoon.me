@@ -9,18 +9,11 @@ export default defineEventHandler(async (event) => {
   if (!username || !password) {
     throw createError({
       statusCode: 400,
-      message: 'Username and password cannot be empty',
+      statusMessage: 'Bad Request',
     })
   }
 
   const result = await loginUser(username, password)
-    .catch((error: any) => {
-      console.error('Database error in login:', error)
-      throw createError({
-        statusCode: 500,
-        message: 'Database error occurred',
-      })
-    })
 
   return {
     success: true,
@@ -35,13 +28,19 @@ async function loginUser(username: string, password: string) {
   // Get stored hashed password
   const hashedPassword = await redis.get<string>(REDIS_KEYS.PASSWORD(username))
   if (!hashedPassword) {
-    throw new Error('User does not exist')
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'User does not exist',
+    })
   }
 
   // Verify password
   const isValid = await bcrypt.compare(password, hashedPassword)
   if (!isValid) {
-    throw new Error('Incorrect password')
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Password is incorrect',
+    })
   }
 
   // Generate token

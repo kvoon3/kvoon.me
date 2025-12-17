@@ -1,72 +1,33 @@
-import { useCookie, useState } from '#app'
-import { computed, onMounted } from 'vue'
+import { useCookie } from '#app'
+import { computed } from 'vue'
 
 export function useAuth() {
-  const username = useState<string | null>('auth-username', () => null)
-  const token = useState<string | null>('auth-token', () => null)
-
   const authCookie = useCookie<{ username: string, token: string, timestamp: number } | null>('chat-auth', {
     maxAge: 24 * 60 * 60, // 24 hrs
     sameSite: 'strict',
     secure: import.meta.env.PROD,
   })
 
+  const username = computed(() => authCookie.value?.username ?? '')
+  const token = computed(() => authCookie.value?.token ?? '')
+  const timestamp = computed(() => authCookie.value?.timestamp ?? 0)
+
   const isAuthenticated = computed(() => !!username.value && !!token.value)
 
-  onMounted(async () => {
-    await loadAuthFromCookie()
-  })
+  tryCleanAuthCookie()
 
-  async function verifyAuthToken(): Promise<boolean> {
-    if (!username.value || !token.value) {
-      return false
-    }
+  async function tryCleanAuthCookie() {
+    if (!authCookie.value)
+      return
 
-    try {
-      const response = await $fetch('/api/auth/verify', {
-        headers: {
-          'X-Username': username.value,
-          'X-Token': token.value,
-        },
-      })
+    const tokenAge = Date.now() - timestamp.value
+    const maxAge = 24 * 60 * 60 * 1000 // 24 hrs
 
-      return response.success && response.data.valid
-    }
-    catch (error) {
-      console.error('Token verification failed:', error)
-      return false
-    }
-  }
-
-  async function loadAuthFromCookie() {
-    if (authCookie.value) {
-      const { username: storedUsername, token: storedToken, timestamp } = authCookie.value
-
-      // 检查 token 是否过期（24小时）
-      const now = Date.now()
-      const tokenAge = now - timestamp
-      const maxAge = 24 * 60 * 60 * 1000 // 24小时
-
-      if (tokenAge < maxAge) {
-        username.value = storedUsername
-        token.value = storedToken
-
-        const isValid = await verifyAuthToken()
-        if (!isValid) {
-          username.value = null
-          token.value = null
-          authCookie.value = null
-        }
-      }
-      else {
-        authCookie.value = null
-      }
-    }
+    if (tokenAge > maxAge)
+      authCookie.value = null
   }
 
   function setAuth(user: string, authToken: string) {
-    username.value = user
-    token.value = authToken
     authCookie.value = {
       username: user,
       token: authToken,
@@ -75,8 +36,6 @@ export function useAuth() {
   }
 
   function logout() {
-    username.value = null
-    token.value = null
     authCookie.value = null
   }
 

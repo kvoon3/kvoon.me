@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   if (!username || !password) {
     throw createError({
       statusCode: 400,
-      message: 'Username and password cannot be empty',
+      statusMessage: 'Username and password cannot be empty',
     })
   }
 
@@ -29,13 +29,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const result = await registerUser(username, password)
-    .catch((error: any) => {
-      console.error('Database error in register:', error)
-      throw createError({
-        statusCode: 500,
-        message: 'Database error occurred',
-      })
-    })
 
   return {
     success: true,
@@ -50,7 +43,10 @@ async function registerUser(username: string, password: string) {
   // Check if user already exists
   const exists = await redis.get(REDIS_KEYS.PASSWORD(username))
   if (exists) {
-    throw new Error('Account already exists')
+    throw createError({
+      statusCode: 409,
+      statusMessage: 'Account already exists',
+    })
   }
 
   // Hash password

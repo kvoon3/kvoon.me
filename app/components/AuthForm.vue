@@ -35,7 +35,7 @@ async function handleLogin() {
   loginError.value = ''
 
   try {
-    const response = await $fetch('/api/auth/login', {
+    const response = await $fetch('/api/public/auth/login', {
       method: 'POST',
       body: {
         username: loginForm.value.username,
@@ -81,7 +81,7 @@ async function handleRegister() {
   registerError.value = ''
 
   try {
-    const response = await $fetch('/api/auth/register', {
+    const response = await $fetch('/api/public/auth/register', {
       method: 'POST',
       body: {
         username: registerForm.value.username,
@@ -90,7 +90,7 @@ async function handleRegister() {
     })
 
     if (response.success) {
-      const loginResponse = await $fetch('/api/auth/login', {
+      const loginResponse = await $fetch('/api/public/auth/login', {
         method: 'POST',
         body: {
           username: registerForm.value.username,

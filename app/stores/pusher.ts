@@ -145,7 +145,7 @@ export const usePusherStore = defineStore('Pusher', () => {
         options.headers = auth.getAuthHeaders()
       }
 
-      const response = await $fetch('/api/chat/messages', options)
+      const response = await $fetch('/api/public/chat/messages', options)
 
       if (response.success) {
         messages.value = response.data.messages
