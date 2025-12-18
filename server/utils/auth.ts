@@ -95,3 +95,17 @@ export async function getOnlineUserCount() {
     return 0
   }
 }
+
+/**
+ * Verify user token
+ */
+export async function verifyToken(username: string, token: string): Promise<boolean> {
+  try {
+    const storedToken = await redis.get(REDIS_KEYS.USER_TOKEN(username, token))
+    return !!storedToken
+  }
+  catch (error) {
+    console.error('Failed to verify token:', error)
+    return false
+  }
+}

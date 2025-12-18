@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image',
     '@pinia/nuxt',
+    'reka-ui/nuxt',
   ],
 
   devtools: { enabled: true },

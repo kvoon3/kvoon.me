@@ -6,6 +6,8 @@ import {
   DialogPortal,
   DialogRoot,
 } from 'reka-ui'
+import AuthModal from './AuthModal.vue'
+import Toast from './Toast.vue'
 
 const {
   newMessage,
@@ -27,6 +29,8 @@ const {
 
 const messagesEnd = ref<HTMLElement>()
 const showOnlineUsers = ref(false)
+const showAuthModal = shallowRef(false)
+const showErrorToast = ref(false)
 
 function scrollToBottom() {
   nextTick(() => {
@@ -38,6 +42,12 @@ function scrollToBottom() {
 watch(formattedMessages, () => {
   scrollToBottom()
 }, { deep: true })
+
+watch(error, (newError) => {
+  if (newError) {
+    showErrorToast.value = true
+  }
+}, { immediate: true })
 
 function handleLogout() {
   logout()
@@ -64,12 +74,17 @@ onUnmounted(() => {
         <h1 class="text-2xl font-bold text-black dark:text-white m-0">
           Chat
         </h1>
-        <div class="border border-neutral-300 dark:border-neutral-700 rounded-full px-4 py-1 font-mono text-sm">
-          <span class="text-black dark:text-white">{{ isConnected ? 'connected' : 'connecting...' }}</span>
-        </div>
       </div>
       <div class="flex items-center gap-4">
-        <div v-if="username" class="flex items-center gap-3">
+        <div v-if="!isAuthenticated" class="flex items-center gap-3">
+          <button
+            class="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded hover:opacity-90 transition-opacity"
+            @click="showAuthModal = true"
+          >
+            Sign In
+          </button>
+        </div>
+        <div v-else class="flex items-center gap-3">
           <span class="font-medium text-black dark:text-white">{{ username }}</span>
           <button
             class="px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -110,10 +125,6 @@ onUnmounted(() => {
 
       <div class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 overflow-y-auto p-6">
-          <div v-if="error" class="bg-black dark:bg-white text-white dark:text-black px-4 py-3 rounded mb-4 text-sm">
-            {{ error }}
-          </div>
-
           <div v-if="isLoading && formattedMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-base">
             Loading...
           </div>
@@ -133,7 +144,20 @@ onUnmounted(() => {
           <div ref="messagesEnd" class="h-1 shrink-0" />
         </div>
 
-        <div class="p-6 border-t border-neutral-200 dark:border-neutral-800">
+        <div v-if="!isAuthenticated" class="p-6 border-t border-neutral-200 dark:border-neutral-800">
+          <div class="text-center py-8">
+            <p class="text-neutral-500 dark:text-neutral-400 mb-4">
+              Sign in to join the conversation
+            </p>
+            <button
+              class="px-6 py-3 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
+              @click="showAuthModal = true"
+            >
+              Sign In to Chat
+            </button>
+          </div>
+        </div>
+        <div v-else class="p-6 border-t border-neutral-200 dark:border-neutral-800">
           <ChatInput
             v-model:message="newMessage"
             :disabled="!isConnected || isLoading"
@@ -192,5 +216,11 @@ onUnmounted(() => {
         </DialogContent>
       </DialogPortal>
     </DialogRoot>
+    <AuthModal v-model:open="showAuthModal" />
+    <Toast
+      v-model:open="showErrorToast"
+      :description="error || ''"
+      variant="destructive"
+    />
   </div>
 </template>
