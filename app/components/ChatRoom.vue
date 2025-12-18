@@ -1,11 +1,4 @@
 <script setup lang="ts">
-import {
-  DialogClose,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
-} from 'reka-ui'
 import AuthModal from './AuthModal.vue'
 import Toast from './Toast.vue'
 
@@ -170,52 +163,34 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <DialogRoot v-model:open="showOnlineUsers">
-      <DialogPortal>
-        <DialogOverlay class="fixed inset-0 bg-black/50" />
-        <DialogContent class="fixed position-center bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-full max-w-md p-0">
-          <div class="p-6 border-b border-neutral-200 dark:border-neutral-800">
-            <div class="flex justify-between items-center">
-              <h2 class="text-xl font-bold text-black dark:text-white">
-                Online Users
-              </h2>
-              <DialogClose class="text-neutral-500 hover:text-black dark:hover:text-white">
-                <span class="sr-only">Close</span>
-                ×
-              </DialogClose>
-            </div>
-            <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-              {{ onlineUsers.length }} users online
-            </p>
+    <TheModal v-model:open="showOnlineUsers" title="Online Users" max-width="max-w-md">
+      <div class="space-y-3">
+        <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+          {{ onlineUsers.length }} users online
+        </p>
+        <div
+          v-for="user in onlineUsers"
+          :key="user"
+          class="flex items-center gap-3 p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+        >
+          <div class="w-8 h-8 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-semibold text-sm shrink-0 rounded-full">
+            {{ user.charAt(0).toUpperCase() }}
           </div>
-          <div class="p-6">
-            <div class="space-y-3">
-              <div
-                v-for="user in onlineUsers"
-                :key="user"
-                class="flex items-center gap-3 p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              >
-                <div class="w-8 h-8 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-semibold text-sm shrink-0 rounded-full">
-                  {{ user.charAt(0).toUpperCase() }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-medium text-black dark:text-white truncate">
-                    {{ user }}
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-neutral-500" />
-                    <span class="text-xs text-neutral-500 dark:text-neutral-400">online</span>
-                  </div>
-                </div>
-              </div>
-              <div v-if="onlineUsers.length === 0" class="text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
-                No users online
-              </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-medium text-black dark:text-white truncate">
+              {{ user }}
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-neutral-500" />
+              <span class="text-xs text-neutral-500 dark:text-neutral-400">online</span>
             </div>
           </div>
-        </DialogContent>
-      </DialogPortal>
-    </DialogRoot>
+        </div>
+        <div v-if="onlineUsers.length === 0" class="text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
+          No users online
+        </div>
+      </div>
+    </TheModal>
     <AuthModal v-model:open="showAuthModal" />
     <Toast
       v-model:open="showErrorToast"
