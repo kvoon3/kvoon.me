@@ -34,8 +34,8 @@ function handleChannelSwitch(channelId: ChannelId) {
               <DialogTitle class="text-lg font-semibold text-black dark:text-white">
                 Channels
               </DialogTitle>
-              <DialogDescription v-show="false">
-                Select a channel
+              <DialogDescription class="sr-only">
+                Select a channel to view messages
               </DialogDescription>
               <DialogClose
                 class="rounded-full p-1 op50 hover:op75 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-300"

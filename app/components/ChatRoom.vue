@@ -36,10 +36,6 @@ async function handleChannelSwitch(channelId: ChannelId) {
   await switchChannel(channelId)
 }
 
-function handleDrawerChannelSwitch(channelId: ChannelId) {
-  handleChannelSwitch(channelId)
-}
-
 function scrollToBottom() {
   nextTick(() => {
     if (messagesEnd.value) {
@@ -205,7 +201,7 @@ onUnmounted(() => {
     <ChannelDrawer
       v-model:open="showChannelDrawer"
       :current-channel-id="currentChannelId"
-      @switch-channel="handleDrawerChannelSwitch"
+      @switch-channel="handleChannelSwitch"
     />
 
     <TheModal v-model:open="showOnlineUsers" title="Online Users" max-width="max-w-md">
