@@ -1,21 +1,21 @@
-import type { ChatMessageEvent, UserTypingEvent } from '#shared/pusher'
-import { PUSHER_CHANNELS, PUSHER_EVENTS } from '#shared/pusher'
+import type { ChannelId, ChatMessageEvent, UserTypingEvent } from '#shared/pusher'
+import { getPusherChannelName, PUSHER_EVENTS } from '#shared/pusher'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import Pusher from 'pusher-js'
 
 export const usePusherStore = defineStore('Pusher', () => {
   const auth = useAuth()
   const channel = ref<any>(null)
-  const pusher = ref<Pusher | null>(null)
+  const pusher = shallowRef<Pusher | null>(null)
+
   const isConnected = ref(false)
+  const currentChannelId = ref<ChannelId>('GENERAL')
   const messages = ref<ChatMessageEvent[]>([])
   const onlineUsers = ref<string[]>([])
   const typingUsers = ref<string[]>([])
 
-  connect()
-
   function connect() {
-    if (!auth.isAuthenticated.value || !import.meta.browser) {
+    if (!auth.isAuthenticated.value || !import.meta.browser || pusher.value) {
       return
     }
 
@@ -29,7 +29,7 @@ export const usePusherStore = defineStore('Pusher', () => {
     }
 
     try {
-      pusher.value = new Pusher(pusherKey, {
+      const value = new Pusher(pusherKey, {
         cluster: pusherCluster,
         channelAuthorization: {
           endpoint: '/api/chat/pusher-auth',
@@ -40,65 +40,88 @@ export const usePusherStore = defineStore('Pusher', () => {
           },
         },
       })
+      pusher.value = value
 
-      // 订阅频道
-      channel.value = pusher.value.subscribe(PUSHER_CHANNELS.PRESENCE_CHATROOM)
+      // Subscribe to channel
+      subscribeToChannel(currentChannelId.value)
 
-      // 监听连接状态
+      // Monitor connection status
       pusher.value.connection.bind('state_change', (states: any) => {
         isConnected.value = states.current === 'connected'
       })
 
-      // 监听连接成功
+      // Monitor connection success
       pusher.value.connection.bind('connected', () => {
         isConnected.value = true
-      })
-
-      // 监听订阅错误
-      channel.value.bind('pusher:subscription_error', (error: any) => {
-        console.error('Pusher subscription error:', error)
-      })
-
-      // 监听消息事件
-      channel.value.bind(PUSHER_EVENTS.CHAT_MESSAGE, (data: ChatMessageEvent) => {
-        messages.value.push(data)
-      })
-
-      // 监听用户加入（Pusher presence 事件）
-      channel.value.bind('pusher:member_added', (member: any) => {
-        const username = member.id
-        if (!onlineUsers.value.includes(username)) {
-          onlineUsers.value.push(username)
-        }
-      })
-
-      // 监听用户离开（Pusher presence 事件）
-      channel.value.bind('pusher:member_removed', (member: any) => {
-        const username = member.id
-        onlineUsers.value = onlineUsers.value.filter(user => user !== username)
-      })
-
-      // 监听订阅成功，获取当前在线用户
-      channel.value.bind('pusher:subscription_succeeded', (members: any) => {
-        // 初始化在线用户列表
-        onlineUsers.value = Object.keys(members.members || {})
-      })
-
-      // 监听用户正在输入（客户端事件）
-      channel.value.bind(`client-${PUSHER_EVENTS.USER_TYPING}`, (data: UserTypingEvent) => {
-        if (data.isTyping) {
-          if (!typingUsers.value.includes(data.username)) {
-            typingUsers.value.push(data.username)
-          }
-        }
-        else {
-          typingUsers.value = typingUsers.value.filter(user => user !== data.username)
-        }
       })
     }
     catch (error) {
       console.error('Failed to connect to Pusher:', error)
     }
+  }
+
+  function subscribeToChannel(channelId: ChannelId) {
+    if (!pusher.value)
+      return
+
+    // Unsubscribe from the old channel
+    if (channel.value) {
+      channel.value.unbind_all()
+      channel.value.unsubscribe()
+    }
+
+    // Reset state
+    messages.value = []
+    onlineUsers.value = []
+    typingUsers.value = []
+
+    // Subscribe to the new channel
+    const channelName = getPusherChannelName(channelId)
+    channel.value = pusher.value.subscribe(channelName)
+
+    // Monitor subscription errors
+    channel.value.bind('pusher:subscription_error', (error: any) => {
+      console.error('Pusher subscription error:', error)
+    })
+
+    // Monitor message events
+    channel.value.bind(PUSHER_EVENTS.CHAT_MESSAGE, (data: ChatMessageEvent) => {
+      messages.value.push(data)
+    })
+
+    // Monitor user join (Pusher presence event)
+    channel.value.bind('pusher:member_added', (member: any) => {
+      const username = member.id
+      if (!onlineUsers.value.includes(username)) {
+        onlineUsers.value.push(username)
+      }
+    })
+
+    // Monitor user leave (Pusher presence event)
+    channel.value.bind('pusher:member_removed', (member: any) => {
+      const username = member.id
+      onlineUsers.value = onlineUsers.value.filter(user => user !== username)
+    })
+
+    // Monitor subscription success, get current online users and fetch messages
+    channel.value.bind('pusher:subscription_succeeded', async (members: any) => {
+      // Initialize online users list
+      onlineUsers.value = Object.keys(members.members || {})
+
+      await fetchMessages()
+    })
+
+    // Monitor user typing (client event)
+    channel.value.bind(`client-${PUSHER_EVENTS.USER_TYPING}`, (data: UserTypingEvent) => {
+      if (data.isTyping) {
+        if (!typingUsers.value.includes(data.username)) {
+          typingUsers.value.push(data.username)
+        }
+      }
+      else {
+        typingUsers.value = typingUsers.value.filter(user => user !== data.username)
+      }
+    })
   }
 
   function disconnect() {
@@ -123,7 +146,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       const response = await $fetch('/api/chat/send', {
         method: 'POST',
         headers: auth.getAuthHeaders(),
-        body: { content },
+        body: { content, channelId: currentChannelId.value },
       })
 
       return response
@@ -137,10 +160,10 @@ export const usePusherStore = defineStore('Pusher', () => {
   async function fetchMessages(limit: number = 50) {
     try {
       const options: any = {
-        query: { limit },
+        query: { limit, channelId: currentChannelId.value },
       }
 
-      // 只有在用户已认证时才发送认证头
+      // Only send auth headers when user is authenticated
       if (auth.isAuthenticated.value) {
         options.headers = auth.getAuthHeaders()
       }
@@ -156,14 +179,22 @@ export const usePusherStore = defineStore('Pusher', () => {
     }
   }
 
+  async function switchChannel(channelId: ChannelId) {
+    if (currentChannelId.value === channelId) {
+      return
+    }
+
+    currentChannelId.value = channelId
+    subscribeToChannel(channelId)
+    // fetchMessages will be called in pusher:subscription_succeeded event
+  }
+
   async function setTyping(isTyping: boolean) {
     if (!auth.isAuthenticated.value) {
       return
     }
 
     try {
-      // 这里可以调用 API 或直接通过 Pusher 发送
-      // 简化处理：直接通过 Pusher 发送
       if (channel.value) {
         channel.value.trigger(`client-${PUSHER_EVENTS.USER_TYPING}`, {
           username: auth.username.value,
@@ -176,23 +207,24 @@ export const usePusherStore = defineStore('Pusher', () => {
     }
   }
 
-  watch(() => auth.isAuthenticated.value, (authenticated) => {
+  watch([auth.isAuthenticated, currentChannelId], (authenticated) => {
     if (authenticated) {
       connect()
     }
     else {
       disconnect()
     }
-  })
+  }, { immediate: true })
 
-  // onUnmounted(() => {
-  //   disconnect()
-  // })
+  onUnmounted(() => {
+    disconnect()
+  })
 
   return {
     pusher,
     channel,
     isConnected,
+    currentChannelId,
     messages,
     onlineUsers,
     typingUsers,
@@ -201,6 +233,7 @@ export const usePusherStore = defineStore('Pusher', () => {
     sendMessage,
     fetchMessages,
     setTyping,
+    switchChannel,
   }
 })
 

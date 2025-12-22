@@ -3,8 +3,9 @@ import { useAuth } from './useAuth'
 
 export function useChat() {
   const auth = useAuth()
-  const pusher = usePusherStore()
-  const { messages, onlineUsers, typingUsers, isConnected } = storeToRefs(pusher)
+  const pusherStore = usePusherStore()
+
+  const { messages, onlineUsers, typingUsers, isConnected, currentChannelId } = storeToRefs(pusherStore)
 
   const newMessage = ref('')
   const isLoading = ref(false)
@@ -38,7 +39,7 @@ export function useChat() {
     error.value = null
 
     try {
-      await pusher.sendMessage(newMessage.value)
+      await pusherStore.sendMessage(newMessage.value)
       newMessage.value = ''
     }
     catch (err: any) {
@@ -53,7 +54,7 @@ export function useChat() {
   const loadMessages = async () => {
     isLoading.value = true
     try {
-      await pusher.fetchMessages(50)
+      await pusherStore.fetchMessages(50)
     }
     catch (err: any) {
       console.error('err', err)
@@ -68,7 +69,7 @@ export function useChat() {
   let typingTimeout: NodeJS.Timeout | null = null
   const handleInput = () => {
     // Set typing status
-    pusher.setTyping(true)
+    pusherStore.setTyping(true)
 
     // Clear previous timeout
     if (typingTimeout) {
@@ -77,7 +78,7 @@ export function useChat() {
 
     // Clear typing status after 3 seconds
     typingTimeout = setTimeout(() => {
-      pusher.setTyping(false)
+      pusherStore.setTyping(false)
     }, 3000)
   }
 
@@ -93,7 +94,7 @@ export function useChat() {
     if (typingTimeout) {
       clearTimeout(typingTimeout)
     }
-    pusher.setTyping(false)
+    pusherStore.setTyping(false)
   }
 
   return {
@@ -107,6 +108,7 @@ export function useChat() {
     otherTypingUsers,
     isAuthenticated: auth.isAuthenticated,
     username: auth.username,
+    currentChannelId,
 
     // Pusher state
     isConnected,
@@ -117,6 +119,7 @@ export function useChat() {
     loadMessages,
     handleInput,
     cleanup,
+    switchChannel: pusherStore.switchChannel,
 
     // Auth methods
     login: auth.setAuth,

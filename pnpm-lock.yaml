@@ -75,6 +75,9 @@ importers:
       '@antfu/eslint-config':
         specifier: ^6.7.1
         version: 6.7.1(@unocss/eslint-plugin@66.5.10(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3))(@vue/compiler-sfc@3.5.25)(eslint-plugin-format@1.1.0(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3)
+      '@antfu/utils':
+        specifier: ^9.3.0
+        version: 9.3.0
       '@iconify-json/carbon':
         specifier: ^1.2.15
         version: 1.2.15

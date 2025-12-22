@@ -1,10 +1,12 @@
-import { PUSHER_CHANNELS, PUSHER_EVENTS } from '#shared/pusher'
+import type { ChannelId } from '#shared/pusher'
+import { getPusherChannelName, PUSHER_EVENTS } from '#shared/pusher'
 import { redis, REDIS_KEYS } from '#shared/redis'
 
 export default defineEventHandler(async (event) => {
   const { username } = event.context.user
-  const { content } = await readBody<{
+  const { content, channelId = 'GENERAL' } = await readBody<{
     content: string
+    channelId?: string
   }>(event).catch((error: any) => {
     throw createError({
       statusCode: 400,
@@ -12,13 +14,13 @@ export default defineEventHandler(async (event) => {
     })
   })
 
-  const message = await sendChatMessage(username, content)
+  const message = await sendChatMessage(username, content, channelId)
 
   // Trigger Pusher event
-  await pusher.trigger(PUSHER_CHANNELS.PRESENCE_CHATROOM, PUSHER_EVENTS.CHAT_MESSAGE, message)
+  const pusherChannel = getPusherChannelName(channelId as ChannelId)
+  await pusher.trigger(pusherChannel, PUSHER_EVENTS.CHAT_MESSAGE, message)
     .catch((error: any) => {
       console.error('Pusher error in send message:', error)
-      // Don't throw error for Pusher failure, just log it
     })
 
   return {
@@ -27,10 +29,7 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-/**
- * Send chat message
- */
-async function sendChatMessage(username: string, content: string) {
+async function sendChatMessage(username: string, content: string, channelId: string) {
   if (!content.trim()) {
     throw createError({
       statusCode: 400,
@@ -39,8 +38,7 @@ async function sendChatMessage(username: string, content: string) {
   }
 
   try {
-    // Generate message ID
-    const messageId = await redis.incr(REDIS_KEYS.LAST_MESSAGE_ID)
+    const messageId = await redis.incr(REDIS_KEYS.LAST_MESSAGE_ID(channelId))
     const timestamp = Date.now()
 
     const message = {
@@ -48,14 +46,10 @@ async function sendChatMessage(username: string, content: string) {
       username,
       content: content.trim(),
       timestamp,
+      channelId,
     }
 
-    // Store to Redis Sorted Set (using timestamp as score)
-    await redis.zadd(REDIS_KEYS.MESSAGES, { score: timestamp, member: JSON.stringify(message) })
-
-    // Limit message history count (keep recent 1000 messages)
-    // Temporarily commented out, testing basic functionality first
-    // await redis.zremrangebyrank(REDIS_KEYS.MESSAGES, 0, -1001)
+    await redis.zadd(REDIS_KEYS.MESSAGES(channelId), { score: timestamp, member: JSON.stringify(message) })
 
     return message
   }

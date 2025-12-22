@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ChannelId } from '#shared/pusher'
+import { channels } from '#shared/pusher'
 import AuthModal from './AuthModal.vue'
 import Toast from './Toast.vue'
 
@@ -13,17 +15,25 @@ const {
   username,
   isConnected,
   onlineUsers,
+  currentChannelId,
 
   sendMessage,
   loadMessages,
   cleanup,
   logout,
+  switchChannel,
 } = useChat()
 
 const messagesEnd = ref<HTMLElement>()
 const showOnlineUsers = ref(false)
 const showAuthModal = shallowRef(false)
 const showErrorToast = ref(false)
+
+async function handleChannelSwitch(channelId: ChannelId) {
+  if (currentChannelId.value === channelId)
+    return
+  await switchChannel(channelId)
+}
 
 function scrollToBottom() {
   nextTick(() => {
@@ -65,7 +75,7 @@ onUnmounted(() => {
     <div class="flex justify-between items-center px-6 py-4 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
       <div class="flex items-center gap-4">
         <h1 class="text-2xl font-bold text-black dark:text-white m-0">
-          Chat
+          #{{ channels.find(c => c.id === currentChannelId)?.name }}
         </h1>
       </div>
       <div class="flex items-center gap-4">
@@ -97,21 +107,23 @@ onUnmounted(() => {
 
     <div class="flex flex-1 min-h-0 overflow-hidden">
       <div class="w-64 shrink-0 border-r border-neutral-200 dark:border-neutral-800">
-        <!-- Channel panel will go here -->
+        <!-- Channel panel -->
         <div class="p-4">
           <h3 class="text-sm font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">
             Channels
           </h3>
           <div class="space-y-1">
-            <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
-              #General
-            </div>
-            <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
-              #Random
-            </div>
-            <div class="px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white">
-              #@kvoon
-            </div>
+            <button
+              v-for="channel in channels"
+              :key="channel.id"
+              class="w-full text-left px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-black dark:text-white transition-colors"
+              :class="{
+                'bg-neutral-200 dark:bg-neutral-700 font-semibold': currentChannelId === channel.id,
+              }"
+              @click="handleChannelSwitch(channel.id)"
+            >
+              #{{ channel.name }}
+            </button>
           </div>
         </div>
       </div>

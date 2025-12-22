@@ -1,17 +1,15 @@
 import { redis, REDIS_KEYS } from '#shared/redis'
 
 export default defineEventHandler(async (event) => {
-  // Get query parameters
   const query = getQuery(event)
   const limit = Number.parseInt(query.limit as string) || 50
   const offset = Number.parseInt(query.offset as string) || 0
+  const channelId = (query.channelId as string) || 'GENERAL'
 
-  // Limit maximum count
   const safeLimit = Math.min(limit, 100)
   const safeOffset = Math.max(offset, 0)
 
-  // Get messages
-  const messages = await getChatMessages(safeLimit, safeOffset)
+  const messages = await getChatMessages(channelId, safeLimit, safeOffset)
 
   return {
     success: true,
@@ -24,16 +22,10 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-/**
- * Get chat message history
- */
-async function getChatMessages(limit: number = 50, offset: number = 0) {
+async function getChatMessages(channelId: string, limit: number = 50, offset: number = 0) {
   try {
-    // Get latest messages (sorted by timestamp descending)
-    // Upstash Redis uses zrange with REV option
-    const messages = await redis.zrange(REDIS_KEYS.MESSAGES, offset, offset + limit - 1, { rev: true })
+    const messages = await redis.zrange(REDIS_KEYS.MESSAGES(channelId), offset, offset + limit - 1, { rev: true })
 
-    // If messages is empty array or undefined, return empty array
     if (!messages || !Array.isArray(messages)) {
       return []
     }
@@ -45,7 +37,6 @@ async function getChatMessages(limit: number = 50, offset: number = 0) {
             return JSON.parse(msg)
           }
           else if (msg && typeof msg === 'object') {
-            // If already an object, return directly
             return msg
           }
           return null
@@ -57,7 +48,7 @@ async function getChatMessages(limit: number = 50, offset: number = 0) {
       })
       .filter(Boolean)
 
-    return parsedMessages.reverse() // Reverse back to chronological order
+    return parsedMessages.reverse()
   }
   catch (error: any) {
     console.error('Database error in getChatMessages:', error)

@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
 
   const { username } = event.context.user
 
-  // For presence channels, need to provide user data
   const presenceData = {
     user_id: username,
     user_info: {
@@ -20,7 +19,6 @@ export default defineEventHandler(async (event) => {
     },
   }
 
-  // Generate authentication response
   const authResponse = pusher?.authorizeChannel(socketId, channelName, presenceData)
   return authResponse
 })

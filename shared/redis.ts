@@ -18,8 +18,8 @@ export const REDIS_KEYS = {
   USER_TOKEN: (username: string, token: string) => `chat:token:user:${username}:${token}`,
   ONLINE_USER: (username: string) => `chat:online:${username}`,
 
-  MESSAGES: 'chat:messages',
-  LAST_MESSAGE_ID: 'chat:last_message_id',
+  MESSAGES: (channelId: string) => `chat:messages:${channelId}`,
+  LAST_MESSAGE_ID: (channelId: string) => `chat:last_message_id:${channelId}`,
   TYPING: (username: string) => `chat:typing:${username}`,
 } as const
 
