@@ -81,9 +81,9 @@ onUnmounted(() => {
       <div class="flex items-center gap-2 md:gap-4">
         <!-- Mobile menu button -->
         <button
+          aria-label="Open channels"
           class="md:hidden p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           @click="showChannelDrawer = true"
-          aria-label="Open channels"
         >
           <svg
             class="w-5 h-5 text-black dark:text-white"
