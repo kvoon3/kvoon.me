@@ -2,6 +2,7 @@
 import type { ChannelId } from '#shared/pusher'
 import { channels } from '#shared/pusher'
 import AuthModal from './AuthModal.vue'
+import ChannelDrawer from './ChannelDrawer.vue'
 import Toast from './Toast.vue'
 
 const {

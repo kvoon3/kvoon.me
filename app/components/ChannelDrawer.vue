@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import type { ChannelId } from '#shared/pusher'
 import { channels } from '#shared/pusher'
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from 'reka-ui'
 
 defineProps<{
   currentChannelId: ChannelId
