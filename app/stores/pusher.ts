@@ -7,6 +7,8 @@ interface ChannelState {
   messages: ChatMessageEvent[]
   onlineUsers: string[]
   typingUsers: string[]
+  hasMore: boolean
+  isLoadingMore: boolean
 }
 
 export const usePusherStore = defineStore('Pusher', () => {
@@ -26,6 +28,8 @@ export const usePusherStore = defineStore('Pusher', () => {
         messages: [],
         onlineUsers: [],
         typingUsers: [],
+        hasMore: true,
+        isLoadingMore: false,
       }
     }
     return channelStates.value[channelId]
@@ -34,6 +38,8 @@ export const usePusherStore = defineStore('Pusher', () => {
   const messages = computed(() => getChannelState(currentChannelId.value).messages)
   const onlineUsers = computed(() => getChannelState(currentChannelId.value).onlineUsers)
   const typingUsers = computed(() => getChannelState(currentChannelId.value).typingUsers)
+  const hasMore = computed(() => getChannelState(currentChannelId.value).hasMore)
+  const isLoadingMore = computed(() => getChannelState(currentChannelId.value).isLoadingMore)
 
   function connect() {
     if (!auth.isAuthenticated.value || !import.meta.browser || pusher.value) {
@@ -213,7 +219,7 @@ export const usePusherStore = defineStore('Pusher', () => {
     }
   }
 
-  async function fetchMessages(limit: number = 50) {
+  async function fetchMessages(limit: number = 20) {
     try {
       const options: any = {
         query: { limit, channelId: currentChannelId.value },
@@ -228,10 +234,48 @@ export const usePusherStore = defineStore('Pusher', () => {
       if (response.success) {
         const state = getChannelState(currentChannelId.value)
         state.messages = response.data.messages
+        state.hasMore = response.data.hasMore
       }
     }
     catch (error) {
       console.error('Failed to fetch messages:', error)
+    }
+  }
+
+  async function loadMoreMessages() {
+    const state = getChannelState(currentChannelId.value)
+
+    if (!state.hasMore || state.isLoadingMore) {
+      return
+    }
+
+    state.isLoadingMore = true
+
+    try {
+      const options: any = {
+        query: {
+          limit: 20,
+          offset: state.messages.length,
+          channelId: currentChannelId.value,
+        },
+      }
+
+      if (auth.isAuthenticated.value) {
+        options.headers = auth.getAuthHeaders()
+      }
+
+      const response = await $fetch('/api/public/chat/messages', options)
+
+      if (response.success) {
+        state.messages = [...response.data.messages, ...state.messages]
+        state.hasMore = response.data.hasMore
+      }
+    }
+    catch (error) {
+      console.error('Failed to load more messages:', error)
+    }
+    finally {
+      state.isLoadingMore = false
     }
   }
 
@@ -294,11 +338,14 @@ export const usePusherStore = defineStore('Pusher', () => {
     messages,
     onlineUsers,
     typingUsers,
+    hasMore,
+    isLoadingMore,
     isAIResponding,
     connect,
     disconnect,
     sendMessage,
     fetchMessages,
+    loadMoreMessages,
     setTyping,
     switchChannel,
   }

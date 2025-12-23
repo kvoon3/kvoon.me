@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   message: {
+    id: string
     username: string
     content: string
     time: string
@@ -12,7 +13,11 @@ defineProps<{
 </script>
 
 <template>
-  <div class="w-full animate-fade-in" :class="[message.isAI ? 'text-left' : message.isOwn ? 'text-right' : 'text-left']">
+  <div
+    class="w-full animate-fade-in"
+    :class="[message.isAI ? 'text-left' : message.isOwn ? 'text-right' : 'text-left']"
+    :data-message-id="message.id"
+  >
     <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1" :class="[message.isAI ? 'justify-start' : message.isOwn ? 'justify-end' : 'justify-start']">
       <span v-if="message.isAI">🤖</span>
       <span>{{ message.username }}</span>

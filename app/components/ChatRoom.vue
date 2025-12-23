@@ -18,9 +18,12 @@ const {
   onlineUsers,
   currentChannelId,
   isAIResponding,
+  hasMore,
+  isLoadingMore,
 
   sendMessage,
   loadMessages,
+  loadMoreMessages,
   cleanup,
   logout,
   switchChannel,
@@ -31,11 +34,15 @@ const showOnlineUsers = ref(false)
 const showAuthModal = shallowRef(false)
 const showErrorToast = ref(false)
 const showChannelDrawer = ref(false)
+const oldestVisibleMessageId = ref<string | null>(null)
 
 async function handleChannelSwitch(channelId: ChannelId) {
   if (currentChannelId.value === channelId)
     return
   await switchChannel(channelId)
+  nextTick(() => {
+    scrollToBottom()
+  })
 }
 
 function scrollToBottom() {
@@ -45,8 +52,22 @@ function scrollToBottom() {
     }
   })
 }
-watch(formattedMessages, () => {
-  scrollToBottom()
+
+watch(formattedMessages, (newMessages, oldMessages) => {
+  if (oldestVisibleMessageId.value) {
+    return
+  }
+
+  if (!oldMessages || newMessages.length > oldMessages.length) {
+    const isNewMessageAtEnd = oldMessages
+      && newMessages.length > 0
+      && oldMessages.length > 0
+      && newMessages[newMessages.length - 1]?.id !== oldMessages[oldMessages.length - 1]?.id
+
+    if (!oldMessages || isNewMessageAtEnd) {
+      scrollToBottom()
+    }
+  }
 }, { deep: true })
 
 watch(error, (newError) => {
@@ -62,9 +83,32 @@ function handleLogout() {
 function handleTyping(_isTyping: boolean) {
 }
 
+async function handleLoadMore() {
+  const firstMessage = formattedMessages.value[0]
+  if (firstMessage) {
+    oldestVisibleMessageId.value = firstMessage.id
+  }
+
+  await loadMoreMessages()
+
+  nextTick(() => {
+    if (oldestVisibleMessageId.value) {
+      const element = document.querySelector(`[data-message-id="${oldestVisibleMessageId.value}"]`)
+      if (element) {
+        element.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      }
+      oldestVisibleMessageId.value = null
+    }
+  })
+}
+
 onMounted(() => {
-  if (isAuthenticated) {
-    loadMessages()
+  if (isAuthenticated.value) {
+    loadMessages().then(() => {
+      nextTick(() => {
+        scrollToBottom()
+      })
+    })
   }
 })
 
@@ -163,6 +207,17 @@ onUnmounted(() => {
           </div>
 
           <div v-else class="space-y-4 md:space-y-6">
+            <!-- Load More button -->
+            <div v-if="hasMore" class="flex justify-center">
+              <button
+                :disabled="isLoadingMore"
+                class="px-3 py-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="handleLoadMore"
+              >
+                {{ isLoadingMore ? 'Loading...' : 'Load more' }}
+              </button>
+            </div>
+
             <ChatMessage
               v-for="message in formattedMessages"
               :key="message.id"

@@ -2,7 +2,7 @@ import { redis, REDIS_KEYS } from '#shared/redis'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const limit = Number.parseInt(query.limit as string) || 50
+  const limit = Number.parseInt(query.limit as string) || 20
   const offset = Number.parseInt(query.offset as string) || 0
   const channelId = (query.channelId as string) || 'GENERAL'
 

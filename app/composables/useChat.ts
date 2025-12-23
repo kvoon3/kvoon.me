@@ -5,7 +5,7 @@ export function useChat() {
   const auth = useAuth()
   const pusherStore = usePusherStore()
 
-  const { messages, onlineUsers, typingUsers, isConnected, currentChannelId, isAIResponding } = storeToRefs(pusherStore)
+  const { messages, onlineUsers, typingUsers, isConnected, currentChannelId, isAIResponding, hasMore, isLoadingMore } = storeToRefs(pusherStore)
 
   const newMessage = ref('')
   const isLoading = ref(false)
@@ -54,7 +54,7 @@ export function useChat() {
   const loadMessages = async () => {
     isLoading.value = true
     try {
-      await pusherStore.fetchMessages(50)
+      await pusherStore.fetchMessages(20)
     }
     catch (err: any) {
       console.error('err', err)
@@ -62,6 +62,16 @@ export function useChat() {
     }
     finally {
       isLoading.value = false
+    }
+  }
+
+  const loadMoreMessages = async () => {
+    try {
+      await pusherStore.loadMoreMessages()
+    }
+    catch (err: any) {
+      console.error('err', err)
+      error.value = 'Failed to load more messages'
     }
   }
 
@@ -110,6 +120,8 @@ export function useChat() {
     username: auth.username,
     currentChannelId,
     isAIResponding,
+    hasMore,
+    isLoadingMore,
 
     // Pusher state
     isConnected,
@@ -118,6 +130,7 @@ export function useChat() {
     // Methods
     sendMessage,
     loadMessages,
+    loadMoreMessages,
     handleInput,
     cleanup,
     switchChannel: pusherStore.switchChannel,
