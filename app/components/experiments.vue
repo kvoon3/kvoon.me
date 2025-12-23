@@ -7,7 +7,7 @@ interface Experiment {
   tags: string[]
 }
 
-const { experiments } = withDefaults(defineProps<{
+withDefaults(defineProps<{
   experiments?: Experiment[]
 }>(), {
   experiments: () => [],
