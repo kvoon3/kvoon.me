@@ -3,6 +3,12 @@ import { getPusherChannelName, PUSHER_EVENTS } from '#shared/pusher'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import Pusher from 'pusher-js'
 
+interface ChannelState {
+  messages: ChatMessageEvent[]
+  onlineUsers: string[]
+  typingUsers: string[]
+}
+
 export const usePusherStore = defineStore('Pusher', () => {
   const auth = useAuth()
   const channel = ref<any>(null)
@@ -10,11 +16,24 @@ export const usePusherStore = defineStore('Pusher', () => {
 
   const isConnected = ref(false)
   const currentChannelId = ref<ChannelId>('GENERAL')
-  const messages = ref<ChatMessageEvent[]>([])
-  const onlineUsers = ref<string[]>([])
-  const typingUsers = ref<string[]>([])
+  const channelStates = ref<Record<string, ChannelState>>({})
   const isAIResponding = ref(false)
   let pendingMessageId = 0
+
+  function getChannelState(channelId: ChannelId): ChannelState {
+    if (!channelStates.value[channelId]) {
+      channelStates.value[channelId] = {
+        messages: [],
+        onlineUsers: [],
+        typingUsers: [],
+      }
+    }
+    return channelStates.value[channelId]
+  }
+
+  const messages = computed(() => getChannelState(currentChannelId.value).messages)
+  const onlineUsers = computed(() => getChannelState(currentChannelId.value).onlineUsers)
+  const typingUsers = computed(() => getChannelState(currentChannelId.value).typingUsers)
 
   function connect() {
     if (!auth.isAuthenticated.value || !import.meta.browser || pusher.value) {
@@ -70,10 +89,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       channel.value.unsubscribe()
     }
 
-    // Reset state
-    messages.value = []
-    onlineUsers.value = []
-    typingUsers.value = []
+    const state = getChannelState(channelId)
 
     // Subscribe to the new channel
     const channelName = getPusherChannelName(channelId)
@@ -86,53 +102,53 @@ export const usePusherStore = defineStore('Pusher', () => {
 
     // Monitor message events
     channel.value.bind(PUSHER_EVENTS.CHAT_MESSAGE, (data: ChatMessageEvent) => {
-      // If this is an AI response, clear the responding state
       if (data.isAI) {
         isAIResponding.value = false
       }
 
-      // Remove pending message if this is from the same user
-      const pendingIndex = messages.value.findIndex(
+      const pendingIndex = state.messages.findIndex(
         msg => msg.isPending && msg.username === data.username && msg.content === data.content,
       )
       if (pendingIndex !== -1) {
-        messages.value.splice(pendingIndex, 1)
+        state.messages.splice(pendingIndex, 1)
       }
 
-      messages.value.push(data)
+      state.messages.push(data)
     })
 
     // Monitor user join (Pusher presence event)
     channel.value.bind('pusher:member_added', (member: any) => {
       const username = member.id
-      if (!onlineUsers.value.includes(username)) {
-        onlineUsers.value.push(username)
+      if (!state.onlineUsers.includes(username)) {
+        state.onlineUsers.push(username)
       }
     })
 
     // Monitor user leave (Pusher presence event)
     channel.value.bind('pusher:member_removed', (member: any) => {
       const username = member.id
-      onlineUsers.value = onlineUsers.value.filter(user => user !== username)
+      state.onlineUsers = state.onlineUsers.filter(user => user !== username)
     })
 
     // Monitor subscription success, get current online users and fetch messages
     channel.value.bind('pusher:subscription_succeeded', async (members: any) => {
-      // Initialize online users list
-      onlineUsers.value = Object.keys(members.members || {})
+      state.onlineUsers = Object.keys(members.members || {})
 
-      await fetchMessages()
+      // Only fetch messages if channel has no cached messages
+      if (state.messages.length === 0) {
+        await fetchMessages()
+      }
     })
 
     // Monitor user typing (client event)
     channel.value.bind(`client-${PUSHER_EVENTS.USER_TYPING}`, (data: UserTypingEvent) => {
       if (data.isTyping) {
-        if (!typingUsers.value.includes(data.username)) {
-          typingUsers.value.push(data.username)
+        if (!state.typingUsers.includes(data.username)) {
+          state.typingUsers.push(data.username)
         }
       }
       else {
-        typingUsers.value = typingUsers.value.filter(user => user !== data.username)
+        state.typingUsers = state.typingUsers.filter(user => user !== data.username)
       }
     })
   }
@@ -158,7 +174,8 @@ export const usePusherStore = defineStore('Pusher', () => {
     const trimmedContent = content.trim()
     const isAIMention = trimmedContent.toLowerCase().startsWith('@kvoon')
 
-    // Add optimistic message
+    const state = getChannelState(currentChannelId.value)
+
     pendingMessageId += 1
     const optimisticMessage: ChatMessageEvent = {
       id: `pending_${pendingMessageId}`,
@@ -168,9 +185,8 @@ export const usePusherStore = defineStore('Pusher', () => {
       channelId: currentChannelId.value,
       isPending: true,
     }
-    messages.value.push(optimisticMessage)
+    state.messages.push(optimisticMessage)
 
-    // Set AI responding state if mentioning AI
     if (isAIMention) {
       isAIResponding.value = true
     }
@@ -185,9 +201,10 @@ export const usePusherStore = defineStore('Pusher', () => {
       return response
     }
     catch (error) {
-      // Remove optimistic message on error
-      messages.value = messages.value.filter(msg => msg.id !== optimisticMessage.id)
-      // Clear AI responding state on error
+      const index = state.messages.findIndex(msg => msg.id === optimisticMessage.id)
+      if (index !== -1) {
+        state.messages.splice(index, 1)
+      }
       if (isAIMention) {
         isAIResponding.value = false
       }
@@ -202,7 +219,6 @@ export const usePusherStore = defineStore('Pusher', () => {
         query: { limit, channelId: currentChannelId.value },
       }
 
-      // Only send auth headers when user is authenticated
       if (auth.isAuthenticated.value) {
         options.headers = auth.getAuthHeaders()
       }
@@ -210,7 +226,8 @@ export const usePusherStore = defineStore('Pusher', () => {
       const response = await $fetch('/api/public/chat/messages', options)
 
       if (response.success) {
-        messages.value = response.data.messages
+        const state = getChannelState(currentChannelId.value)
+        state.messages = response.data.messages
       }
     }
     catch (error) {
@@ -223,17 +240,17 @@ export const usePusherStore = defineStore('Pusher', () => {
       return
     }
 
+    // Clear non-persistent state for old channel
+    const oldState = getChannelState(currentChannelId.value)
+    oldState.onlineUsers = []
+    oldState.typingUsers = []
+
     currentChannelId.value = channelId
 
     if (auth.isAuthenticated.value && pusher.value) {
       subscribeToChannel(channelId)
-      // fetchMessages will be called in pusher:subscription_succeeded event
     }
     else {
-      // For unauthenticated users, just clear state and fetch messages
-      messages.value = []
-      onlineUsers.value = []
-      typingUsers.value = []
       await fetchMessages()
     }
   }
