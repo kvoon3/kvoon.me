@@ -2,7 +2,7 @@
   "name": "kvoon.me",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.26.0",
+  "packageManager": "pnpm@10.26.1",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -38,7 +38,7 @@
     "zdog": "^1.1.3"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.7.1",
+    "@antfu/eslint-config": "^6.7.3",
     "@antfu/utils": "^9.3.0",
     "@iconify-json/carbon": "^1.2.15",
     "@iconify-json/logos": "^1.2.10",
@@ -55,7 +55,7 @@
     "eslint-plugin-format": "^1.1.0",
     "lint-staged": "^16.2.7",
     "simple-git-hooks": "^2.13.1",
-    "vue-tsc": "^3.1.8"
+    "vue-tsc": "^3.2.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
