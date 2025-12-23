@@ -6,6 +6,7 @@ defineProps<{
     time: string
     isOwn: boolean
     isAI?: boolean
+    isPending?: boolean
   }
 }>()
 </script>
@@ -18,13 +19,14 @@ defineProps<{
       <span v-if="message.isAI" class="text-xs bg-[#a0f0ec]/20 text-[#00a89d] dark:text-[#a0f0ec] px-1.5 py-0.5 rounded">AI</span>
     </div>
     <div
-      class="inline-block max-w-[80%] rounded p-3"
+      class="inline-block max-w-[80%] rounded p-3 transition-all duration-300"
       :class="[
         message.isAI
           ? 'bg-[#a0f0ec]/10 dark:bg-[#a0f0ec]/10 text-black dark:text-white border border-[#a0f0ec]/40 dark:border-[#a0f0ec]/40'
           : message.isOwn
             ? 'bg-black dark:bg-white text-white dark:text-black'
             : 'bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white',
+        message.isPending && 'animate-pulse opacity-70',
       ]"
     >
       <div class="break-words leading-relaxed">

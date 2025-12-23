@@ -5,6 +5,7 @@ export interface ChatMessageEvent {
   timestamp: number
   channelId?: string
   isAI?: boolean
+  isPending?: boolean
 }
 
 export interface UserJoinedEvent {

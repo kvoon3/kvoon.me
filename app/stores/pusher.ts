@@ -13,6 +13,8 @@ export const usePusherStore = defineStore('Pusher', () => {
   const messages = ref<ChatMessageEvent[]>([])
   const onlineUsers = ref<string[]>([])
   const typingUsers = ref<string[]>([])
+  const isAIResponding = ref(false)
+  let pendingMessageId = 0
 
   function connect() {
     if (!auth.isAuthenticated.value || !import.meta.browser || pusher.value) {
@@ -84,6 +86,19 @@ export const usePusherStore = defineStore('Pusher', () => {
 
     // Monitor message events
     channel.value.bind(PUSHER_EVENTS.CHAT_MESSAGE, (data: ChatMessageEvent) => {
+      // If this is an AI response, clear the responding state
+      if (data.isAI) {
+        isAIResponding.value = false
+      }
+
+      // Remove pending message if this is from the same user
+      const pendingIndex = messages.value.findIndex(
+        msg => msg.isPending && msg.username === data.username && msg.content === data.content,
+      )
+      if (pendingIndex !== -1) {
+        messages.value.splice(pendingIndex, 1)
+      }
+
       messages.value.push(data)
     })
 
@@ -140,16 +155,42 @@ export const usePusherStore = defineStore('Pusher', () => {
       throw new Error('需要认证')
     }
 
+    const trimmedContent = content.trim()
+    const isAIMention = trimmedContent.toLowerCase().startsWith('@kvoon')
+
+    // Add optimistic message
+    pendingMessageId += 1
+    const optimisticMessage: ChatMessageEvent = {
+      id: `pending_${pendingMessageId}`,
+      username: auth.username.value!,
+      content: trimmedContent,
+      timestamp: Date.now(),
+      channelId: currentChannelId.value,
+      isPending: true,
+    }
+    messages.value.push(optimisticMessage)
+
+    // Set AI responding state if mentioning AI
+    if (isAIMention) {
+      isAIResponding.value = true
+    }
+
     try {
       const response = await $fetch('/api/chat/send', {
         method: 'POST',
         headers: auth.getAuthHeaders(),
-        body: { content, channelId: currentChannelId.value },
+        body: { content: trimmedContent, channelId: currentChannelId.value },
       })
 
       return response
     }
     catch (error) {
+      // Remove optimistic message on error
+      messages.value = messages.value.filter(msg => msg.id !== optimisticMessage.id)
+      // Clear AI responding state on error
+      if (isAIMention) {
+        isAIResponding.value = false
+      }
       console.error('Failed to send message:', error)
       throw error
     }
@@ -226,6 +267,7 @@ export const usePusherStore = defineStore('Pusher', () => {
     messages,
     onlineUsers,
     typingUsers,
+    isAIResponding,
     connect,
     disconnect,
     sendMessage,

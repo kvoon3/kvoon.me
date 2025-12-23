@@ -72,6 +72,7 @@ async function sendChatMessage(username: string, content: string, channelId: str
 async function processAIResponse(channelId: string, userMessage: string) {
   try {
     const recentMessages = await redis.zrange(REDIS_KEYS.MESSAGES(channelId), -15, -1)
+    const hasRecentMessages = recentMessages.length > 0
 
     const chatHistory = recentMessages
       .map((msg) => {
@@ -86,11 +87,12 @@ async function processAIResponse(channelId: string, userMessage: string) {
 
     const messageWithoutMention = userMessage.replace(/^@kvoon\s*/i, '').trim()
 
-    if (!messageWithoutMention) {
-      return
-    }
-
-    const aiResponse = await getAIResponse(chatHistory, messageWithoutMention)
+    const aiResponseText = await getAIResponse(
+      chatHistory,
+      messageWithoutMention || hasRecentMessages
+        ? messageWithoutMention // empty string
+        : 'Hi!',
+    )
 
     const messageId = await redis.incr(REDIS_KEYS.LAST_MESSAGE_ID(channelId))
     const timestamp = Date.now()
@@ -98,7 +100,7 @@ async function processAIResponse(channelId: string, userMessage: string) {
     const aiMessage = {
       id: `msg_${messageId}`,
       username: 'kvoon',
-      content: aiResponse,
+      content: aiResponseText,
       timestamp,
       channelId,
       isAI: true,

@@ -136,7 +136,7 @@ onUnmounted(() => {
           class="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed rounded-l-none focus:outline-none flex items-center justify-center gap-2"
         >
           <span v-if="isSending" class="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
-          <span>{{ isSending ? 'Sending...' : 'Send' }}</span>
+          <span v-else>Send</span>
         </button>
       </div>
     </form>

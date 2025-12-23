@@ -17,6 +17,7 @@ const {
   isConnected,
   onlineUsers,
   currentChannelId,
+  isAIResponding,
 
   sendMessage,
   loadMessages,
@@ -167,6 +168,21 @@ onUnmounted(() => {
               :key="message.id"
               :message="message"
             />
+
+            <!-- AI placeholder message -->
+            <div v-if="isAIResponding" class="w-full animate-fade-in text-left">
+              <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1 justify-start">
+                <span>🤖</span>
+                <span>kvoon</span>
+                <span class="text-xs bg-[#a0f0ec]/20 text-[#00a89d] dark:text-[#a0f0ec] px-1.5 py-0.5 rounded">AI</span>
+              </div>
+              <div class="inline-block max-w-[80%] rounded p-3 bg-[#a0f0ec]/10 dark:bg-[#a0f0ec]/10 text-black dark:text-white border border-[#a0f0ec]/40 dark:border-[#a0f0ec]/40 animate-pulse">
+                <div class="flex items-center gap-2">
+                  <div class="i-svg-spinners:wind-toy text-2xl text-[#00a89d] dark:text-[#a0f0ec]" />
+                  <span class="text-neutral-500 dark:text-neutral-400">Thinking...</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div ref="messagesEnd" class="h-1 shrink-0" />

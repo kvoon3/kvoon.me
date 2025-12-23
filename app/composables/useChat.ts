@@ -5,7 +5,7 @@ export function useChat() {
   const auth = useAuth()
   const pusherStore = usePusherStore()
 
-  const { messages, onlineUsers, typingUsers, isConnected, currentChannelId } = storeToRefs(pusherStore)
+  const { messages, onlineUsers, typingUsers, isConnected, currentChannelId, isAIResponding } = storeToRefs(pusherStore)
 
   const newMessage = ref('')
   const isLoading = ref(false)
@@ -109,6 +109,7 @@ export function useChat() {
     isAuthenticated: auth.isAuthenticated,
     username: auth.username,
     currentChannelId,
+    isAIResponding,
 
     // Pusher state
     isConnected,
