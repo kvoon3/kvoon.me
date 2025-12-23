@@ -224,8 +224,18 @@ export const usePusherStore = defineStore('Pusher', () => {
     }
 
     currentChannelId.value = channelId
-    subscribeToChannel(channelId)
-    // fetchMessages will be called in pusher:subscription_succeeded event
+
+    if (auth.isAuthenticated.value && pusher.value) {
+      subscribeToChannel(channelId)
+      // fetchMessages will be called in pusher:subscription_succeeded event
+    }
+    else {
+      // For unauthenticated users, just clear state and fetch messages
+      messages.value = []
+      onlineUsers.value = []
+      typingUsers.value = []
+      await fetchMessages()
+    }
   }
 
   async function setTyping(isTyping: boolean) {
