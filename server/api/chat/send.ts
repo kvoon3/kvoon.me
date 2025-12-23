@@ -1,6 +1,6 @@
 import type { ChannelId } from '#shared/pusher'
 import { getPusherChannelName, PUSHER_EVENTS } from '#shared/pusher'
-import { redis, REDIS_KEYS } from '#shared/redis'
+import { MESSAGE_TTL, redis, REDIS_KEYS } from '#shared/redis'
 
 export default defineEventHandler(async (event) => {
   const { username } = event.context.user
@@ -57,6 +57,7 @@ async function sendChatMessage(username: string, content: string, channelId: str
     }
 
     await redis.zadd(REDIS_KEYS.MESSAGES(channelId), { score: timestamp, member: JSON.stringify(message) })
+    await redis.expire(REDIS_KEYS.MESSAGES(channelId), MESSAGE_TTL)
 
     return message
   }
@@ -110,6 +111,7 @@ async function processAIResponse(channelId: string, userMessage: string) {
       score: timestamp,
       member: JSON.stringify(aiMessage),
     })
+    await redis.expire(REDIS_KEYS.MESSAGES(channelId), MESSAGE_TTL)
 
     const pusherChannel = getPusherChannelName(channelId as ChannelId)
     if (pusherChannel) {
@@ -136,6 +138,7 @@ async function processAIResponse(channelId: string, userMessage: string) {
         score: timestamp,
         member: JSON.stringify(errorMessage),
       })
+      await redis.expire(REDIS_KEYS.MESSAGES(channelId), MESSAGE_TTL)
 
       const pusherChannel = getPusherChannelName(channelId as ChannelId)
       if (pusherChannel) {

@@ -35,3 +35,4 @@ export const TOKEN_TTL = TOKEN_TTL_DAYS * 24 * 60 * 60
 export const GRACE_PERIOD = TOKEN_GRACE_DAYS * 24 * 60 * 60
 export const ONLINE_TTL = 5 * 60
 export const TYPING_TTL = 3
+export const MESSAGE_TTL = 1 * 24 * 60 * 60
