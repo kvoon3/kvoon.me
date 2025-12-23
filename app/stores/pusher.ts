@@ -19,9 +19,7 @@ export const usePusherStore = defineStore('Pusher', () => {
       return
     }
 
-    const config = useRuntimeConfig()
-    const pusherKey = config.public.pusherKey
-    const pusherCluster = config.public.pusherCluster
+    const { pusherKey, pusherCluster } = useRuntimeConfig()
 
     if (!pusherKey || !pusherCluster) {
       console.warn('Pusher environment variables are not set')

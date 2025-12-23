@@ -68,9 +68,10 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    public: {
-      pusherKey: import.meta.env.PUSHER_KEY,
-      pusherCluster: import.meta.env.PUSHER_CLUSTER,
-    },
+    deepseekApiKey: '',
+    deepseekBaseUrl: '',
+
+    pusherKey: '',
+    pusherCluster: '',
   },
 })
