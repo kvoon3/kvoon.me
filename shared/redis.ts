@@ -1,16 +1,21 @@
 import { Redis } from '@upstash/redis'
 
-const redisUrl = import.meta.env.UPSTASH_REDIS_REST_URL
-const redisToken = import.meta.env.UPSTASH_REDIS_REST_TOKEN
+function getRedisInstance() {
+  const config = useRuntimeConfig()
+  const redisUrl = config.upstashRedisRestUrl
+  const redisToken = config.upstashRedisRestToken
 
-if (!redisUrl || !redisToken) {
-  throw new Error('Missing Upstash Redis environment variables')
+  if (!redisUrl || !redisToken) {
+    throw new Error('Missing Upstash Redis environment variables')
+  }
+
+  return new Redis({
+    url: redisUrl,
+    token: redisToken,
+  })
 }
 
-export const redis = new Redis({
-  url: redisUrl,
-  token: redisToken,
-})
+export const redis = getRedisInstance()
 
 export const REDIS_KEYS = {
   PASSWORD: (username: string) => `chat:password:${username}`,
@@ -23,7 +28,10 @@ export const REDIS_KEYS = {
   TYPING: (username: string) => `chat:typing:${username}`,
 } as const
 
-export const TOKEN_TTL = 90 * 24 * 60 * 60
-export const GRACE_PERIOD = 365 * 24 * 60 * 60
+export const TOKEN_TTL_DAYS = Number(useRuntimeConfig().tokenTtlDays) || 90
+export const TOKEN_GRACE_DAYS = Number(useRuntimeConfig().tokenGraceDays) || 365
+
+export const TOKEN_TTL = TOKEN_TTL_DAYS * 24 * 60 * 60
+export const GRACE_PERIOD = TOKEN_GRACE_DAYS * 24 * 60 * 60
 export const ONLINE_TTL = 5 * 60
-export const TYPING_TTL = 3 // secends
+export const TYPING_TTL = 3

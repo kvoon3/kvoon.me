@@ -68,10 +68,21 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    upstashRedisRestUrl: '',
+    upstashRedisRestToken: '',
+
+    pusherAppId: '',
+    pusherSecret: '',
+
+    tokenTtlDays: '90',
+    tokenGraceDays: '365',
+
     deepseekApiKey: '',
     deepseekBaseUrl: '',
 
-    pusherKey: '',
-    pusherCluster: '',
+    public: {
+      pusherKey: '',
+      pusherCluster: '',
+    },
   },
 })

@@ -53,8 +53,12 @@ export function getChannelById(id: ChannelId) {
   return channels.find(channel => channel.id === id)
 }
 
-export function getPusherChannelName(channelId: ChannelId) {
-  return getChannelById(channelId)?.pusherKey
+export function getPusherChannelName(channelId: ChannelId): string {
+  const channel = getChannelById(channelId)
+  if (!channel) {
+    throw new Error(`Channel not found: ${channelId}`)
+  }
+  return channel.pusherKey
 }
 
 export interface PusherEventMap {

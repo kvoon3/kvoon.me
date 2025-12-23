@@ -19,16 +19,16 @@ export const usePusherStore = defineStore('Pusher', () => {
       return
     }
 
-    const { pusherKey, pusherCluster } = useRuntimeConfig()
+    const config = useRuntimeConfig()
 
-    if (!pusherKey || !pusherCluster) {
+    if (!config.public.pusherKey || !config.public.pusherCluster) {
       console.warn('Pusher environment variables are not set')
       return
     }
 
     try {
-      const value = new Pusher(pusherKey, {
-        cluster: pusherCluster,
+      const value = new Pusher(config.public.pusherKey, {
+        cluster: config.public.pusherCluster,
         channelAuthorization: {
           endpoint: '/api/chat/pusher-auth',
           transport: 'ajax',
