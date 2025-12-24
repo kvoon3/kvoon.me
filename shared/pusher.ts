@@ -46,6 +46,11 @@ export const channels = [
     name: 'Help',
     pusherKey: 'presence-chatroom-help',
   },
+  {
+    id: 'AI',
+    name: 'AI',
+    pusherKey: null,
+  },
 ] as const
 
 export type ChannelId = typeof channels[number]['id']
@@ -54,12 +59,16 @@ export function getChannelById(id: ChannelId) {
   return channels.find(channel => channel.id === id)
 }
 
-export function getPusherChannelName(channelId: ChannelId): string {
+export function getPusherChannelName(channelId: ChannelId): string | null {
   const channel = getChannelById(channelId)
   if (!channel) {
     throw new Error(`Channel not found: ${channelId}`)
   }
   return channel.pusherKey
+}
+
+export function isAIChannel(channelId: ChannelId): boolean {
+  return channelId === 'AI'
 }
 
 export interface PusherEventMap {

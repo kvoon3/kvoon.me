@@ -29,16 +29,34 @@ const {
   switchChannel,
 } = useChat()
 
+const aiChatStore = useAIChatStore()
+const { messages: aiMessages, isLoading: aiIsLoading, isSending: aiIsSending, isStreaming: aiIsStreaming } = storeToRefs(aiChatStore)
+
+const isAIChannel = computed(() => currentChannelId.value === 'AI')
+
+const displayMessages = computed(() => {
+  if (isAIChannel.value) {
+    return aiMessages.value
+  }
+  return formattedMessages.value
+})
+
 const messagesEnd = ref<HTMLElement>()
 const showOnlineUsers = ref(false)
 const showAuthModal = shallowRef(false)
 const showErrorToast = ref(false)
 const showChannelDrawer = ref(false)
 const oldestVisibleMessageId = ref<string | null>(null)
+const newAIMessage = ref('')
 
 async function handleChannelSwitch(channelId: ChannelId) {
   if (currentChannelId.value === channelId)
     return
+
+  if (channelId === 'AI' && isAuthenticated.value) {
+    await aiChatStore.fetchMessages()
+  }
+
   await switchChannel(channelId)
   nextTick(() => {
     scrollToBottom()
@@ -54,7 +72,7 @@ function scrollToBottom() {
 }
 
 watch(formattedMessages, (newMessages, oldMessages) => {
-  if (oldestVisibleMessageId.value) {
+  if (isAIChannel.value || oldestVisibleMessageId.value) {
     return
   }
 
@@ -67,6 +85,12 @@ watch(formattedMessages, (newMessages, oldMessages) => {
     if (!oldMessages || isNewMessageAtEnd) {
       scrollToBottom()
     }
+  }
+}, { deep: true })
+
+watch(aiMessages, () => {
+  if (isAIChannel.value) {
+    scrollToBottom()
   }
 }, { deep: true })
 
@@ -102,9 +126,38 @@ async function handleLoadMore() {
   })
 }
 
+async function handleAISendMessage() {
+  if (!newAIMessage.value?.trim()) {
+    return
+  }
+
+  const msg = newAIMessage.value.trim()
+  await aiChatStore.sendMessage(msg)
+  newAIMessage.value = ''
+}
+
+const showClearConfirm = ref(false)
+
+async function handleClearAIHistory() {
+  showClearConfirm.value = true
+}
+
+async function confirmClearHistory() {
+  try {
+    await aiChatStore.clearHistory()
+    showClearConfirm.value = false
+  }
+  catch (error) {
+    console.error('Failed to clear history:', error)
+  }
+}
+
 onMounted(() => {
   if (isAuthenticated.value) {
-    loadMessages().then(() => {
+    (isAIChannel.value
+      ? aiChatStore.fetchMessages()
+      : loadMessages()
+    ).then(() => {
       nextTick(() => {
         scrollToBottom()
       })
@@ -121,7 +174,6 @@ onUnmounted(() => {
   <div class="flex flex-col min-h-0 flex-1">
     <div class="flex justify-between items-center px-4 md:px-6 py-3 md:py-4 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
       <div class="flex items-center gap-2 md:gap-4">
-        <!-- Mobile menu button -->
         <button
           aria-label="Open channels"
           class="md:hidden p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -145,7 +197,7 @@ onUnmounted(() => {
           #{{ channels.find(c => c.id === currentChannelId)?.name }}
         </h1>
       </div>
-      <div class="flex items-center gap-2 md:gap-4">
+      <div class="flex items-center gap-2 md:gap-3">
         <div v-if="!isAuthenticated" class="flex items-center gap-2 md:gap-3">
           <button
             class="px-3 md:px-4 py-1.5 md:py-2 bg-black dark:bg-white text-white dark:text-black rounded text-sm md:text-base hover:opacity-90 transition-opacity"
@@ -157,12 +209,20 @@ onUnmounted(() => {
         <div v-else class="flex items-center gap-2 md:gap-3">
           <span class="font-medium text-black dark:text-white text-sm md:text-base hidden sm:inline">{{ username }}</span>
           <button
+            v-if="isAIChannel"
+            class="px-2 md:px-3 py-1 text-xs border border-neutral-300 dark:border-neutral-700 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            @click="handleClearAIHistory"
+          >
+            Clear History
+          </button>
+          <button
             class="px-2 md:px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-xs md:text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             @click="handleLogout"
           >
             Logout
           </button>
           <button
+            v-if="!isAIChannel"
             class="px-2 md:px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-xs md:text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             @click="showOnlineUsers = true"
           >
@@ -198,17 +258,29 @@ onUnmounted(() => {
 
       <div class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 overflow-y-auto p-4 md:p-6">
-          <div v-if="isLoading && formattedMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-sm md:text-base">
+          <div v-if="(isAIChannel ? aiIsLoading : isLoading) && displayMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-sm md:text-base">
             Loading...
           </div>
 
-          <div v-else-if="formattedMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-sm md:text-base">
-            No messages yet. Start chatting!
+          <div v-else-if="displayMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-sm md:text-base">
+            <div class="text-center">
+              <div v-if="isAIChannel" class="space-y-2">
+                <div class="text-2xl">
+                  🤖
+                </div>
+                <div>Start a conversation with AI!</div>
+                <div class="text-xs">
+                  Your conversations are private and stored securely.
+                </div>
+              </div>
+              <div v-else>
+                No messages yet. Start chatting!
+              </div>
+            </div>
           </div>
 
           <div v-else class="space-y-4 md:space-y-6">
-            <!-- Load More button -->
-            <div v-if="hasMore" class="flex justify-center">
+            <div v-if="hasMore && !isAIChannel" class="flex justify-center">
               <button
                 :disabled="isLoadingMore"
                 class="px-3 py-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -218,14 +290,22 @@ onUnmounted(() => {
               </button>
             </div>
 
-            <ChatMessage
-              v-for="message in formattedMessages"
-              :key="message.id"
-              :message="message"
-            />
+            <template v-if="isAIChannel">
+              <AIChatMessage
+                v-for="message in aiMessages"
+                :key="message.id"
+                :message="message"
+              />
+            </template>
+            <template v-else>
+              <ChatMessage
+                v-for="message in formattedMessages"
+                :key="message.id"
+                :message="message"
+              />
+            </template>
 
-            <!-- AI placeholder message -->
-            <div v-if="isAIResponding" class="w-full animate-fade-in text-left">
+            <div v-if="isAIResponding && !isAIChannel" class="w-full animate-fade-in text-left">
               <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1 justify-start">
                 <span>🤖</span>
                 <span>kvoon</span>
@@ -258,6 +338,7 @@ onUnmounted(() => {
         </div>
         <div v-else class="p-4 md:p-6 border-t border-neutral-200 dark:border-neutral-800">
           <ChatInput
+            v-if="!isAIChannel"
             v-model:message="newMessage"
             :disabled="!isConnected || isLoading"
             :is-sending="isSending"
@@ -265,6 +346,24 @@ onUnmounted(() => {
             @send="sendMessage"
             @typing="handleTyping"
           />
+          <div v-else class="flex flex-col gap-2">
+            <form class="flex rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-700 focus-within:shadow-highlight" @submit.prevent="handleAISendMessage">
+              <input
+                v-model="newAIMessage"
+                :disabled="aiIsSending || aiIsStreaming"
+                placeholder="Ask AI anything..."
+                class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none caret-[#a0f0eccd]"
+              >
+              <button
+                type="submit"
+                :disabled="aiIsSending || aiIsStreaming || !newAIMessage?.trim()"
+                class="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed rounded-l-none focus:outline-none flex items-center justify-center gap-2"
+              >
+                <span v-if="aiIsSending || aiIsStreaming" class="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                <span v-else>Send</span>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -304,6 +403,29 @@ onUnmounted(() => {
         </div>
       </div>
     </TheModal>
+
+    <TheModal v-model:open="showClearConfirm" title="Clear Chat History" max-width="max-w-md">
+      <div class="space-y-4">
+        <p class="text-sm text-neutral-600 dark:text-neutral-300">
+          Are you sure you want to clear your AI chat history? This action cannot be undone.
+        </p>
+        <div class="flex gap-3 justify-end">
+          <button
+            class="px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-sm"
+            @click="showClearConfirm = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
+            @click="confirmClearHistory"
+          >
+            Clear History
+          </button>
+        </div>
+      </div>
+    </TheModal>
+
     <AuthModal v-model:open="showAuthModal" />
     <Toast
       v-model:open="showErrorToast"

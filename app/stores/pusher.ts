@@ -89,6 +89,9 @@ export const usePusherStore = defineStore('Pusher', () => {
     if (!pusher.value)
       return
 
+    if (channelId === 'AI')
+      return
+
     // Unsubscribe from the old channel
     if (channel.value) {
       channel.value.unbind_all()
@@ -99,6 +102,9 @@ export const usePusherStore = defineStore('Pusher', () => {
 
     // Subscribe to the new channel
     const channelName = getPusherChannelName(channelId)
+    if (!channelName)
+      return
+
     channel.value = pusher.value.subscribe(channelName)
 
     // Monitor subscription errors

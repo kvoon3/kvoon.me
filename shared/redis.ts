@@ -26,6 +26,9 @@ export const REDIS_KEYS = {
   MESSAGES: (channelId: string) => `chat:messages:${channelId}`,
   LAST_MESSAGE_ID: (channelId: string) => `chat:last_message_id:${channelId}`,
   TYPING: (username: string) => `chat:typing:${username}`,
+
+  AI_CONTEXT: (username: string) => `chat:ai:context:${username}`,
+  AI_LAST_MESSAGE_ID: (username: string) => `chat:ai:last_message_id:${username}`,
 } as const
 
 export const TOKEN_TTL_DAYS = Number(useRuntimeConfig().tokenTtlDays) || 90
