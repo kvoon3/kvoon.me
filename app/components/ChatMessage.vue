@@ -21,13 +21,13 @@ defineProps<{
     <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1" :class="[message.isAI ? 'justify-start' : message.isOwn ? 'justify-end' : 'justify-start']">
       <span v-if="message.isAI">🤖</span>
       <span>{{ message.username }}</span>
-      <span v-if="message.isAI" class="text-xs bg-[#a0f0ec]/20 text-[#00a89d] dark:text-[#a0f0ec] px-1.5 py-0.5 rounded">AI</span>
+      <span v-if="message.isAI" class="text-xs bg-primary/20 text-[#00a89d] dark:text-primary px-1.5 py-0.5 rounded">AI</span>
     </div>
     <div
       class="inline-block max-w-[80%] rounded p-3 transition-all duration-300"
       :class="[
         message.isAI
-          ? 'bg-[#a0f0ec]/10 dark:bg-[#a0f0ec]/10 text-black dark:text-white border border-[#a0f0ec]/40 dark:border-[#a0f0ec]/40'
+          ? 'bg-primary/10 dark:bg-primary/10 text-black dark:text-white border border-primary/40 dark:border-primary/40'
           : message.isOwn
             ? 'bg-black dark:bg-white text-white dark:text-black'
             : 'bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white',

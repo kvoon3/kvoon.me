@@ -80,7 +80,6 @@ const { data, error } = useAsyncData(
 
 <style scoped>
 #icon {
-  --blur-green: #a0f0eccd;
   --blur-min-range: 2px;
   --blur-max-range: 20px;
   animation: blur-loop 5s infinite
@@ -88,7 +87,7 @@ const { data, error } = useAsyncData(
 
 @keyframes blur-loop {
   0% {
-    filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--blur-green))
+    filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--c-primary))
   }
 
   50% {
@@ -96,7 +95,7 @@ const { data, error } = useAsyncData(
   }
 
   100% {
-    filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--blur-green))
+    filter: blur(var(--blur-min-range)) drop-shadow(0 0 var(--blur-max-range) var(--c-primary))
   }
 }
 

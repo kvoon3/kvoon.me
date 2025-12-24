@@ -126,7 +126,7 @@ onUnmounted(() => {
           v-model="message"
           :placeholder="placeholder"
           :disabled="disabled"
-          class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none caret-[#a0f0eccd]"
+          class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none caret-primary"
           @input="handleInputChange"
           @keydown.tab.prevent="showCommandHint && insertCommand()"
         >

@@ -216,17 +216,17 @@ onUnmounted(() => {
             Clear History
           </button>
           <button
-            class="px-2 md:px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-xs md:text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            @click="handleLogout"
-          >
-            Logout
-          </button>
-          <button
             v-if="!isAIChannel"
             class="px-2 md:px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-xs md:text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             @click="showOnlineUsers = true"
           >
-            {{ onlineUsers.length }} <span class="hidden sm:inline">online</span>
+            <span color-primary>{{ onlineUsers.length }}</span> <span class="hidden sm:inline">online</span>
+          </button>
+          <button
+            class="px-2 md:px-3 py-1 border border-neutral-300 dark:border-neutral-700 rounded text-xs md:text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            @click="handleLogout"
+          >
+            Logout
           </button>
         </div>
       </div>
@@ -309,11 +309,11 @@ onUnmounted(() => {
               <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1 justify-start">
                 <span>🤖</span>
                 <span>kvoon</span>
-                <span class="text-xs bg-[#a0f0ec]/20 text-[#00a89d] dark:text-[#a0f0ec] px-1.5 py-0.5 rounded">AI</span>
+                <span class="text-xs bg-primary/20 text-[#00a89d] dark:text-primary px-1.5 py-0.5 rounded">AI</span>
               </div>
-              <div class="inline-block max-w-[80%] rounded p-3 bg-[#a0f0ec]/10 dark:bg-[#a0f0ec]/10 text-black dark:text-white border border-[#a0f0ec]/40 dark:border-[#a0f0ec]/40 animate-pulse">
+              <div class="inline-block max-w-[80%] rounded p-3 bg-primary/10 dark:bg-primary/10 text-black dark:text-white border border-primary/40 dark:border-primary/40 animate-pulse">
                 <div class="flex items-center gap-2">
-                  <div class="i-svg-spinners:wind-toy text-2xl text-[#00a89d] dark:text-[#a0f0ec]" />
+                  <div class="i-svg-spinners:wind-toy text-2xl text-[#00a89d] dark:text-primary" />
                   <span class="text-neutral-500 dark:text-neutral-400">Thinking...</span>
                 </div>
               </div>
@@ -352,7 +352,7 @@ onUnmounted(() => {
                 v-model="newAIMessage"
                 :disabled="aiIsSending || aiIsStreaming"
                 placeholder="Ask AI anything..."
-                class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none caret-[#a0f0eccd]"
+                class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none caret-primary"
               >
               <button
                 type="submit"

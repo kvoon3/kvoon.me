@@ -42,7 +42,7 @@ function toggleColorMode() {
             : 'pixelarticons:monitor'
       "
       px2 py1 border-1 rounded
-      class="bg-$c-primary transition-all duration-200 ease-in-out hover:scale-105"
+      class="transition-all duration-200 ease-in-out hover:scale-105"
       :class="{ 'opacity-70': isTransitioning }"
     />
   </button>

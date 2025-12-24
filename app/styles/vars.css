@@ -1,5 +1,7 @@
 html {
-  --c-primary: #555;
+  --c-base: #555;
+  --c-primary: #029e91cd;
+  /* --c-primary: #a0f0eccd; */
   --c-secondary: #333;
   --c-bg: #fff;
 
@@ -14,7 +16,8 @@ html {
 }
 
 html.dark {
-  --c-primary: #fff;
+  --c-base: #fff;
+  --c-primary: #a0f0eccd;
   --c-secondary: #333;
   --c-bg: #000;
 

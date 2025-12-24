@@ -30,7 +30,7 @@ withDefaults(defineProps<{
       >
         <div flex="~ col gap-4">
           <div flex="~ items-center gap-3">
-            <Icon :name="experiment.icon" size-6 text-primary />
+            <Icon :name="experiment.icon" size-6 />
             <h3 font-medium>
               {{ experiment.name }}
             </h3>

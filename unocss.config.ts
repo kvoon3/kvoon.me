@@ -14,7 +14,7 @@ export default defineConfig({
     ['btn', 'inline-flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-active'],
     ['link', 'text-primary hover:text-active transition-colors'],
     ['icon-btn', 'inline-block flex transition-all duration-300 op-75 hover:op-90 items-center justify-center gap2'],
-    ['color-base', 'color-$c-primary'],
+    ['color-base', 'color-$c-base'],
     ['bg-base', 'bg-$c-bg'],
     ['bg-active', 'bg-neutral:10'],
     ['position-x-center', 'left-1/2 -translate-x-1/2'],
@@ -44,6 +44,11 @@ export default defineConfig({
     }),
     presetTypography(),
   ],
+  theme: {
+    colors: {
+      primary: 'var(--c-primary)',
+    },
+  },
   transformers: [
     transformerVariantGroup(),
     transformerDirectives(),

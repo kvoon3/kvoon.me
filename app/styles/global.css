@@ -5,7 +5,7 @@
 html,
 body,
 #__nuxt {
-  color: var(--c-primary);
+  color: var(--c-base);
   background: var(--c-bg);
   --uno: font-sans;
   height: 100dvh;

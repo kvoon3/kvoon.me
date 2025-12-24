@@ -42,7 +42,7 @@ function isActive(path: string) {
             <NuxtLink
               :to="item.path"
               class="btn" :class="[
-                isActive(item.path) ? 'bg-active text-primary' : '',
+                isActive(item.path) ? 'bg-active' : '',
               ]"
             >
               {{ item.label }}
