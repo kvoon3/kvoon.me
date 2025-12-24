@@ -26,4 +26,4 @@ items:
 ---
 ::
 
-or email me kvoon@duck.com
+or email me <kvoon@duck.com>
