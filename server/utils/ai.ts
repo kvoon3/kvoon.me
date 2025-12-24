@@ -38,7 +38,7 @@ export async function getAIResponse(
   return result.text
 }
 
-function getAIModel(): LanguageModel {
+export function getAIModel(): LanguageModel {
   const config = useRuntimeConfig()
   const provider = config.aiProvider
 
