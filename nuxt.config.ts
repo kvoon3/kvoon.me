@@ -77,8 +77,13 @@ export default defineNuxtConfig({
     tokenTtlDays: '90',
     tokenGraceDays: '365',
 
+    aiProvider: 'mimo',
+
     deepseekApiKey: '',
     deepseekBaseUrl: '',
+
+    openaiApiKey: '',
+    openaiBaseUrl: '',
 
     public: {
       pusherKey: '',

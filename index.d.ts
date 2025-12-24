@@ -11,8 +11,13 @@ declare module 'nuxt/schema' {
     tokenTtlDays: string
     tokenGraceDays: string
 
+    aiProvider: 'mimo' | 'deepseek'
+
     deepseekApiKey: string
     deepseekBaseUrl: string
+
+    openaiApiKey: string
+    openaiBaseUrl: string
   }
 
   interface PublicRuntimeConfig {
