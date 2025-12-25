@@ -291,7 +291,7 @@ onUnmounted(() => {
             </div>
 
             <template v-if="isAIChannel">
-              <AIChatMessage
+              <ChatMessage
                 v-for="message in aiMessages"
                 :key="message.id"
                 :message="message"

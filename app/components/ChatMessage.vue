@@ -1,45 +1,80 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   message: {
     id: string
-    username: string
+    username?: string
     content: string
-    time: string
-    isOwn: boolean
+    time?: string
+    isOwn?: boolean
     isAI?: boolean
     isPending?: boolean
+    role?: 'user' | 'assistant'
+    timestamp?: number
+    isStreaming?: boolean
   }
 }>()
+
+const formattedTime = computed(() => {
+  if (props.message.time)
+    return props.message.time
+  if (props.message.timestamp) {
+    return new Date(props.message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  }
+  return ''
+})
+
+const displayName = computed(() => {
+  if (props.message.username)
+    return props.message.username
+  if (props.message.role === 'user')
+    return 'You'
+  if (props.message.role === 'assistant')
+    return 'kvoon'
+  return ''
+})
+
+const isAIMessage = computed(() => {
+  return props.message.isAI || props.message.role === 'assistant'
+})
+
+const isOwnMessage = computed(() => {
+  return props.message.isOwn || props.message.role === 'user'
+})
 </script>
 
 <template>
   <div
     class="w-full animate-fade-in"
-    :class="[message.isAI ? 'text-left' : message.isOwn ? 'text-right' : 'text-left']"
+    :class="[isAIMessage ? 'text-left' : isOwnMessage ? 'text-right' : 'text-left']"
     :data-message-id="message.id"
   >
-    <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1" :class="[message.isAI ? 'justify-start' : message.isOwn ? 'justify-end' : 'justify-start']">
-      <span v-if="message.isAI">🤖</span>
-      <span>{{ message.username }}</span>
-      <span v-if="message.isAI" class="text-xs bg-primary/20 text-[#00a89d] dark:text-primary px-1.5 py-0.5 rounded">AI</span>
+    <div class="text-sm font-medium text-black dark:text-white mb-1 flex items-center gap-1" :class="[isAIMessage ? 'justify-start' : isOwnMessage ? 'justify-end' : 'justify-start']">
+      <span v-if="isAIMessage">🤖</span>
+      <span>{{ displayName }}</span>
+      <span v-if="isAIMessage" class="text-xs bg-primary/20 text-[#00a89d] dark:text-primary px-1.5 py-0.5 rounded">AI</span>
     </div>
     <div
-      class="inline-block max-w-[80%] rounded p-3 transition-all duration-300"
+      v-if="!isAIMessage"
+      class="inline-block max-w-[80%] rounded p-3 transition-all duration-300 relative overflow-hidden bg-neutral-100/70 dark:bg-black text-black dark:text-white"
       :class="[
-        message.isAI
-          ? 'bg-primary/10 dark:bg-primary/10 text-black dark:text-white border border-primary/40 dark:border-primary/40'
-          : message.isOwn
-            ? 'bg-black dark:bg-white text-white dark:text-black'
-            : 'bg-neutral-100 dark:bg-neutral-800 text-black dark:text-white',
-        message.isPending && 'animate-pulse opacity-70',
+        message.isPending && 'message-pending',
       ]"
     >
-      <div class="break-words leading-relaxed">
+      <div class="break-words leading-relaxed relative z-1">
         {{ message.content }}
       </div>
     </div>
+    <div
+      v-else
+      class="w-full transition-all duration-300"
+    >
+      <div class="break-words leading-relaxed whitespace-pre-wrap">
+        {{ message.content }}
+        <span v-if="message.isStreaming" class="inline-block w-1 h-4 ml-0.5 bg-current animate-pulse" />
+      </div>
+    </div>
     <div class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-      {{ message.time }}
+      {{ formattedTime }}
     </div>
   </div>
 </template>
