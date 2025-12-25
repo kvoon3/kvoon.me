@@ -1,11 +1,5 @@
+import type { UIMessage } from 'ai'
 import { redis, REDIS_KEYS } from '#shared/redis'
-
-interface AIMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: number
-}
 
 export default defineEventHandler(async (event) => {
   const { username } = event.context.user
@@ -22,7 +16,7 @@ export default defineEventHandler(async (event) => {
           return null
         }
       })
-      .filter(Boolean) as AIMessage[]
+      .filter(Boolean) as UIMessage[]
 
     return {
       success: true,

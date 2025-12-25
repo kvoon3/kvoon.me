@@ -1,17 +1,22 @@
 <script setup lang="ts">
+import type { UIMessage } from 'ai'
+
+interface ChatMessageProps {
+  id: string
+  username?: string
+  content?: string
+  time?: string
+  isOwn?: boolean
+  isAI?: boolean
+  isPending?: boolean
+  role?: 'user' | 'assistant' | 'system'
+  timestamp?: number
+  isStreaming?: boolean
+  parts?: UIMessage['parts']
+}
+
 const props = defineProps<{
-  message: {
-    id: string
-    username?: string
-    content: string
-    time?: string
-    isOwn?: boolean
-    isAI?: boolean
-    isPending?: boolean
-    role?: 'user' | 'assistant'
-    timestamp?: number
-    isStreaming?: boolean
-  }
+  message: ChatMessageProps
 }>()
 
 const formattedTime = computed(() => {
@@ -40,6 +45,21 @@ const isAIMessage = computed(() => {
 const isOwnMessage = computed(() => {
   return props.message.isOwn || props.message.role === 'user'
 })
+
+const messageContent = computed(() => {
+  if (props.message.content) {
+    return props.message.content
+  }
+
+  if (props.message.parts) {
+    return props.message.parts
+      .filter(part => part.type === 'text')
+      .map(part => part.type === 'text' ? part.text : '')
+      .join('')
+  }
+
+  return ''
+})
 </script>
 
 <template>
@@ -61,7 +81,7 @@ const isOwnMessage = computed(() => {
       ]"
     >
       <div class="break-words leading-relaxed relative z-1">
-        {{ message.content }}
+        {{ messageContent }}
       </div>
     </div>
     <div
@@ -69,7 +89,7 @@ const isOwnMessage = computed(() => {
       class="w-full transition-all duration-300"
     >
       <div class="break-words leading-relaxed whitespace-pre-wrap">
-        {{ message.content }}
+        {{ messageContent }}
         <span v-if="message.isStreaming" class="inline-block w-1 h-4 ml-0.5 bg-current animate-pulse" />
       </div>
     </div>

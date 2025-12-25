@@ -1,5 +1,6 @@
+import type { UIMessage } from 'ai'
 import { MESSAGE_TTL, redis, REDIS_KEYS } from '#shared/redis'
-import { streamText } from 'ai'
+import { convertToModelMessages, streamText } from 'ai'
 
 const AI_SYSTEM_PROMPT = `You are kvoon, a helpful and friendly AI assistant in a private 1-on-1 chat.
 
@@ -13,104 +14,87 @@ Guidelines:
 
 You're chatting directly with the user in a private conversation. Be helpful, friendly, and engaging!`
 
-interface AIMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: number
-}
+export default defineLazyEventHandler(async () => {
+  const model = getAIModel()
 
-export default defineEventHandler(async (event) => {
-  const { username } = event.context.user
-  const { content } = await readBody<{ content: string }>(event).catch((error: any) => {
-    throw createError({
-      statusCode: 400,
-      message: `Invalid JSON body: ${error.message}`,
+  return defineEventHandler(async (event) => {
+    const { username } = event.context.user
+    const { messages }: { messages: UIMessage[] } = await readBody(event).catch((error: any) => {
+      throw createError({
+        statusCode: 400,
+        message: `Invalid JSON body: ${error.message}`,
+      })
     })
-  })
 
-  if (!content?.trim()) {
-    throw createError({
-      statusCode: 400,
-      message: 'Message content cannot be empty',
-    })
-  }
-
-  const trimmedContent = content.trim()
-
-  try {
-    const messageId = await redis.incr(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
-    const timestamp = Date.now()
-
-    const userMessage: AIMessage = {
-      id: `ai_msg_${messageId}`,
-      role: 'user',
-      content: trimmedContent,
-      timestamp,
+    if (!messages || !Array.isArray(messages)) {
+      throw createError({
+        statusCode: 400,
+        message: 'Messages array is required',
+      })
     }
 
-    await redis.zadd(REDIS_KEYS.AI_CONTEXT(username), {
-      score: timestamp,
-      member: JSON.stringify(userMessage),
-    })
-    await redis.expire(REDIS_KEYS.AI_CONTEXT(username), MESSAGE_TTL)
-
-    const recentMessages = await redis.zrange(REDIS_KEYS.AI_CONTEXT(username), -15, -1)
-    const chatHistory = recentMessages
-      .map((msg) => {
-        try {
-          return typeof msg === 'string' ? JSON.parse(msg) : msg
-        }
-        catch {
-          return null
-        }
-      })
-      .filter(Boolean) as AIMessage[]
-
-    const messages = [
-      { role: 'system', content: AI_SYSTEM_PROMPT },
-      ...chatHistory.map(msg => ({
-        role: msg.role,
-        content: msg.content,
-      })),
-    ] as Array<{ role: 'system' | 'user' | 'assistant', content: string }>
-
-    const result = streamText({
-      model: getAIModel(),
-      messages,
-      temperature: 0.7,
-      async onFinish({ text }) {
-        const aiMessageId = await redis.incr(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
-        const aiTimestamp = Date.now()
-
-        const aiMessage: AIMessage = {
-          id: `ai_msg_${aiMessageId}`,
-          role: 'assistant',
-          content: text,
-          timestamp: aiTimestamp,
-        }
-
-        await redis.zadd(REDIS_KEYS.AI_CONTEXT(username), {
-          score: aiTimestamp,
-          member: JSON.stringify(aiMessage),
+    try {
+      const userMessage = messages[messages.length - 1]
+      if (!userMessage) {
+        throw createError({
+          statusCode: 400,
+          message: 'No message provided',
         })
-        await redis.expire(REDIS_KEYS.AI_CONTEXT(username), MESSAGE_TTL)
+      }
 
-        const allMessages = await redis.zcard(REDIS_KEYS.AI_CONTEXT(username))
-        if (allMessages > 30) {
-          const toRemove = allMessages - 30
-          await redis.zremrangebyrank(REDIS_KEYS.AI_CONTEXT(username), 0, toRemove - 1)
-        }
-      },
-    })
+      const messageId = await redis.incr(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
+      const timestamp = Date.now()
 
-    return result.toTextStreamResponse()
-  }
-  catch (error: any) {
-    console.error('AI stream error:', error)
-    throw createError({
-      statusCode: 500,
-      message: 'Failed to process AI request',
-    })
-  }
+      await redis.zadd(REDIS_KEYS.AI_CONTEXT(username), {
+        score: timestamp,
+        member: JSON.stringify({
+          ...userMessage,
+          id: `ai_msg_${messageId}`,
+          timestamp,
+        }),
+      })
+      await redis.expire(REDIS_KEYS.AI_CONTEXT(username), MESSAGE_TTL)
+
+      const modelMessages = convertToModelMessages(messages)
+
+      const result = streamText({
+        model,
+        system: AI_SYSTEM_PROMPT,
+        messages: modelMessages,
+        temperature: 0.7,
+        async onFinish({ response }) {
+          const aiMessageId = await redis.incr(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
+          const aiTimestamp = Date.now()
+
+          const aiMessage = {
+            id: `ai_msg_${aiMessageId}`,
+            role: 'assistant' as const,
+            parts: response.messages[0]?.content || [],
+            timestamp: aiTimestamp,
+          }
+
+          await redis.zadd(REDIS_KEYS.AI_CONTEXT(username), {
+            score: aiTimestamp,
+            member: JSON.stringify(aiMessage),
+          })
+          await redis.expire(REDIS_KEYS.AI_CONTEXT(username), MESSAGE_TTL)
+
+          const allMessages = await redis.zcard(REDIS_KEYS.AI_CONTEXT(username))
+          if (allMessages > 30) {
+            const toRemove = allMessages - 30
+            await redis.zremrangebyrank(REDIS_KEYS.AI_CONTEXT(username), 0, toRemove - 1)
+          }
+        },
+      })
+
+      return result.toUIMessageStreamResponse()
+    }
+    catch (error: any) {
+      console.error('AI stream error:', error)
+      throw createError({
+        statusCode: 500,
+        message: 'Failed to process AI request',
+      })
+    }
+  })
 })

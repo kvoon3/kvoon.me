@@ -1,16 +1,14 @@
+import type { UIMessage } from 'ai'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
-interface AIMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: number
+interface CustomUIMessage extends UIMessage {
+  timestamp?: number
   isStreaming?: boolean
 }
 
 export const useAIChatStore = defineStore('AIChat', () => {
   const auth = useAuth()
-  const messages = ref<AIMessage[]>([])
+  const messages = ref<CustomUIMessage[]>([])
   const isLoading = ref(false)
   const isSending = ref(false)
   const isStreaming = ref(false)
@@ -48,20 +46,20 @@ export const useAIChatStore = defineStore('AIChat', () => {
     isSending.value = true
 
     const tempUserMessageId = `temp_user_${Date.now()}`
-    const userMessage: AIMessage = {
+    const userMessage: CustomUIMessage = {
       id: tempUserMessageId,
       role: 'user',
-      content: trimmedContent,
+      parts: [{ type: 'text', text: trimmedContent }],
       timestamp: Date.now(),
     }
     messages.value.push(userMessage)
 
     try {
       const tempAiMessageId = `temp_ai_${Date.now()}`
-      const aiMessage: AIMessage = {
+      const aiMessage: CustomUIMessage = {
         id: tempAiMessageId,
         role: 'assistant',
-        content: '',
+        parts: [{ type: 'text', text: '' }],
         timestamp: Date.now(),
         isStreaming: true,
       }
@@ -75,7 +73,7 @@ export const useAIChatStore = defineStore('AIChat', () => {
           'Content-Type': 'application/json',
           ...auth.getAuthHeaders(),
         },
-        body: JSON.stringify({ content: trimmedContent }),
+        body: JSON.stringify({ messages: messages.value }),
       })
 
       if (!response.ok) {
@@ -88,17 +86,45 @@ export const useAIChatStore = defineStore('AIChat', () => {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
+      let buffer = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done)
           break
 
-        const chunk = decoder.decode(value, { stream: true })
-        const messageIndex = messages.value.findIndex(m => m.id === tempAiMessageId)
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
 
-        if (messageIndex !== -1 && messages.value[messageIndex]) {
-          messages.value[messageIndex]!.content += chunk
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (line.startsWith('0:')) {
+            const jsonStr = line.slice(2)
+            try {
+              const data = JSON.parse(jsonStr)
+
+              if (data.type === 'text-delta' && data.textDelta) {
+                const messageIndex = messages.value.findIndex(m => m.id === tempAiMessageId)
+                if (messageIndex !== -1 && messages.value[messageIndex]) {
+                  const msg = messages.value[messageIndex]!
+                  const textPart = msg.parts.find(p => p.type === 'text')
+                  if (textPart && textPart.type === 'text') {
+                    textPart.text += data.textDelta
+                  }
+                }
+              }
+              else if (data.type === 'finish') {
+                const messageIndex = messages.value.findIndex(m => m.id === tempAiMessageId)
+                if (messageIndex !== -1 && messages.value[messageIndex]) {
+                  messages.value[messageIndex]!.isStreaming = false
+                }
+              }
+            }
+            catch (error) {
+              console.error('Failed to parse stream data:', error)
+            }
+          }
         }
       }
 
@@ -112,8 +138,12 @@ export const useAIChatStore = defineStore('AIChat', () => {
 
       const aiMessageIndex = messages.value.findIndex(m => m.id === currentStreamingMessageId.value)
       if (aiMessageIndex !== -1 && messages.value[aiMessageIndex]) {
-        messages.value[aiMessageIndex]!.content = 'Sorry, I encountered an error. Please try again.'
-        messages.value[aiMessageIndex]!.isStreaming = false
+        const msg = messages.value[aiMessageIndex]!
+        const textPart = msg.parts.find(p => p.type === 'text')
+        if (textPart && textPart.type === 'text') {
+          textPart.text = 'Sorry, I encountered an error. Please try again.'
+        }
+        msg.isStreaming = false
       }
     }
     finally {

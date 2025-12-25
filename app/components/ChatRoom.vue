@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ChannelId } from '#shared/pusher'
 import { channels } from '#shared/pusher'
+import { Chat } from '@ai-sdk/vue'
+import { DefaultChatTransport } from 'ai'
 import AuthModal from './AuthModal.vue'
 import ChannelDrawer from './ChannelDrawer.vue'
 import Toast from './Toast.vue'
@@ -29,14 +31,20 @@ const {
   switchChannel,
 } = useChat()
 
-const aiChatStore = useAIChatStore()
-const { messages: aiMessages, isLoading: aiIsLoading, isSending: aiIsSending, isStreaming: aiIsStreaming } = storeToRefs(aiChatStore)
+const auth = useAuth()
+
+const aiChat = new Chat({
+  transport: new DefaultChatTransport({
+    api: '/api/chat/ai/stream',
+    headers: auth.getAuthHeaders(),
+  }),
+})
 
 const isAIChannel = computed(() => currentChannelId.value === 'AI')
 
 const displayMessages = computed(() => {
   if (isAIChannel.value) {
-    return aiMessages.value
+    return aiChat.messages
   }
   return formattedMessages.value
 })
@@ -53,11 +61,12 @@ async function handleChannelSwitch(channelId: ChannelId) {
   if (currentChannelId.value === channelId)
     return
 
-  if (channelId === 'AI' && isAuthenticated.value) {
-    await aiChatStore.fetchMessages()
+  await switchChannel(channelId)
+
+  if (channelId === 'AI') {
+    await loadAIMessages()
   }
 
-  await switchChannel(channelId)
   nextTick(() => {
     scrollToBottom()
   })
@@ -88,7 +97,7 @@ watch(formattedMessages, (newMessages, oldMessages) => {
   }
 }, { deep: true })
 
-watch(aiMessages, () => {
+watch(() => aiChat.messages, () => {
   if (isAIChannel.value) {
     scrollToBottom()
   }
@@ -132,7 +141,7 @@ async function handleAISendMessage() {
   }
 
   const msg = newAIMessage.value.trim()
-  await aiChatStore.sendMessage(msg)
+  await aiChat.sendMessage({ text: msg })
   newAIMessage.value = ''
 }
 
@@ -144,7 +153,11 @@ async function handleClearAIHistory() {
 
 async function confirmClearHistory() {
   try {
-    await aiChatStore.clearHistory()
+    await $fetch('/api/chat/ai/clear', {
+      method: 'POST',
+      headers: auth.getAuthHeaders(),
+    })
+    aiChat.messages = []
     showClearConfirm.value = false
   }
   catch (error) {
@@ -152,10 +165,24 @@ async function confirmClearHistory() {
   }
 }
 
+async function loadAIMessages() {
+  try {
+    const response = await $fetch('/api/chat/ai/messages', {
+      headers: auth.getAuthHeaders(),
+    })
+    if (response.success) {
+      aiChat.messages = response.data.messages
+    }
+  }
+  catch (error) {
+    console.error('Failed to load AI messages:', error)
+  }
+}
+
 onMounted(() => {
   if (isAuthenticated.value) {
     (isAIChannel.value
-      ? aiChatStore.fetchMessages()
+      ? loadAIMessages()
       : loadMessages()
     ).then(() => {
       nextTick(() => {
@@ -258,7 +285,7 @@ onUnmounted(() => {
 
       <div class="flex-1 flex flex-col overflow-hidden">
         <div class="flex-1 overflow-y-auto p-4 md:p-6">
-          <div v-if="(isAIChannel ? aiIsLoading : isLoading) && displayMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-sm md:text-base">
+          <div v-if="(isAIChannel ? aiChat.status !== 'ready' : isLoading) && displayMessages.length === 0" class="flex items-center justify-center h-full text-neutral-500 dark:text-neutral-400 text-sm md:text-base">
             Loading...
           </div>
 
@@ -292,9 +319,12 @@ onUnmounted(() => {
 
             <template v-if="isAIChannel">
               <ChatMessage
-                v-for="message in aiMessages"
+                v-for="(message, index) in aiChat.messages"
                 :key="message.id"
-                :message="message"
+                :message="{
+                  ...message,
+                  isStreaming: index === aiChat.messages.length - 1 && (aiChat.status === 'streaming' || aiChat.status === 'submitted'),
+                }"
               />
             </template>
             <template v-else>
@@ -350,16 +380,16 @@ onUnmounted(() => {
             <form class="flex rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-700 focus-within:shadow-highlight" @submit.prevent="handleAISendMessage">
               <input
                 v-model="newAIMessage"
-                :disabled="aiIsSending || aiIsStreaming"
+                :disabled="aiChat.status === 'streaming' || aiChat.status === 'submitted'"
                 placeholder="Ask AI anything..."
                 class="flex-1 px-4 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white border-none focus:outline-none caret-primary"
               >
               <button
                 type="submit"
-                :disabled="aiIsSending || aiIsStreaming || !newAIMessage?.trim()"
+                :disabled="aiChat.status === 'streaming' || aiChat.status === 'submitted' || !newAIMessage?.trim()"
                 class="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed rounded-l-none focus:outline-none flex items-center justify-center gap-2"
               >
-                <span v-if="aiIsSending || aiIsStreaming" class="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                <span v-if="aiChat.status === 'streaming' || aiChat.status === 'submitted'" class="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
                 <span v-else>Send</span>
               </button>
             </form>
