@@ -53,12 +53,14 @@ async function registerUser(username: string, password: string) {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   // Store password and user info
-  await redis.set(REDIS_KEYS.PASSWORD(username), hashedPassword)
-  await redis.set(REDIS_KEYS.USER_INFO(username), {
-    username,
-    createdAt: Date.now(),
-    lastLogin: Date.now(),
-  })
+  await Promise.all([
+    redis.set(REDIS_KEYS.PASSWORD(username), hashedPassword),
+    redis.set(REDIS_KEYS.USER_INFO(username), {
+      username,
+      createdAt: Date.now(),
+      lastLogin: Date.now(),
+    }),
+  ])
 
   return { success: true, username }
 }

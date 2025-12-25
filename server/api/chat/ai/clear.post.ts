@@ -10,8 +10,10 @@ export default defineEventHandler(async (event) => {
       await redis.del(...messageIds.map(id => REDIS_KEYS.AI_MESSAGE(username, id as string)))
     }
 
-    await redis.del(REDIS_KEYS.AI_CONTEXT_INDEX(username))
-    await redis.del(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
+    await Promise.all([
+      redis.del(REDIS_KEYS.AI_CONTEXT_INDEX(username)),
+      redis.del(REDIS_KEYS.AI_LAST_MESSAGE_ID(username)),
+    ])
 
     return {
       success: true,

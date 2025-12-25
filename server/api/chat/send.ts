@@ -57,8 +57,10 @@ async function sendChatMessage(username: string, content: string, channelId: str
     }
 
     const msgKey = REDIS_KEYS.MESSAGE(channelId, `msg_${messageId}`)
-    await redis.set(msgKey, JSON.stringify(message), { ex: MESSAGE_TTL })
-    await redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` })
+    await Promise.all([
+      redis.set(msgKey, JSON.stringify(message), { ex: MESSAGE_TTL }),
+      redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` }),
+    ])
 
     return message
   }
@@ -113,8 +115,10 @@ async function processAIResponse(channelId: string, userMessage: string) {
     }
 
     const msgKey = REDIS_KEYS.MESSAGE(channelId, `msg_${messageId}`)
-    await redis.set(msgKey, JSON.stringify(aiMessage), { ex: MESSAGE_TTL })
-    await redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` })
+    await Promise.all([
+      redis.set(msgKey, JSON.stringify(aiMessage), { ex: MESSAGE_TTL }),
+      redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` }),
+    ] as const)
 
     const pusherChannel = getPusherChannelName(channelId as ChannelId)
     if (pusherChannel) {
@@ -138,8 +142,10 @@ async function processAIResponse(channelId: string, userMessage: string) {
       }
 
       const msgKey = REDIS_KEYS.MESSAGE(channelId, `msg_${messageId}`)
-      await redis.set(msgKey, JSON.stringify(errorMessage), { ex: MESSAGE_TTL })
-      await redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` })
+      await Promise.all([
+        redis.set(msgKey, JSON.stringify(errorMessage), { ex: MESSAGE_TTL }),
+        redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` }),
+      ] as const)
 
       const pusherChannel = getPusherChannelName(channelId as ChannelId)
       if (pusherChannel) {

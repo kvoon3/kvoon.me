@@ -17,10 +17,10 @@ export default defineEventHandler(async (event) => {
 async function logoutUser(username: string, token: string) {
   try {
     const tokenKey = REDIS_KEYS.USER_TOKEN(username, token)
-    await redis.del(tokenKey)
-
-    // Clear online status
-    await redis.del(REDIS_KEYS.ONLINE_USER(username))
+    await Promise.all([
+      redis.del(tokenKey),
+      redis.del(REDIS_KEYS.ONLINE_USER(username)),
+    ])
 
     return { success: true }
   }
