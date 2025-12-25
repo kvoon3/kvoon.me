@@ -56,8 +56,9 @@ async function sendChatMessage(username: string, content: string, channelId: str
       channelId,
     }
 
-    await redis.zadd(REDIS_KEYS.MESSAGES(channelId), { score: timestamp, member: JSON.stringify(message) })
-    await redis.expire(REDIS_KEYS.MESSAGES(channelId), MESSAGE_TTL)
+    const msgKey = REDIS_KEYS.MESSAGE(channelId, `msg_${messageId}`)
+    await redis.set(msgKey, JSON.stringify(message), { ex: MESSAGE_TTL })
+    await redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` })
 
     return message
   }
@@ -72,13 +73,17 @@ async function sendChatMessage(username: string, content: string, channelId: str
 
 async function processAIResponse(channelId: string, userMessage: string) {
   try {
-    const recentMessages = await redis.zrange(REDIS_KEYS.MESSAGES(channelId), -15, -1)
-    const hasRecentMessages = recentMessages.length > 0
+    const recentMessageIds = await redis.zrange(REDIS_KEYS.MESSAGES_INDEX(channelId), -15, -1)
+    const hasRecentMessages = recentMessageIds.length > 0
+
+    const recentMessages = hasRecentMessages
+      ? await redis.mget(...recentMessageIds.map(id => REDIS_KEYS.MESSAGE(channelId, id as string)))
+      : []
 
     const chatHistory = recentMessages
       .map((msg) => {
         try {
-          return typeof msg === 'string' ? JSON.parse(msg) : msg
+          return msg ? (typeof msg === 'string' ? JSON.parse(msg) : msg) : null
         }
         catch {
           return null
@@ -91,7 +96,7 @@ async function processAIResponse(channelId: string, userMessage: string) {
     const aiResponseText = await getAIResponse(
       chatHistory,
       messageWithoutMention || hasRecentMessages
-        ? messageWithoutMention // empty string
+        ? messageWithoutMention
         : 'Hi!',
     )
 
@@ -107,11 +112,9 @@ async function processAIResponse(channelId: string, userMessage: string) {
       isAI: true,
     }
 
-    await redis.zadd(REDIS_KEYS.MESSAGES(channelId), {
-      score: timestamp,
-      member: JSON.stringify(aiMessage),
-    })
-    await redis.expire(REDIS_KEYS.MESSAGES(channelId), MESSAGE_TTL)
+    const msgKey = REDIS_KEYS.MESSAGE(channelId, `msg_${messageId}`)
+    await redis.set(msgKey, JSON.stringify(aiMessage), { ex: MESSAGE_TTL })
+    await redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` })
 
     const pusherChannel = getPusherChannelName(channelId as ChannelId)
     if (pusherChannel) {
@@ -134,11 +137,9 @@ async function processAIResponse(channelId: string, userMessage: string) {
         isAI: true,
       }
 
-      await redis.zadd(REDIS_KEYS.MESSAGES(channelId), {
-        score: timestamp,
-        member: JSON.stringify(errorMessage),
-      })
-      await redis.expire(REDIS_KEYS.MESSAGES(channelId), MESSAGE_TTL)
+      const msgKey = REDIS_KEYS.MESSAGE(channelId, `msg_${messageId}`)
+      await redis.set(msgKey, JSON.stringify(errorMessage), { ex: MESSAGE_TTL })
+      await redis.zadd(REDIS_KEYS.MESSAGES_INDEX(channelId), { score: timestamp, member: `msg_${messageId}` })
 
       const pusherChannel = getPusherChannelName(channelId as ChannelId)
       if (pusherChannel) {

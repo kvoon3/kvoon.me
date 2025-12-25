@@ -24,11 +24,13 @@ export default defineEventHandler(async (event) => {
 
 async function getChatMessages(channelId: string, limit: number = 50, offset: number = 0) {
   try {
-    const messages = await redis.zrange(REDIS_KEYS.MESSAGES(channelId), offset, offset + limit - 1, { rev: true })
+    const messageIds = await redis.zrange(REDIS_KEYS.MESSAGES_INDEX(channelId), offset, offset + limit - 1, { rev: true })
 
-    if (!messages || !Array.isArray(messages)) {
+    if (!messageIds || !Array.isArray(messageIds) || messageIds.length === 0) {
       return []
     }
+
+    const messages = await redis.mget(...messageIds.map(id => REDIS_KEYS.MESSAGE(channelId, id as string)))
 
     const parsedMessages = messages
       .map((msg) => {

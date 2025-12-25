@@ -4,7 +4,13 @@ export default defineEventHandler(async (event) => {
   const { username } = event.context.user
 
   try {
-    await redis.del(REDIS_KEYS.AI_CONTEXT(username))
+    const messageIds = await redis.zrange(REDIS_KEYS.AI_CONTEXT_INDEX(username), 0, -1)
+
+    if (messageIds.length > 0) {
+      await redis.del(...messageIds.map(id => REDIS_KEYS.AI_MESSAGE(username, id as string)))
+    }
+
+    await redis.del(REDIS_KEYS.AI_CONTEXT_INDEX(username))
     await redis.del(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
 
     return {

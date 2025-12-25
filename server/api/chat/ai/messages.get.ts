@@ -5,12 +5,23 @@ export default defineEventHandler(async (event) => {
   const { username } = event.context.user
 
   try {
-    const messages = await redis.zrange(REDIS_KEYS.AI_CONTEXT(username), 0, -1)
+    const messageIds = await redis.zrange(REDIS_KEYS.AI_CONTEXT_INDEX(username), 0, -1)
+
+    if (!messageIds || messageIds.length === 0) {
+      return {
+        success: true,
+        data: {
+          messages: [],
+        },
+      }
+    }
+
+    const messages = await redis.mget(...messageIds.map(id => REDIS_KEYS.AI_MESSAGE(username, id as string)))
 
     const formattedMessages = messages
       .map((msg) => {
         try {
-          return typeof msg === 'string' ? JSON.parse(msg) : msg
+          return msg ? (typeof msg === 'string' ? JSON.parse(msg) : msg) : null
         }
         catch {
           return null

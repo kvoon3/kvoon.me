@@ -23,11 +23,13 @@ export const REDIS_KEYS = {
   USER_TOKEN: (username: string, token: string) => `chat:token:user:${username}:${token}`,
   ONLINE_USER: (username: string) => `chat:online:${username}`,
 
-  MESSAGES: (channelId: string) => `chat:messages:${channelId}`,
+  MESSAGES_INDEX: (channelId: string) => `chat:messages:${channelId}:index`,
+  MESSAGE: (channelId: string, messageId: string) => `chat:messages:${channelId}:${messageId}`,
   LAST_MESSAGE_ID: (channelId: string) => `chat:last_message_id:${channelId}`,
   TYPING: (username: string) => `chat:typing:${username}`,
 
-  AI_CONTEXT: (username: string) => `chat:ai:context:${username}`,
+  AI_CONTEXT_INDEX: (username: string) => `chat:ai:context:${username}:index`,
+  AI_MESSAGE: (username: string, messageId: string) => `chat:ai:context:${username}:${messageId}`,
   AI_LAST_MESSAGE_ID: (username: string) => `chat:ai:last_message_id:${username}`,
 } as const
 

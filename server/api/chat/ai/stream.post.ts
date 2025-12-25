@@ -44,16 +44,15 @@ export default defineLazyEventHandler(async () => {
 
       const messageId = await redis.incr(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
       const timestamp = Date.now()
+      const msgId = `ai_msg_${messageId}`
 
-      await redis.zadd(REDIS_KEYS.AI_CONTEXT(username), {
-        score: timestamp,
-        member: JSON.stringify({
-          ...userMessage,
-          id: `ai_msg_${messageId}`,
-          timestamp,
-        }),
-      })
-      await redis.expire(REDIS_KEYS.AI_CONTEXT(username), MESSAGE_TTL)
+      const msgKey = REDIS_KEYS.AI_MESSAGE(username, msgId)
+      await redis.set(msgKey, JSON.stringify({
+        ...userMessage,
+        id: msgId,
+        timestamp,
+      }), { ex: MESSAGE_TTL })
+      await redis.zadd(REDIS_KEYS.AI_CONTEXT_INDEX(username), { score: timestamp, member: msgId })
 
       const modelMessages = convertToModelMessages(messages)
 
@@ -65,24 +64,27 @@ export default defineLazyEventHandler(async () => {
         async onFinish({ response }) {
           const aiMessageId = await redis.incr(REDIS_KEYS.AI_LAST_MESSAGE_ID(username))
           const aiTimestamp = Date.now()
+          const aiMsgId = `ai_msg_${aiMessageId}`
 
           const aiMessage = {
-            id: `ai_msg_${aiMessageId}`,
+            id: aiMsgId,
             role: 'assistant' as const,
             parts: response.messages[0]?.content || [],
             timestamp: aiTimestamp,
           }
 
-          await redis.zadd(REDIS_KEYS.AI_CONTEXT(username), {
-            score: aiTimestamp,
-            member: JSON.stringify(aiMessage),
-          })
-          await redis.expire(REDIS_KEYS.AI_CONTEXT(username), MESSAGE_TTL)
+          const msgKey = REDIS_KEYS.AI_MESSAGE(username, aiMsgId)
+          await redis.set(msgKey, JSON.stringify(aiMessage), { ex: MESSAGE_TTL })
+          await redis.zadd(REDIS_KEYS.AI_CONTEXT_INDEX(username), { score: aiTimestamp, member: aiMsgId })
 
-          const allMessages = await redis.zcard(REDIS_KEYS.AI_CONTEXT(username))
+          const allMessages = await redis.zcard(REDIS_KEYS.AI_CONTEXT_INDEX(username))
           if (allMessages > 30) {
             const toRemove = allMessages - 30
-            await redis.zremrangebyrank(REDIS_KEYS.AI_CONTEXT(username), 0, toRemove - 1)
+            const oldMessageIds = await redis.zrange(REDIS_KEYS.AI_CONTEXT_INDEX(username), 0, toRemove - 1)
+            if (oldMessageIds.length > 0) {
+              await redis.del(...oldMessageIds.map(id => REDIS_KEYS.AI_MESSAGE(username, id as string)))
+              await redis.zremrangebyrank(REDIS_KEYS.AI_CONTEXT_INDEX(username), 0, toRemove - 1)
+            }
           }
         },
       })
