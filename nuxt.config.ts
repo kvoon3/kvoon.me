@@ -64,6 +64,9 @@ export default defineNuxtConfig({
           'Cross-Origin-Opener-Policy': 'same-origin',
         },
       },
+      'content/**': {
+        prerender: true,
+      },
     },
   },
 
