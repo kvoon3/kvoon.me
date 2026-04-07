@@ -13,7 +13,6 @@ const route = useRoute()
 const navItems = [
   { path: '/', label: 'Home' },
   { path: '/photos', label: 'Photos' },
-  { path: '/chat', label: 'Chat' },
   { path: '/experiments', label: 'Experiments' },
 ]
 
