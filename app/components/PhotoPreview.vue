@@ -2,7 +2,7 @@
 import { nextTick, onMounted, ref, watch } from 'vue'
 
 interface Photo {
-  name: string | undefined
+  name: string
   url: string
 }
 

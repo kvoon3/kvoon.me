@@ -19,19 +19,23 @@ const { slideDirection, handleKeydown } = useKeyboardNavigation()
 // Import component
 const PhotoPreview = defineAsyncComponent(() => import('../components/PhotoPreview.vue'))
 
-// Load photo metadata (blurhash)
-const photoMeta = import.meta.glob<{ default: PhotoMeta }>('../../public/photo-meta.json', { eager: true })
-const metaMap: Record<string, PhotoMeta> = Object.assign({}, ...Object.values(photoMeta).map(m => m.default))
+// Load photo metadata (blurhash from sidecar JSONs)
+const sidecarFiles = import.meta.glob<{ default: PhotoMeta }>('../../public/photos/*.json', { eager: true })
+const metaMap: Record<string, PhotoMeta> = {}
+for (const [path, module] of Object.entries(sidecarFiles)) {
+  const name = parseFilename(path)!.replace('.json', '')
+  metaMap[name] = module.default
+}
 
 const photos = Object.entries(import.meta.glob<{ default: string }>('../../public/photos/*', {
   eager: true,
 })).map(([key, _]) => {
-  const name = parseFilename(key)
+  const name = parseFilename(key)!
   return {
     name,
     url: `/photos/${name}`,
   }
-}).reverse()
+}).filter(photo => imgRE.test(photo.name)).reverse()
 
 // Get blurhash style object for a photo
 function getBlurhashStyle(filename: string | undefined): Record<string, string> | undefined {

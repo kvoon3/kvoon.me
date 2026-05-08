@@ -90,9 +90,15 @@ importers:
       '@vueuse/nuxt':
         specifier: ^14.2.1
         version: 14.2.1(magicast@0.5.2)(nuxt@4.4.2(@babel/core@7.29.0)(@babel/plugin-syntax-jsx@7.27.1(@babel/core@7.29.0))(@netlify/blobs@8.2.0)(@parcel/watcher@2.5.6)(@types/node@24.10.0)(@upstash/redis@1.37.0)(@vue/compiler-sfc@3.5.32)(better-sqlite3@11.9.1)(cac@6.7.14)(db0@0.3.4(better-sqlite3@11.9.1))(eslint@10.2.0(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(optionator@0.9.4)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rollup-plugin-visualizer@7.0.1(rollup@4.60.1))(rollup@4.60.1)(terser@5.43.1)(typescript@5.9.3)(vite@7.3.2(@types/node@24.10.0)(jiti@2.6.1)(terser@5.43.1)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3))(vue@3.5.32(typescript@5.9.3))
+      ansis:
+        specifier: ^4.2.0
+        version: 4.2.0
       eslint-plugin-format:
         specifier: ^2.0.1
         version: 2.0.1(eslint@10.2.0(jiti@2.6.1))
+      exifreader:
+        specifier: ^4.38.1
+        version: 4.38.1
       knip:
         specifier: ^6.0.4
         version: 6.0.4
@@ -3629,6 +3635,10 @@ packages:
   '@webcontainer/env@1.1.1':
     resolution: {integrity: sha512-6aN99yL695Hi9SuIk1oC88l9o0gmxL1nGWWQ/kNy81HigJ0FoaoTXpytCj6ItzgyCEwA9kF1wixsTuv5cjsgng==}
 
+  '@xmldom/xmldom@0.9.10':
+    resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
+    engines: {node: '>=14.6'}
+
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -4773,6 +4783,9 @@ packages:
   execa@8.0.1:
     resolution: {integrity: sha512-VyhnebXciFV2DESc+p6B+y0LjSm0krU4OgJN44qFAhBY0TJ+1V61tYD2+wHusZ6F9n5K+vl8k0sTy7PEfV4qpg==}
     engines: {node: '>=16.17'}
+
+  exifreader@4.38.1:
+    resolution: {integrity: sha512-VUQ8pnWJHpnQXPQLgx4XBwjhj+eE0f5t4KhVFn6BnnTYKLf79DfjVRntR5061qE9NZgx2ohvE+JLXe/FWfCaAA==}
 
   expand-template@2.0.3:
     resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
@@ -11280,6 +11293,9 @@ snapshots:
 
   '@webcontainer/env@1.1.1': {}
 
+  '@xmldom/xmldom@0.9.10':
+    optional: true
+
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -12567,6 +12583,10 @@ snapshots:
       onetime: 6.0.0
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
+
+  exifreader@4.38.1:
+    optionalDependencies:
+      '@xmldom/xmldom': 0.9.10
 
   expand-template@2.0.3:
     optional: true
@@ -14848,7 +14868,7 @@ snapshots:
 
   prebuild-install@7.1.3:
     dependencies:
-      detect-libc: 2.0.4
+      detect-libc: 2.1.2
       expand-template: 2.0.3
       github-from-package: 0.0.0
       minimist: 1.2.8
