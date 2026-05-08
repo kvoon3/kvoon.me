@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "build": "nuxt build",
-    "process-photos": "pnpx tsx app/scripts/process-photos.ts",
+    "process-photos": "pnpx tsx scripts/process-photos.ts",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

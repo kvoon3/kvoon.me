@@ -6,9 +6,9 @@ import ExifReader from 'exifreader'
 import fg from 'fast-glob'
 import { basename, join, parse } from 'pathe'
 import sharp from 'sharp'
-import { compressSharp } from '../utils/img-compress'
+import { compressSharp } from '../app/utils/img-compress'
 
-const folder = fileURLToPath(new URL('../../public/photos', import.meta.url))
+const folder = fileURLToPath(new URL('../public/photos', import.meta.url))
 
 let files = (await fg('**/*.{jpg,png,jpeg}', {
   caseSensitiveMatch: false,
