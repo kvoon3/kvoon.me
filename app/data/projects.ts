@@ -1,11 +1,11 @@
-export interface Project {
+interface Project {
   name: string
   desc: string
   link: string
   icon: string
 }
 
-export interface ProjectCategory {
+interface ProjectCategory {
   [key: string]: Project[]
 }
 

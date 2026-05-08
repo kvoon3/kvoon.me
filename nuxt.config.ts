@@ -64,33 +64,9 @@ export default defineNuxtConfig({
           'Cross-Origin-Opener-Policy': 'same-origin',
         },
       },
-      'content/**': {
+      '/': {
         prerender: true,
       },
-    },
-  },
-
-  runtimeConfig: {
-    upstashRedisRestUrl: '',
-    upstashRedisRestToken: '',
-
-    pusherAppId: '',
-    pusherSecret: '',
-
-    tokenTtlDays: '90',
-    tokenGraceDays: '365',
-
-    aiProvider: 'mimo',
-
-    deepseekApiKey: '',
-    deepseekBaseUrl: '',
-
-    openaiApiKey: '',
-    openaiBaseUrl: '',
-
-    public: {
-      pusherKey: '',
-      pusherCluster: '',
     },
   },
 })
