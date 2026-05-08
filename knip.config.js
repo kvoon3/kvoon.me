@@ -4,8 +4,14 @@ export default {
     config: ['unocss.config.ts'],
   },
 
-  // Ignore markdown files and global components (not tracked by plugins)
-  ignoreFiles: ['*.md', '**/*.global.vue'],
+  // Ignore global components and config files (not tracked by plugins)
+  // Note: *.md files are ignored by default in knip
+  ignoreFiles: ['**/*.global.vue', 'content.config.ts'],
+
+  // Entry files - mark build scripts and shared utilities as entry points
+  entry: [
+    'app/utils/generatePhotoMeta.ts',
+  ],
 
   // Icon packages are used by @nuxt/icon at runtime
   // ESLint is managed by @nuxt/eslint

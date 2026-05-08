@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PhotoMeta } from '~/types/photo'
+import { blurhashToCssGradientString } from '@unpic/placeholder'
 import {
   DialogClose,
   DialogContent,
@@ -6,7 +8,9 @@ import {
   DialogPortal,
   DialogRoot,
 } from 'reka-ui'
+
 import { parseFilename } from 'ufo'
+import { imgRE } from '~/shared/constants'
 
 // Import composables
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen()
@@ -14,6 +18,10 @@ const { slideDirection, handleKeydown } = useKeyboardNavigation()
 
 // Import component
 const PhotoPreview = defineAsyncComponent(() => import('../components/PhotoPreview.vue'))
+
+// Load photo metadata (blurhash)
+const photoMeta = import.meta.glob<{ default: PhotoMeta }>('../../public/photo-meta.json', { eager: true })
+const metaMap: Record<string, PhotoMeta> = Object.assign({}, ...Object.values(photoMeta).map(m => m.default))
 
 const photos = Object.entries(import.meta.glob<{ default: string }>('../../public/photos/*', {
   eager: true,
@@ -24,6 +32,13 @@ const photos = Object.entries(import.meta.glob<{ default: string }>('../../publi
     url: `/photos/${name}`,
   }
 }).reverse()
+
+// Get blurhash style object for a photo
+function getBlurhashStyle(filename: string | undefined): Record<string, string> | undefined {
+  const name = filename?.replace(imgRE, '')
+  const bg = name ? metaMap[name]?.blurhash : undefined
+  return bg ? { background: blurhashToCssGradientString(bg) } : undefined
+}
 
 const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
 const isDialogOpen = computed(() => !!selectedPhoto.value)
@@ -162,7 +177,17 @@ watch(selectedPhoto, (newValue) => {
 <template>
   <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
     <div v-for="photo in photos" :key="photo.name" aspect-square bg-neutral:10 @click="selectedPhoto = photo">
-      <LazyNuxtImg loading="lazy" :quality="70" :width="720" :src="photo.url" alt="photo" w-full h-full object-cover />
+      <LazyNuxtImg
+        loading="lazy"
+        :quality="70"
+        :width="720"
+        :src="photo.url"
+        alt="photo"
+        w-full
+        h-full
+        object-cover
+        :style="getBlurhashStyle(photo.name)"
+      />
     </div>
     <DialogRoot v-model:open="isDialogOpen">
       <DialogPortal>
@@ -219,7 +244,7 @@ watch(selectedPhoto, (newValue) => {
             <!-- Main content area - Image -->
             <div class="relative w-full h-full flex items-center justify-center" @click="toggleInfo">
               <Transition :name="slideDirection === 'next' ? 'photo-slide' : 'photo-slide-reverse'" mode="out-in">
-                <div :key="selectedPhoto?.name">
+                <div :key="selectedPhoto?.name" :style="getBlurhashStyle(selectedPhoto?.name)">
                   <NuxtImg
                     v-slot="{ isLoaded, src, imgAttrs }" :src="selectedPhoto?.url" alt="photo"
                     class="rounded-lg shadow-2xl" :custom="true"
