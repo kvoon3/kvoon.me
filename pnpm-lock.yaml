@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  knip:
-    hash: d8c675de08300b32841e4ac48c11f3b7539f74c07669be3d322875fca390302c
-    path: patches/knip.patch
-
 importers:
 
   .:
@@ -94,7 +89,7 @@ importers:
         version: 2.0.1(eslint@10.2.0(jiti@2.6.1))
       knip:
         specifier: ^6.0.4
-        version: 6.0.4(patch_hash=d8c675de08300b32841e4ac48c11f3b7539f74c07669be3d322875fca390302c)
+        version: 6.0.4
       lint-staged:
         specifier: ^16.4.0
         version: 16.4.0
@@ -13297,7 +13292,7 @@ snapshots:
 
   klona@2.0.6: {}
 
-  knip@6.0.4(patch_hash=d8c675de08300b32841e4ac48c11f3b7539f74c07669be3d322875fca390302c):
+  knip@6.0.4:
     dependencies:
       '@nodelib/fs.walk': 1.2.8
       fast-glob: 3.3.3
