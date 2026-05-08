@@ -40,7 +40,7 @@ export default defineConfig({
     }),
     presetAttributify(),
     presetIcons({
-      scale: 1.2,
+      scale: 1.4,
     }),
     presetTypography(),
   ],

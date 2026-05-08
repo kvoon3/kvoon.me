@@ -39,17 +39,17 @@ useSeoMeta({
     <section space-y-12>
       <CategoryCard name="Recent Active" text-xl>
         <NuxtLink block leading-loose w-fit target="_black" href="https://my-pull-requests.kvoon.me" bg-op-0 class="icon-btn">
-          <Icon name="ph:git-pull-request" />
+          <Icon size-4 name="ph:git-pull-request" />
           My Open Pull Requests
         </NuxtLink>
         <NuxtLink block leading-loose w-fit target="_black" href="https://releases-bmz.pages.dev" bg-op-0 class="icon-btn">
-          <Icon name="ph:git-commit-duotone" />
+          <Icon size-4 name="ph:git-commit-duotone" />
           My Releases
         </NuxtLink>
       </CategoryCard>
       <CategoryCard name="Projects">
         <div v-for="(categoryProjects, category) in projects" :key="category" mb6>
-          <h2 text-xl mb2 color-neutral>
+          <h2 text-sm mb8 color-neutral>
             {{ category }}
           </h2>
           <div grid="~ lg:cols-2 gap-4">
