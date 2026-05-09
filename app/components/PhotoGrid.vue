@@ -58,7 +58,7 @@ watch(selectedPhoto, (val) => {
 
 <template>
   <div>
-    <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
+    <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-4">
       <div
         v-for="photo in photos"
         :key="photo.name"
