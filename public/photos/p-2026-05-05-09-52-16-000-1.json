@@ -1,3 +1,10 @@
 {
-  "blurhash": "UuKK[|kC-;t7~qof%Mof-;j[t7j[xuayRjay"
+  "name": "Bangkok Asok",
+  "blurhash": "UuKK[|kC-;t7~qof%Mof-;j[t7j[xuayRjay",
+  "location": [
+    13.7388,
+    100.5605
+  ],
+  "place": "Bangkok",
+  "rotate": 9.7
 }

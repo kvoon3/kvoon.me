@@ -1,3 +1,10 @@
 {
-  "blurhash": "UFEMOK00ogxt00%NRjax00~qofM|_3InxsWD"
+  "name": "Pattaya",
+  "blurhash": "UFEMOK00ogxt00%NRjax00~qofM|_3InxsWD",
+  "location": [
+    12.9361,
+    100.882
+  ],
+  "place": "Pattaya",
+  "rotate": -6.84
 }

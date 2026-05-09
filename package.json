@@ -24,6 +24,7 @@
     "@unpic/placeholder": "^0.1.2",
     "better-sqlite3": "^12.9.0",
     "blurhash": "^2.0.5",
+    "cobe": "^2.0.1",
     "eslint": "^10.3.0",
     "nuxt": "^4.4.4",
     "pinia": "^3.0.4",
