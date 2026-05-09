@@ -64,7 +64,6 @@ for (const filepath of files) {
     await fs.writeFile(outFile, outBuffer)
   if (outFile !== filepath)
     await fs.unlink(filepath)
-
 }
 
 // Generate blurhash
