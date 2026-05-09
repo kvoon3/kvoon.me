@@ -1,4 +1,6 @@
 // https://knip.dev/reference/configuration
+
+/** @type {import('knip').KnipConfig} */
 export default {
   unocss: {
     config: ['unocss.config.ts'],
