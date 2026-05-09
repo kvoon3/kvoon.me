@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PhotoWithLocation } from '~/types/photo'
 import createGlobe from 'cobe'
+import PhotoGlobeLabel from './PhotoGlobeLabel.client.vue'
 
 const props = defineProps<{
   photos: PhotoWithLocation[]
@@ -10,18 +11,29 @@ interface LocationGroup {
   id: string
   lat: number
   lng: number
+  place?: string
   photos: PhotoWithLocation[]
 }
+
+const MIN_SCALE = 0.4
+const MAX_SCALE = 2.0
+const DEFAULT_SCALE = 0.95
 
 const colorMode = useColorMode()
 const canvas = ref<HTMLCanvasElement>()
 const container = ref<HTMLDivElement>()
 const size = reactive({ width: 0, height: 0 })
+const currentScale = ref(DEFAULT_SCALE)
 
 let globe: ReturnType<typeof createGlobe> | null = null
 let animationId = 0
 
 const isDark = computed(() => colorMode.preference === 'dark' || colorMode.value === 'dark')
+
+const markerColor = computed<[number, number, number]>(() => isDark.value
+  ? [160 / 255, 240 / 255, 236 / 255]
+  : [2 / 255, 158 / 255, 145 / 255],
+)
 
 const locationGroups = computed<LocationGroup[]>(() => {
   const map = new Map<string, LocationGroup>()
@@ -32,18 +44,48 @@ const locationGroups = computed<LocationGroup[]>(() => {
         id: `loc-${map.size}`,
         lat: photo.location[0],
         lng: photo.location[1],
+        place: photo.place,
         photos: [],
       })
     }
+
     map.get(key)!.photos.push(photo)
   }
   return [...map.values()]
 })
 
+const photoIndices = reactive<Record<string, number>>({})
+let rotationIntervals: ReturnType<typeof setInterval>[] = []
+
+function stopRotation() {
+  for (const id of rotationIntervals)
+    clearInterval(id)
+  rotationIntervals = []
+}
+
+function startRotation() {
+  for (const group of locationGroups.value) {
+    if (group.photos.length <= 1)
+      continue
+    photoIndices[group.id] = 0
+    // Jitter prevents all markers from cycling simultaneously
+    const interval = 5000 + Math.random() * 3000
+    const id = setInterval(() => {
+      photoIndices[group.id] = ((photoIndices[group.id] ?? 0) + 1) % group.photos.length
+    }, interval)
+    rotationIntervals.push(id)
+  }
+}
+
+watch(locationGroups, () => {
+  stopRotation()
+  startRotation()
+}, { immediate: true })
+
 const markers = computed(() =>
   locationGroups.value.map(g => ({
     location: [g.lat, g.lng] as [number, number],
-    size: Math.min(0.03 + g.photos.length * 0.005, 0.07),
+    size: 0.03,
     id: g.id,
   })),
 )
@@ -55,9 +97,9 @@ function initGlobe() {
   globe?.destroy()
 
   globe = createGlobe(canvas.value, {
-    devicePixelRatio: 2,
-    width: size.width * 2,
-    height: size.height * 2,
+    devicePixelRatio: Math.min(window.devicePixelRatio, 2),
+    width: size.width,
+    height: size.height,
     phi: 0,
     theta: 0.3,
     dark: isDark.value ? 1 : 0,
@@ -65,14 +107,14 @@ function initGlobe() {
     mapSamples: 16000,
     mapBrightness: 6,
     baseColor: [1, 1, 1],
-    markerColor: [1, 1, 1],
+    markerColor: markerColor.value,
     glowColor: [0.5, 0.5, 0.5],
-    scale: 0.95,
+    scale: currentScale.value,
     markers: markers.value,
   })
 }
 
-let phi = 0
+const phi = 3
 let dragOffset = 0
 let pointerOrigin: number | null = null
 let dragOffsetAtStart = 0
@@ -92,12 +134,60 @@ function onPointerUp() {
   pointerOrigin = null
 }
 
-function animate() {
-  if (pointerOrigin === null) {
-    phi += 0.003
-    dragOffset *= 0.94
+function applyScale(s: number) {
+  const clamped = Math.max(MIN_SCALE, Math.min(MAX_SCALE, s))
+  if (clamped !== currentScale.value) {
+    currentScale.value = clamped
+    globe?.update({ scale: clamped })
   }
-  globe?.update({ phi: phi + dragOffset })
+}
+
+function onWheel(e: WheelEvent) {
+  e.preventDefault()
+  applyScale(currentScale.value - e.deltaY * 0.001)
+}
+
+let pinchStartDistance = 0
+let pinchStartScale = DEFAULT_SCALE
+
+function getTouchDistance(e: TouchEvent): number {
+  const [t0, t1] = [e.touches[0], e.touches[1]]
+  if (!t0 || !t1)
+    return 0
+  return Math.hypot(t0.clientX - t1.clientX, t0.clientY - t1.clientY)
+}
+
+function onTouchStart(e: TouchEvent) {
+  if (e.touches.length === 2) {
+    pointerOrigin = null
+    pinchStartDistance = getTouchDistance(e)
+    pinchStartScale = currentScale.value
+  }
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (e.touches.length !== 2)
+    return
+  e.preventDefault()
+  if (pinchStartDistance === 0)
+    return
+  applyScale(pinchStartScale * (getTouchDistance(e) / pinchStartDistance))
+}
+
+function onTouchEnd(e: TouchEvent) {
+  if (e.touches.length < 2) {
+    pinchStartDistance = 0
+  }
+}
+
+let lastPhi = 0
+
+function animate() {
+  const current = phi + dragOffset
+  if (current !== lastPhi) {
+    lastPhi = current
+    globe?.update({ phi: current })
+  }
   animationId = requestAnimationFrame(animate)
 }
 
@@ -126,7 +216,11 @@ watch(container, (value) => {
 watch(
   [canvas, () => size.width, () => size.height],
   ([c, w, h]) => {
-    if (c && w > 0 && h > 0) {
+    if (!c || w === 0 || h === 0)
+      return
+    if (globe) {
+      globe.update({ width: w, height: h })
+    } else {
       initGlobe()
     }
   },
@@ -135,11 +229,10 @@ watch(
 onUnmounted(() => {
   if (animationId)
     cancelAnimationFrame(animationId)
-
   globe?.destroy()
-
   ro?.disconnect()
   ro = null
+  stopRotation()
 })
 
 watch(isDark, (dark) => {
@@ -148,7 +241,7 @@ watch(isDark, (dark) => {
 
 watch(markers, (m) => {
   globe?.update({ markers: m })
-}, { deep: true })
+})
 </script>
 
 <template>
@@ -158,40 +251,21 @@ watch(markers, (m) => {
     @pointermove="onPointerMove"
     @pointerup="onPointerUp"
     @pointerleave="onPointerUp"
+    @wheel="onWheel"
+    @touchstart="onTouchStart"
+    @touchmove="onTouchMove"
+    @touchend="onTouchEnd"
   >
     <canvas ref="canvas" w-full h-full />
 
-    <div
+    <PhotoGlobeLabel
       v-for="group in locationGroups"
       :key="group.id"
-      :style="{
-        positionAnchor: `--cobe-${group.id}`,
-        top: `anchor(--cobe-${group.id} bottom)`,
-        left: `anchor(--cobe-${group.id} center)`,
-        opacity: `var(--cobe-visible-${group.id}, 0)`,
-      }"
-      class="photo-label"
-    >
-      <NuxtImg
-        :src="group.photos[0]!.path"
-        :quality="40"
-        :width="40"
-        :height="40"
-        fit="cover"
-        border-4
-        border-neutral-300
-        shadow-sm
-        aspect-square
-        object-cover
-        size-20
-      />
-      <span
-        v-if="group.photos.length > 1"
-        absolute top--1 right--1 bg-primary text-white text-10px rounded-full w-16px h-16px flex items-center justify-center font-medium
-      >
-        {{ group.photos.length }}
-      </span>
-    </div>
+      :cobe-id="group.id"
+      :photo="group.photos[photoIndices[group.id] ?? 0]"
+      :place="group.place"
+      :photo-count="group.photos.length"
+    />
 
     <div
       v-if="locationGroups.length === 0"
@@ -201,21 +275,3 @@ watch(markers, (m) => {
     </div>
   </div>
 </template>
-
-<style>
-.photo-label {
-  position: absolute;
-  bottom: anchor(top);
-  left: anchor(center);
-  translate: -50% calc(-1000% - 20px);
-  margin-bottom: 8px;
-  padding: 0.25rem 0.5rem;
-  background: #1a1a1a;
-  color: #fff;
-  font-size: 0.75rem;
-  border-radius: 4px;
-  white-space: nowrap;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-</style>

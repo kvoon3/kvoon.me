@@ -119,6 +119,11 @@ for (const filepath of files) {
     changed = true
   }
 
+  if (config.rotate === undefined) {
+    config.rotate = Math.round((Math.random() * 20 - 10) * 100) / 100
+    changed = true
+  }
+
   if (!config.blurhash) {
     const img = sharp(buffer)
     const { data, info } = await img

@@ -1,7 +1,10 @@
 {
+  "name": "Pattaya",
   "blurhash": "U25E4;EN$g5T0%=vJ8$$E4OD$$xY};jZI=EN",
   "location": [
-    22.5431,
-    114.0579
-  ]
+    12.9361,
+    100.882
+  ],
+  "place": "Pattaya",
+  "rotate": -6.54
 }

@@ -16,6 +16,8 @@ const photosWithLocation = computed<PhotoWithLocation[]>(() => {
       path: `/photos/${name}.jpg`,
       location: meta.location!,
       blurhash: meta.blurhash,
+      rotate: meta.rotate,
+      place: meta.place,
     }))
 })
 
@@ -35,7 +37,7 @@ function toggleDisplayMode() {
       <Icon v-if="viewMode === 'grid'" :size="25" :name="displayMode === 'cover' ? 'ph:crop-duotone' : 'ph:image-duotone'" icon-btn transition-all @click="toggleDisplayMode()" />
       <Icon :size="25" :name="viewMode === 'grid' ? 'ph:globe-duotone' : 'ph:grid-nine-duotone'" icon-btn transition-all @click="toggleViewMode()" />
     </div>
-    <PhotoGlobe v-if="viewMode === 'globe'" :photos="photosWithLocation" />
+    <PhotoGlobe v-if="viewMode === 'globe'" class="h-[calc(100vh-8rem)]" :photos="photosWithLocation" />
     <PhotoGrid v-else :meta-map="metaMap" :display-mode="displayMode" />
   </div>
 </template>

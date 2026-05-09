@@ -1,7 +1,10 @@
 {
+  "name": "Pattaya",
   "blurhash": "U58y;d9t0i=dtRIps.tP0g-B}qJB#ktRR*Ip",
   "location": [
-    22.5431,
-    114.0579
-  ]
+    12.9361,
+    100.882
+  ],
+  "place": "Pattaya",
+  "rotate": -1.11
 }

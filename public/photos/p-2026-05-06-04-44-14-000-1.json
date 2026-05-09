@@ -1,7 +1,10 @@
 {
+  "name": "Bangkok Asok",
   "blurhash": "UK8;lV%MIAof_Nx]ITaf?vxvM_j[-=t8Rjof",
   "location": [
-    22.5431,
-    114.0579
-  ]
+    13.7388,
+    100.5605
+  ],
+  "place": "Bangkok",
+  "rotate": 8.37
 }

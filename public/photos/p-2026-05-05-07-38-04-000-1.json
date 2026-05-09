@@ -1,7 +1,10 @@
 {
+  "name": "Bangkok Asok",
   "blurhash": "U7Mi1Q}]}[+c00=E,Bvh00S$58}?K*9[Ki?Z",
   "location": [
-    22.5431,
-    114.0579
-  ]
+    13.7388,
+    100.5605
+  ],
+  "place": "Bangkok",
+  "rotate": 2.35
 }

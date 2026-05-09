@@ -76,6 +76,12 @@ watch(selectedPhoto, (val) => {
           :class="props.displayMode === 'cover' ? 'object-cover' : 'object-contain'"
           :style="props.displayMode === 'cover' ? getBlurhashStyle(photo.name) : ''"
         />
+        <div
+          v-if="metaMap[photo.name]?.name"
+          absolute bottom-0 left-0 right-0 bg-black:60 text-white text-xs px-2 py-1 truncate
+        >
+          {{ metaMap[photo.name]?.name }}
+        </div>
       </div>
 
       <Teleport to="body">
