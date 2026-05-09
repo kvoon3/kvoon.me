@@ -115,19 +115,22 @@ function initGlobe() {
 }
 
 let phi = 3
-let dragOffset = 0
 let pointerOrigin: number | null = null
-let dragOffsetAtStart = 0
+let phiAtDragStart = 0
+let velocity = 0
 
 function onPointerDown(e: PointerEvent) {
   pointerOrigin = e.clientX
-  dragOffsetAtStart = dragOffset
+  phiAtDragStart = phi
+  velocity = 0
 }
 
 function onPointerMove(e: PointerEvent) {
   if (pointerOrigin === null)
     return
-  dragOffset = dragOffsetAtStart + (e.clientX - pointerOrigin) / 200
+  const next = phiAtDragStart + (e.clientX - pointerOrigin) / 200
+  velocity = next - phi
+  phi = next
 }
 
 function onPointerUp() {
@@ -180,12 +183,20 @@ function onTouchEnd(e: TouchEvent) {
   }
 }
 
+
 function animate() {
-  phi += 0.005
+  if (pointerOrigin === null) {
+    if (Math.abs(velocity) > 0.0005) {
+      phi += velocity
+      velocity *= 0.95
+    } else {
+      velocity = 0
+      phi += 0.005
+    }
+  }
   globe?.update({ phi })
   requestAnimationFrame(animate)
 }
-
 function updateSize() {
   if (!container.value)
     return
