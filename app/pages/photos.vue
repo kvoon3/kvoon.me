@@ -76,19 +76,33 @@ watch(selectedPhoto, (val) => {
     </div>
 
     <Teleport to="body">
-      <div
-        v-if="selectedPhoto"
-        class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-        style="padding: 10px"
-        @click.self="selectedPhoto = null"
-      >
-        <NuxtImg
-          :src="selectedPhoto.url"
-          alt="photo"
-          class="max-w-full max-h-full w-auto h-auto object-contain cursor-pointer"
-          @click.stop="selectedPhoto = null"
-        />
-      </div>
+      <Transition name="modal-fade">
+        <div
+          v-if="selectedPhoto"
+          class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          style="padding: 10px"
+          @click.self="selectedPhoto = null"
+        >
+          <NuxtImg
+            :src="selectedPhoto.url"
+            alt="photo"
+            class="max-w-full max-h-full w-auto h-auto object-contain cursor-pointer"
+            @click.stop="selectedPhoto = null"
+          />
+        </div>
+      </Transition>
     </Teleport>
   </div>
 </template>
+
+<style scoped>
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+</style>
