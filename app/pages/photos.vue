@@ -28,6 +28,10 @@ function getBlurhashStyle(filename: string | undefined): Record<string, string> 
   return bg ? { background: blurhashToCssGradientString(bg) } : undefined
 }
 
+const [displayMode, toggleDisplayMode] = useToggle('cover', {
+  truthyValue: 'cover',
+  falsyValue: 'contain',
+})
 const selectedPhoto = shallowRef<typeof photos[number] | null>(null)
 
 function onKeydown(e: KeyboardEvent) {
@@ -60,8 +64,19 @@ watch(selectedPhoto, (val) => {
 </script>
 
 <template>
+  <div py2 px4>
+    <button icon-btn @click="toggleDisplayMode()">
+      <div v-if="displayMode === 'cover'" i-ph-crop-duotone />
+      <div v-else i-ph-image-duotone />
+    </button>
+  </div>
   <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
-    <div v-for="photo in photos" :key="photo.name" aspect-square bg-neutral:10 @click="selectedPhoto = photo">
+    <div
+      v-for="photo in photos"
+      :key="photo.name"
+      aspect-square
+      @click="selectedPhoto = photo"
+    >
       <LazyNuxtImg
         loading="lazy"
         :quality="70"
@@ -70,8 +85,8 @@ watch(selectedPhoto, (val) => {
         alt="photo"
         w-full
         h-full
-        object-cover
-        :style="getBlurhashStyle(photo.name)"
+        :class="displayMode === 'cover' ? 'object-cover' : 'object-contain'"
+        :style="displayMode === 'cover' ? getBlurhashStyle(photo.name) : ''"
       />
     </div>
 
