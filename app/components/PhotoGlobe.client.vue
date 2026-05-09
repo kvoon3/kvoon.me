@@ -115,22 +115,30 @@ function initGlobe() {
 }
 
 let phi = 3
-let pointerOrigin: number | null = null
+let theta = 0.3
+let pointerOrigin: { x: number, y: number } | null = null
 let phiAtDragStart = 0
-let velocity = 0
+let thetaAtDragStart = 0
+let velocityPhi = 0
+let velocityTheta = 0
 
 function onPointerDown(e: PointerEvent) {
-  pointerOrigin = e.clientX
+  pointerOrigin = { x: e.clientX, y: e.clientY }
   phiAtDragStart = phi
-  velocity = 0
+  thetaAtDragStart = theta
+  velocityPhi = 0
+  velocityTheta = 0
 }
 
 function onPointerMove(e: PointerEvent) {
   if (pointerOrigin === null)
     return
-  const next = phiAtDragStart + (e.clientX - pointerOrigin) / 200
-  velocity = next - phi
-  phi = next
+  const nextPhi = phiAtDragStart + (e.clientX - pointerOrigin.x) / 200
+  const nextTheta = thetaAtDragStart + (e.clientY - pointerOrigin.y) / 200
+  velocityPhi = nextPhi - phi
+  velocityTheta = nextTheta - theta
+  phi = nextPhi
+  theta = nextTheta
 }
 
 function onPointerUp() {
@@ -183,18 +191,25 @@ function onTouchEnd(e: TouchEvent) {
   }
 }
 
-
 function animate() {
   if (pointerOrigin === null) {
-    if (Math.abs(velocity) > 0.0005) {
-      phi += velocity
-      velocity *= 0.95
-    } else {
-      velocity = 0
+    if (Math.abs(velocityPhi) > 0.0005) {
+      phi += velocityPhi
+      velocityPhi *= 0.95
+    }
+    else {
+      velocityPhi = 0
       phi += 0.005
     }
+    if (Math.abs(velocityTheta) > 0.0005) {
+      theta += velocityTheta
+      velocityTheta *= 0.95
+    }
+    else {
+      velocityTheta = 0
+    }
   }
-  globe?.update({ phi })
+  globe?.update({ phi, theta })
   requestAnimationFrame(animate)
 }
 function updateSize() {
