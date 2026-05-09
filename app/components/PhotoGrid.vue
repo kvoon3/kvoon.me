@@ -95,7 +95,7 @@ watch(selectedPhoto, (val) => {
             <NuxtImg
               :src="selectedPhoto.url"
               alt="photo"
-              class="max-w-full max-h-full w-auto h-auto object-contain cursor-pointer"
+              class="w-full h-full object-contain cursor-pointer"
               @click.stop="selectedPhoto = null"
             />
           </div>
