@@ -34,6 +34,7 @@ defineProps<{
           aspect-square
           object-cover
           size-20
+          shrink-0
         />
         <div text-9px text-neutral-400 text-center pt-1 font-medium uppercase tracking-wider>
           {{ place }}

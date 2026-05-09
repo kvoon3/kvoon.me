@@ -26,7 +26,7 @@ const size = reactive({ width: 0, height: 0 })
 const currentScale = ref(DEFAULT_SCALE)
 
 let globe: ReturnType<typeof createGlobe> | null = null
-let animationId = 0
+const animationId = 0
 
 const isDark = computed(() => colorMode.preference === 'dark' || colorMode.value === 'dark')
 
@@ -114,7 +114,7 @@ function initGlobe() {
   })
 }
 
-const phi = 3
+let phi = 3
 let dragOffset = 0
 let pointerOrigin: number | null = null
 let dragOffsetAtStart = 0
@@ -180,15 +180,10 @@ function onTouchEnd(e: TouchEvent) {
   }
 }
 
-let lastPhi = 0
-
 function animate() {
-  const current = phi + dragOffset
-  if (current !== lastPhi) {
-    lastPhi = current
-    globe?.update({ phi: current })
-  }
-  animationId = requestAnimationFrame(animate)
+  phi += 0.005
+  globe?.update({ phi })
+  requestAnimationFrame(animate)
 }
 
 function updateSize() {
@@ -220,7 +215,8 @@ watch(
       return
     if (globe) {
       globe.update({ width: w, height: h })
-    } else {
+    }
+    else {
       initGlobe()
     }
   },
