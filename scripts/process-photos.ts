@@ -1,3 +1,4 @@
+import type { Tags } from 'exifreader'
 import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
@@ -66,13 +67,31 @@ for (const filepath of files) {
     await fs.unlink(filepath)
 }
 
-// Generate blurhash
+// Generate blurhash and extract location
 files = (await fg('**/*.{jpg,png,jpeg}', {
   caseSensitiveMatch: false,
   absolute: true,
   cwd: folder,
 }))
   .sort((a, b) => a.localeCompare(b))
+
+const DEFAULT_LOCATION: [number, number] = [22.5431, 114.0579]
+
+function extractGps(exif: Tags): [number, number] | null {
+  const lat = exif.GPSLatitude?.value
+  const latRef = exif.GPSLatitudeRef?.value?.[0]
+  const lng = exif.GPSLongitude?.value
+  const lngRef = exif.GPSLongitudeRef?.value?.[0]
+  if (lat && lng && Array.isArray(lat) && Array.isArray(lng)) {
+    const latDec = lat[0] + lat[1] / 60 + lat[2] / 3600
+    const lngDec = lng[0] + lng[1] / 60 + lng[2] / 3600
+    return [
+      Math.round((latRef === 'S' ? -latDec : latDec) * 10000) / 10000,
+      Math.round((lngRef === 'W' ? -lngDec : lngDec) * 10000) / 10000,
+    ]
+  }
+  return null
+}
 
 for (const filepath of files) {
   if (!basename(filepath).startsWith('p-')) {
@@ -83,19 +102,37 @@ for (const filepath of files) {
   if (existsSync(configFile)) {
     config = JSON.parse(await fs.readFile(configFile, 'utf-8'))
   }
-  if (config.blurhash) {
-    continue
-  }
+
   const buffer = await fs.readFile(filepath)
-  const img = sharp(buffer)
-  const { data, info } = await img
-    .raw()
-    .ensureAlpha()
-    .resize(32, 32, { fit: 'cover' })
-    .toBuffer({ resolveWithObject: true })
-  const blurhash = blurhashEncode(new Uint8ClampedArray(data), info?.width, info?.height, 4, 4)
-  config.blurhash = blurhash
-  await fs.writeFile(configFile, JSON.stringify(config, null, 2))
+
+  let changed = false
+
+  // Extract GPS location from EXIF if not already in config
+  if (!config.location) {
+    try {
+      const exif = await ExifReader.load(buffer)
+      config.location = extractGps(exif) || DEFAULT_LOCATION
+    }
+    catch {
+      config.location = DEFAULT_LOCATION
+    }
+    changed = true
+  }
+
+  if (!config.blurhash) {
+    const img = sharp(buffer)
+    const { data, info } = await img
+      .raw()
+      .ensureAlpha()
+      .resize(32, 32, { fit: 'cover' })
+      .toBuffer({ resolveWithObject: true })
+    const blurhash = blurhashEncode(new Uint8ClampedArray(data), info?.width, info?.height, 4, 4)
+    config.blurhash = blurhash
+    changed = true
+  }
+  if (changed) {
+    await fs.writeFile(configFile, JSON.stringify(config, null, 2))
+  }
 }
 
 // Clean up json files that don't have a corresponding image
