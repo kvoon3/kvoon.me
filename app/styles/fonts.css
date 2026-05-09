@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'GeistPixelSquare';
+  src: url('/fonts/GeistPixel-Square.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistPixelGrid';
+  src: url('/fonts/GeistPixel-Grid.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistPixelCircle';
+  src: url('/fonts/GeistPixel-Circle.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistPixelTriangle';
+  src: url('/fonts/GeistPixel-Triangle.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistPixelLine';
+  src: url('/fonts/GeistPixel-Line.woff2') format('woff2');
+  font-display: swap;
+}
+

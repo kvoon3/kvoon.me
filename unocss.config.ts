@@ -48,6 +48,13 @@ export default defineConfig({
     colors: {
       primary: 'var(--c-primary)',
     },
+    font: {
+      'pixel-square': 'GeistPixelSquare',
+      'pixel-grid': 'GeistPixelGrid',
+      'pixel-circle': 'GeistPixelCircle',
+      'pixel-triangle': 'GeistPixelTriangle',
+      'pixel-line': 'GeistPixelLine',
+    },
   },
   transformers: [
     transformerVariantGroup(),
