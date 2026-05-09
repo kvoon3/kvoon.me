@@ -64,49 +64,48 @@ watch(selectedPhoto, (val) => {
 </script>
 
 <template>
-  <div py2 px4>
-    <button icon-btn @click="toggleDisplayMode()">
-      <div v-if="displayMode === 'cover'" i-ph-crop-duotone />
-      <div v-else i-ph-image-duotone />
-    </button>
-  </div>
-  <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
-    <div
-      v-for="photo in photos"
-      :key="photo.name"
-      aspect-square
-      @click="selectedPhoto = photo"
-    >
-      <LazyNuxtImg
-        loading="lazy"
-        :quality="70"
-        :width="720"
-        :src="photo.url"
-        alt="photo"
-        w-full
-        h-full
-        :class="displayMode === 'cover' ? 'object-cover' : 'object-contain'"
-        :style="displayMode === 'cover' ? getBlurhashStyle(photo.name) : ''"
-      />
+  <div>
+    <div pt4 px4>
+      <Icon :size="25" :name="displayMode === 'cover' ? 'ph:crop-duotone' : 'ph:image-duotone'" icon-btn transition-all @click="toggleDisplayMode()" />
     </div>
+    <div p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-1">
+      <div
+        v-for="photo in photos"
+        :key="photo.name"
+        aspect-square
+        @click="selectedPhoto = photo"
+      >
+        <LazyNuxtImg
+          loading="lazy"
+          :quality="70"
+          :width="720"
+          :src="photo.url"
+          alt="photo"
+          w-full
+          h-full
+          :class="displayMode === 'cover' ? 'object-cover' : 'object-contain'"
+          :style="displayMode === 'cover' ? getBlurhashStyle(photo.name) : ''"
+        />
+      </div>
 
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="selectedPhoto"
-          class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-          style="padding: 10px"
-          @click.self="selectedPhoto = null"
-        >
-          <NuxtImg
-            :src="selectedPhoto.url"
-            alt="photo"
-            class="max-w-full max-h-full w-auto h-auto object-contain cursor-pointer"
-            @click.stop="selectedPhoto = null"
-          />
-        </div>
-      </Transition>
-    </Teleport>
+      <Teleport to="body">
+        <Transition name="modal-fade">
+          <div
+            v-if="selectedPhoto"
+            class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+            style="padding: 10px"
+            @click.self="selectedPhoto = null"
+          >
+            <NuxtImg
+              :src="selectedPhoto.url"
+              alt="photo"
+              class="max-w-full max-h-full w-auto h-auto object-contain cursor-pointer"
+              @click.stop="selectedPhoto = null"
+            />
+          </div>
+        </Transition>
+      </Teleport>
+    </div>
   </div>
 </template>
 
