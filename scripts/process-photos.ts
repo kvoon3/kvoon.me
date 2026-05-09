@@ -30,8 +30,6 @@ for (const filepath of files) {
   const img = await sharp(buffer)
   const exif = await ExifReader.load(buffer)
 
-  let title: string | undefined
-
   let dateRaw = exif.DateTimeOriginal?.value || exif.DateTime?.value || exif.DateCreated?.value
   dateRaw ||= new Date(await fs.stat(filepath).then(stat => stat.birthtime || stat.mtime)).toISOString()
   if (Array.isArray(dateRaw))
@@ -67,9 +65,6 @@ for (const filepath of files) {
   if (outFile !== filepath)
     await fs.unlink(filepath)
 
-  if (title) {
-    await fs.writeFile(outFile.replace(/\.\w+$/, '.json'), JSON.stringify({ text: title }, null, 2))
-  }
 }
 
 // Generate blurhash
