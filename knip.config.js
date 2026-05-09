@@ -12,7 +12,6 @@ export default {
 
   // Entry files - mark build scripts and shared utilities as entry points
   entry: [
-    'app/utils/generatePhotoMeta.ts',
     'scripts/process-photos.ts',
   ],
 
