@@ -22,7 +22,6 @@ function toggleColorMode() {
     colorMode.preference = 'system'
   }
 
-  // Reset transition state after animation completes
   if (themeTransitionDuration.value) {
     sleep(Number.parseInt(themeTransitionDuration.value, 10)).then(() => {
       isTransitioning.value = false
@@ -36,10 +35,10 @@ function toggleColorMode() {
     <Icon
       :name="
         colorMode.preference === 'dark'
-          ? 'pixelarticons:moon'
+          ? 'ph:moon'
           : colorMode.preference === 'light'
-            ? 'pixelarticons:sun'
-            : 'pixelarticons:monitor'
+            ? 'ph:sun'
+            : 'ph:monitor'
       "
       px2 py1 border-1 rounded
       class="transition-all duration-200 ease-in-out hover:scale-105"

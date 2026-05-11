@@ -15,7 +15,7 @@ export default {
     'scripts/process-photos.ts',
   ],
 
-  // Icon packages are used by @nuxt/icon at runtime
+  // Icon collections are loaded by @nuxt/icon at runtime
   // ESLint is managed by @nuxt/eslint
-  ignoreDependencies: ['@iconify-json/*', 'eslint'],
+  ignoreDependencies: ['@iconify-json/ph', '@iconify-json/simple-icons', 'eslint'],
 }

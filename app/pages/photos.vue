@@ -35,7 +35,7 @@ function toggleDisplayMode() {
   <div>
     <div py2 px4 flex justify-center gap-2>
       <Icon :size="25" :name="displayMode === 'cover' ? 'ph:crop-duotone' : 'ph:image-duotone'" icon-btn transition-all @click="toggleDisplayMode()" />
-      <Icon :size="25" :name="showGlobe ? 'ph:globe-duotone' : 'ph:globe-duotone'" icon-btn transition-all :class="{ 'text-primary': showGlobe }" @click="toggleGlobe()" />
+      <Icon :size="25" name="ph:globe-duotone" icon-btn transition-all :class="{ 'text-primary': showGlobe }" @click="toggleGlobe()" />
     </div>
     <Transition name="globe-drawer">
       <PhotoGlobe v-if="showGlobe" class="h-[min(400px,40vh)]" :photos="photosWithLocation" />
