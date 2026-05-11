@@ -134,6 +134,9 @@ onUnmounted(() => {
         :key="photo.name"
         relative
         aspect-square
+        border
+        transition-colors
+        :class="props.showInfo ? 'border-neutral-300 dark:border-neutral-700' : 'border-transparent'"
         @click="selectedPhoto = photo"
       >
         <LazyNuxtImg
