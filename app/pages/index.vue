@@ -15,10 +15,9 @@ useSeoMeta({
 <template>
   <div grid="~ md:cols-2 gap-8" container mxa pt12>
     <div prose dark:prose-invert px4>
-      <div relative>
-        <NuxtImg src="/avatar_cropped.JPG" :quality="70" alt="avatar" object-cover rounded-full border-base size-30 />
-        <!-- border="~ dashed base" -->
-        <div absolute top-0 left-20 shadow-sm dark:shadow-neutral-500 rounded-full>
+      <div relative isolate>
+        <NuxtImg src="/avatar_cropped.JPG" :quality="70" alt="avatar" relative z-1 object-cover rounded-full border-base size-30 />
+        <div absolute top-0 left-20 z-0 shadow-sm dark:shadow-neutral-500 rounded-full>
           <MyIcon id="icon" :size="120" :weight="50" />
         </div>
       </div>
@@ -87,7 +86,7 @@ useSeoMeta({
 #icon {
   --blur-min-range: 2px;
   --blur-max-range: 20px;
-  animation: blur-loop 5s infinite
+  animation: blur-loop 5s infinite;
 }
 
 @keyframes blur-loop {
@@ -112,20 +111,5 @@ useSeoMeta({
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  background-color: #fee;
-  border: 1px solid #fcc;
-  border-radius: 0.5rem;
-  color: #c00;
-  margin: 1rem 0;
-}
-
-.error-message .icon {
-  flex-shrink: 0;
 }
 </style>
