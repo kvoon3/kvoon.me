@@ -110,7 +110,7 @@ const showPhotoInfo = ref(false)
 function togglePhotoInfo() {
   showPhotoInfo.value = !showPhotoInfo.value
 }
-const showLocationFilters = ref(true)
+const showLocationFilters = ref(false)
 function toggleLocationFilters() {
   showLocationFilters.value = !showLocationFilters.value
 }
@@ -118,7 +118,18 @@ function toggleLocationFilters() {
 
 <template>
   <div>
-    <div py2 px4 flex justify-center gap-2>
+    <div py2 px4 flex justify-center gap-4>
+      <button
+        type="button"
+        icon-btn
+        transition-all
+        :aria-pressed="showLocationFilters"
+        :aria-label="showLocationFilters ? 'Hide location filters' : 'Show location filters'"
+        :class="{ 'text-primary': showLocationFilters }"
+        @click="toggleLocationFilters()"
+      >
+        <Icon :size="25" name="ph:funnel-duotone" />
+      </button>
       <Icon :size="25" :name="displayMode === 'cover' ? 'ph:crop-duotone' : 'ph:image-duotone'" icon-btn transition-all @click="toggleDisplayMode()" />
       <Icon :size="25" name="ph:globe-duotone" icon-btn transition-all :class="{ 'text-primary': showGlobe }" @click="toggleGlobe()" />
       <button
@@ -131,17 +142,6 @@ function toggleLocationFilters() {
         @click="togglePhotoInfo()"
       >
         <Icon :size="25" name="ph:info-duotone" />
-      </button>
-      <button
-        type="button"
-        icon-btn
-        transition-all
-        :aria-pressed="showLocationFilters"
-        :aria-label="showLocationFilters ? 'Hide location filters' : 'Show location filters'"
-        :class="{ 'text-primary': showLocationFilters }"
-        @click="toggleLocationFilters()"
-      >
-        <Icon :size="25" name="ph:funnel-duotone" />
       </button>
     </div>
     <Transition name="globe-drawer">
