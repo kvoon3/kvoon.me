@@ -4,14 +4,14 @@ import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { encode as blurhashEncode } from 'blurhash'
 import ExifReader from 'exifreader'
-import fg from 'fast-glob'
 import { basename, join, parse } from 'pathe'
 import sharp from 'sharp'
+import { glob } from 'tinyglobby'
 import { compressSharp } from '../app/utils/img-compress'
 
 const folder = fileURLToPath(new URL('../public/photos', import.meta.url))
 
-let files = (await fg('**/*.{jpg,png,jpeg}', {
+let files = (await glob('**/*.{jpg,png,jpeg}', {
   caseSensitiveMatch: false,
   absolute: true,
   cwd: folder,
@@ -68,7 +68,7 @@ for (const filepath of files) {
 }
 
 // Generate blurhash and extract location
-files = (await fg('**/*.{jpg,png,jpeg}', {
+files = (await glob('**/*.{jpg,png,jpeg}', {
   caseSensitiveMatch: false,
   absolute: true,
   cwd: folder,
@@ -141,7 +141,7 @@ for (const filepath of files) {
 }
 
 // Clean up json files that don't have a corresponding image
-for (const json of await fg('**/*.json', {
+for (const json of await glob('**/*.json', {
   caseSensitiveMatch: false,
   absolute: true,
   cwd: folder,
