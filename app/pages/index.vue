@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { blurhashToCssGradientString } from '@unpic/placeholder'
 import { projects } from '~/data/projects'
+import avatarMeta from '../data/avatar.json'
 
 const { data, error } = useAsyncData(
   '/intro',
   () => queryCollection('content').path('/intro').first(),
 )
+
+const avatarPlaceholderStyle = {
+  background: blurhashToCssGradientString(avatarMeta.blurhash),
+}
 
 useSeoMeta({
   title: data.value?.title,
@@ -16,7 +22,7 @@ useSeoMeta({
   <div grid="~ md:cols-2 gap-8" container mxa pt12>
     <div prose dark:prose-invert px4>
       <div relative isolate>
-        <NuxtImg src="/avatar_cropped.JPG" :quality="70" alt="avatar" relative z-1 object-cover rounded-full border-base size-30 />
+        <NuxtImg src="/avatar_cropped.jpg" :quality="70" alt="avatar" relative z-1 object-cover rounded-full border-base size-30 :style="avatarPlaceholderStyle" />
         <div absolute top-0 left-20 z-0 shadow-sm dark:shadow-neutral-500 rounded-full>
           <MyIcon id="icon" :size="120" :weight="50" />
         </div>

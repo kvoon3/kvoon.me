@@ -1,4 +1,5 @@
 import type { Tags } from 'exifreader'
+import type { Buffer } from 'node:buffer'
 import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
@@ -9,7 +10,45 @@ import sharp from 'sharp'
 import { glob } from 'tinyglobby'
 import { compressSharp } from '../app/utils/img-compress'
 
-const folder = fileURLToPath(new URL('../public/photos', import.meta.url))
+interface ImageMeta {
+  blurhash?: string
+}
+
+interface PhotoMeta extends ImageMeta {
+  location?: [number, number]
+  rotate?: number
+}
+
+const publicFolder = fileURLToPath(new URL('../public', import.meta.url))
+const dataFolder = fileURLToPath(new URL('../app/data', import.meta.url))
+const folder = join(publicFolder, 'photos')
+
+function stringifyJson(data: unknown): string {
+  return `${JSON.stringify(data, null, 2)}\n`
+}
+
+async function createBlurhash(buffer: Buffer): Promise<string> {
+  const img = sharp(buffer)
+  const { data, info } = await img
+    .raw()
+    .ensureAlpha()
+    .resize(32, 32, { fit: 'cover' })
+    .toBuffer({ resolveWithObject: true })
+  return blurhashEncode(new Uint8ClampedArray(data), info.width, info.height, 4, 4)
+}
+
+async function ensureBlurhash(filepath: string, configFile = filepath.replace(/\.\w+$/, '.json'), force = false): Promise<void> {
+  const config: ImageMeta = existsSync(configFile)
+    ? JSON.parse(await fs.readFile(configFile, 'utf-8'))
+    : {}
+
+  if (config.blurhash && !force)
+    return
+
+  const buffer = await fs.readFile(filepath)
+  config.blurhash = await createBlurhash(buffer)
+  await fs.writeFile(configFile, stringifyJson(config))
+}
 
 let files = (await glob('**/*.{jpg,png,jpeg}', {
   caseSensitiveMatch: false,
@@ -98,7 +137,7 @@ for (const filepath of files) {
     continue
   }
   const configFile = filepath.replace(/\.\w+$/, '.json')
-  let config: Record<string, any> = {}
+  let config: PhotoMeta = {}
   if (existsSync(configFile)) {
     config = JSON.parse(await fs.readFile(configFile, 'utf-8'))
   }
@@ -125,18 +164,11 @@ for (const filepath of files) {
   }
 
   if (!config.blurhash) {
-    const img = sharp(buffer)
-    const { data, info } = await img
-      .raw()
-      .ensureAlpha()
-      .resize(32, 32, { fit: 'cover' })
-      .toBuffer({ resolveWithObject: true })
-    const blurhash = blurhashEncode(new Uint8ClampedArray(data), info?.width, info?.height, 4, 4)
-    config.blurhash = blurhash
+    config.blurhash = await createBlurhash(buffer)
     changed = true
   }
   if (changed) {
-    await fs.writeFile(configFile, JSON.stringify(config, null, 2))
+    await fs.writeFile(configFile, stringifyJson(config))
   }
 }
 
@@ -149,3 +181,5 @@ for (const json of await glob('**/*.json', {
   if (!existsSync(json.replace(/\.json$/, '.jpg')))
     await fs.unlink(json)
 }
+
+await ensureBlurhash(join(publicFolder, 'avatar_cropped.jpg'), join(dataFolder, 'avatar.json'), true)
