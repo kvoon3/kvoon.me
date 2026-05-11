@@ -25,6 +25,16 @@ export default defineNuxtConfig({
     fallback: 'dark',
   },
 
+  icon: {
+    clientBundle: {
+      icons: [
+        'ph:sun',
+        'ph:moon',
+        'ph:monitor',
+      ],
+    },
+  },
+
   eslint: {
     config: {
       standalone: false,

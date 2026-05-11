@@ -6,6 +6,22 @@ const isTransitioning = ref(false)
 
 const themeTransitionDuration = useCssVar('--theme-transition-duration')
 
+const themeIconName = computed(() => {
+  if (colorMode.preference === 'dark')
+    return 'ph:moon'
+  if (colorMode.preference === 'light')
+    return 'ph:sun'
+  return 'ph:monitor'
+})
+
+const themeLabel = computed(() => {
+  if (colorMode.preference === 'dark')
+    return 'Switch to system theme'
+  if (colorMode.preference === 'light')
+    return 'Switch to dark theme'
+  return 'Switch to light theme'
+})
+
 function toggleColorMode() {
   if (isTransitioning.value)
     return
@@ -31,18 +47,13 @@ function toggleColorMode() {
 </script>
 
 <template>
-  <button p2 rounded flex="~ items-center justify-center" hover:bg-active @click="toggleColorMode">
+  <button p2 rounded flex="~ items-center justify-center" hover:bg-active :aria-label="themeLabel" @click="toggleColorMode">
     <Icon
-      :name="
-        colorMode.preference === 'dark'
-          ? 'ph:moon'
-          : colorMode.preference === 'light'
-            ? 'ph:sun'
-            : 'ph:monitor'
-      "
-      px2 py1 border-1 rounded
+      :name="themeIconName"
+      px2 py1 border-1 rounded text-5
       class="transition-all duration-200 ease-in-out hover:scale-105"
       :class="{ 'opacity-70': isTransitioning }"
+      aria-hidden="true"
     />
   </button>
 </template>
