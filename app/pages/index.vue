@@ -78,7 +78,7 @@ useSeoMeta({
         </div>
       </CategoryCard>
     </section>
-    <LicenseLink px4 />
+    <LicenseLink px4 py8 />
   </div>
 </template>
 
