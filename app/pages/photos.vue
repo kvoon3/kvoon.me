@@ -118,7 +118,7 @@ function toggleLocationFilters() {
 
 <template>
   <div>
-    <div py2 px4 flex justify-center gap-4>
+    <div pt5 pb2 px4 flex justify-center gap-4>
       <button
         type="button"
         icon-btn
