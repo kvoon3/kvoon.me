@@ -28,6 +28,12 @@ export default defineNuxtConfig({
   icon: {
     clientBundle: {
       icons: [
+        'ph:check-duotone',
+        'ph:copy-duotone',
+        'ph:crop-duotone',
+        'ph:globe-duotone',
+        'ph:image-duotone',
+        'ph:info-duotone',
         'ph:sun',
         'ph:moon',
         'ph:monitor',
