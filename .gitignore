@@ -26,3 +26,4 @@ logs
 
 # Local Netlify folder
 .netlify
+.codex/environments/environment.toml
