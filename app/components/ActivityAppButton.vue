@@ -12,7 +12,7 @@ const { data: activity } = await useFetch<ActivityPayload | null>('/api/activity
 })
 
 const activityLabel = computed(() => activity.value?.appName ?? 'Idle')
-const activityTitle = computed(() => activity.value?.windowTitle ?? 'No active window')
+const activityTitle = computed(() => activity.value?.windowTitle)
 const activityTime = computed(() => activity.value?.timestamp ? new Date(activity.value.timestamp) : Date.now())
 const rawActivityTimeAgo = useTimeAgo(activityTime)
 const activityTimeAgo = computed(() => {
@@ -22,6 +22,24 @@ const activityTimeAgo = computed(() => {
   return rawActivityTimeAgo.value
     .replace('minute', 'min')
     .replace('minutes', 'mins')
+})
+
+const now = ref(Date.now())
+
+useIntervalFn(() => {
+  now.value = Date.now()
+}, 1000)
+
+const activityCounter = computed(() => {
+  if (!activity.value?.timestamp)
+    return ''
+  const elapsed = now.value - new Date(activity.value.timestamp).getTime()
+  if (elapsed < 0)
+    return ''
+  const h = Math.floor(elapsed / 3600000)
+  const m = Math.floor((elapsed % 3600000) / 60000)
+  const s = Math.floor((elapsed % 60000) / 1000)
+  return `(${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')})`
 })
 
 const idleMessages = [
@@ -105,7 +123,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <div min-w-0 flex-1>
+          <div min-w-0 flex-1 flex="~ col" justify-between>
             <Transition name="fade-slide" mode="out-in">
               <p v-if="activity?.appName" class="activity-label" :data-text="`kvoon is using ${activityLabel}`" text-base font-medium leading-snug>
                 kvoon is using {{ activityLabel }}
@@ -114,8 +132,8 @@ onBeforeUnmount(() => {
                 {{ idleMessage }}
               </p>
             </Transition>
-            <p mt1 text-sm text-neutral>
-              {{ activityTimeAgo }}
+            <p text-sm text-neutral op-50>
+              {{ activityTimeAgo }} <span text-xs op-75>{{ activityCounter }}</span>
             </p>
           </div>
         </div>
@@ -127,10 +145,6 @@ onBeforeUnmount(() => {
           <p mt1 text-sm break-words leading-snug>
             {{ activityTitle }}
           </p>
-        </div>
-
-        <div v-else mt4 border-t border-neutral:20 pt3 text-sm text-neutral>
-          No active window title
         </div>
       </PopoverContent>
     </PopoverPortal>

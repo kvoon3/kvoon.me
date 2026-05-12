@@ -9,6 +9,19 @@ var accessibilityObserver: AXObserver?
 var observedAppElement: AXUIElement?
 var observedWindowElement: AXUIElement?
 
+let appNotifications = [
+  kAXFocusedWindowChangedNotification,
+  kAXMainWindowChangedNotification,
+  kAXFocusedUIElementChangedNotification,
+]
+
+let windowNotifications = [
+  kAXTitleChangedNotification,
+  kAXValueChangedNotification,
+  kAXSelectedChildrenChangedNotification,
+  kAXFocusedUIElementChangedNotification,
+]
+
 func emitActivityEvent() {
   print("activity")
   fflush(stdout)
@@ -22,13 +35,30 @@ func removeWindowObservation() {
     return
   }
 
-  AXObserverRemoveNotification(
-    accessibilityObserver,
-    currentObservedWindowElement,
-    kAXTitleChangedNotification as CFString
-  )
+  for notification in windowNotifications {
+    AXObserverRemoveNotification(
+      accessibilityObserver,
+      currentObservedWindowElement,
+      notification as CFString
+    )
+  }
 
   observedWindowElement = nil
+}
+
+func addNotification(
+  _ notification: String,
+  to element: AXUIElement,
+  using observer: AXObserver
+) -> Bool {
+  let result = AXObserverAddNotification(
+    observer,
+    element,
+    notification as CFString,
+    nil
+  )
+
+  return result == .success || result == .notificationAlreadyRegistered
 }
 
 func observeFocusedWindowTitle() {
@@ -56,24 +86,24 @@ func observeFocusedWindowTitle() {
   }
 
   let windowElement = focusedWindow as! AXUIElement
-  let registrationResult = AXObserverAddNotification(
-    accessibilityObserver,
-    windowElement,
-    kAXTitleChangedNotification as CFString,
-    nil
-  )
-
-  guard registrationResult == .success else {
-    return
+  var registeredAnyNotification = false
+  for notification in windowNotifications {
+    if addNotification(notification, to: windowElement, using: accessibilityObserver) {
+      registeredAnyNotification = true
+    }
   }
 
-  observedWindowElement = windowElement
+  if registeredAnyNotification {
+    observedWindowElement = windowElement
+  }
 }
 
 let accessibilityCallback: AXObserverCallback = { _, _, notification, _ in
   let notificationName = notification as String
 
-  if notificationName == kAXFocusedWindowChangedNotification as String {
+  if notificationName == kAXFocusedWindowChangedNotification as String
+    || notificationName == kAXMainWindowChangedNotification as String
+  {
     observeFocusedWindowTitle()
   }
 
@@ -101,14 +131,14 @@ func observeFrontmostApplication() {
   }
 
   let appElement = AXUIElementCreateApplication(app.processIdentifier)
-  let registrationResult = AXObserverAddNotification(
-    nextObserver,
-    appElement,
-    kAXFocusedWindowChangedNotification as CFString,
-    nil
-  )
+  var registeredAnyNotification = false
+  for notification in appNotifications {
+    if addNotification(notification, to: appElement, using: nextObserver) {
+      registeredAnyNotification = true
+    }
+  }
 
-  guard registrationResult == .success else {
+  guard registeredAnyNotification else {
     return
   }
 
