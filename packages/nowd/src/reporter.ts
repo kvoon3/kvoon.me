@@ -14,12 +14,12 @@ export async function postSnapshot(snapshot: ActivitySnapshot, config: AppConfig
     if (response.ok)
       return true
 
-    console.warn(`Upload failed: ${response.status} ${response.statusText}`)
+    console.warn(`Upload failed for "${snapshot.appName || 'idle'}": ${response.status} ${response.statusText}`)
     return false
   }
   catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    console.warn(`Upload failed: ${message}`)
+    console.warn(`Upload failed for "${snapshot.appName || 'idle'}": ${message}`)
     return false
   }
 }

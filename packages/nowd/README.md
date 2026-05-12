@@ -17,8 +17,17 @@ NOWD_INCLUDE_APP_ICON="true"
 NOWD_INCLUDE_WINDOW_TITLE="true"
 ```
 
-The CLI prints one JSON object per sample and sends the same payload to
-`NOWD_API_URL` when configured:
+The CLI logs collector state changes and sends the matching payload to
+`NOWD_API_URL`:
+
+```text
+[nowd] watching http://localhost:3000/api/activity appIcon=true windowTitle=true
+[nowd] reported Code :: README.md
+[nowd] unchanged Code :: README.md
+[nowd] reported idle
+```
+
+The uploaded JSON payload looks like:
 
 ```json
 {

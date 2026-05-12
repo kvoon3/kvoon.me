@@ -9,6 +9,13 @@ const config = loadConfig()
 let lastReportedState: string | undefined
 let cleaningUp = false
 
+function describeSnapshot(snapshot: ActivitySnapshot): string {
+  const details = [snapshot.appName || 'idle']
+  if (snapshot.windowTitle)
+    details.push(snapshot.windowTitle)
+  return details.join(' :: ')
+}
+
 function toPayload(snapshot: ActivitySnapshot): ActivitySnapshot {
   return {
     appName: snapshot.appName,
@@ -42,15 +49,17 @@ async function collectOnce(): Promise<void> {
 
   const payload = toPayload(snapshot)
   const nextState = toStateKey(payload)
-  if (nextState === lastReportedState)
+  if (nextState === lastReportedState) {
+    process.stdout.write(`[nowd] unchanged ${describeSnapshot(payload)}\n`)
     return
+  }
 
   lastReportedState = nextState
   const uploaded = await postSnapshot(payload, config)
   if (!uploaded)
     return
 
-  process.stdout.write(`[nowd] ${payload.appName}\n`)
+  process.stdout.write(`[nowd] reported ${describeSnapshot(payload)}\n`)
 }
 
 async function signalIdle(): Promise<void> {
@@ -59,10 +68,15 @@ async function signalIdle(): Promise<void> {
   cleaningUp = true
 
   await postSnapshot(idleSnapshot(), config)
+  process.stdout.write('[nowd] reported idle\n')
   process.exit(0)
 }
 
 async function main(): Promise<void> {
+  process.stdout.write(
+    `[nowd] watching ${config.apiUrl} appIcon=${config.includeAppIcon} windowTitle=${config.includeWindowTitle}\n`,
+  )
+
   process.on('SIGINT', () => void signalIdle())
   process.on('SIGTERM', () => void signalIdle())
 
