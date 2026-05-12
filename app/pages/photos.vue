@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PhotoGridItem, PhotoMeta, PhotoWithLocation } from '~/types/photo'
+import { useRouteQuery } from '@vueuse/router'
 import { parseFilename } from 'ufo'
 import { imgRE } from '~/shared/constants'
 
@@ -67,19 +68,33 @@ const locationTags = computed<LocationTag[]>(() => {
   })
 })
 
-const activeLocationKeys = ref(new Set<string>())
-const initializedLocationFilters = ref(false)
+const tagQuery = useRouteQuery('tags')
+const locationKeys = computed(() => locationTags.value.map(tag => tag.key))
 
-watch(locationTags, (tags) => {
-  const nextKeys = new Set(tags.map(tag => tag.key))
-  if (!initializedLocationFilters.value) {
-    activeLocationKeys.value = nextKeys
-    initializedLocationFilters.value = true
+function getLocationKeysFromQuery(value: typeof tagQuery.value): Set<string> | undefined {
+  if (value == null)
     return
-  }
 
-  activeLocationKeys.value = new Set([...activeLocationKeys.value].filter(key => nextKeys.has(key)))
-}, { immediate: true })
+  return new Set((Array.isArray(value) ? value : [value])
+    .flatMap(part => part.split(','))
+    .map(key => key.trim())
+    .filter(Boolean))
+}
+
+const activeLocationKeys = computed<Set<string>>({
+  get() {
+    const queryKeys = getLocationKeysFromQuery(tagQuery.value)
+    return queryKeys
+      ? new Set(locationKeys.value.filter(key => queryKeys.has(key)))
+      : new Set(locationKeys.value)
+  },
+  set(keys) {
+    const selectedKeys = locationKeys.value.filter(key => keys.has(key))
+    tagQuery.value = selectedKeys.length === locationKeys.value.length
+      ? undefined
+      : selectedKeys.join(',')
+  },
+})
 
 const hasSelectedAllLocations = computed(() => activeLocationKeys.value.size === locationTags.value.length)
 const hasSelectedLocations = computed(() => activeLocationKeys.value.size > 0)
@@ -99,11 +114,23 @@ function toggleLocation(key: string) {
 }
 
 function selectAllLocations() {
-  activeLocationKeys.value = new Set(locationTags.value.map(tag => tag.key))
+  activeLocationKeys.value = new Set(locationKeys.value)
 }
 
 function deselectAllLocations() {
   activeLocationKeys.value = new Set()
+}
+
+function selectRandomLocations() {
+  const keys = locationKeys.value
+  if (keys.length === 0)
+    return
+
+  const selectedKeys = keys.filter(() => Math.random() >= 0.5)
+  if (selectedKeys.length === 0)
+    selectedKeys.push(keys[Math.floor(Math.random() * keys.length)]!)
+
+  activeLocationKeys.value = new Set(selectedKeys)
 }
 
 const photosWithLocation = computed<PhotoWithLocation[]>(() => {
@@ -209,6 +236,20 @@ function toggleLocationFilters() {
         >
           <Icon name="ph:x-circle-duotone" :size="16" />
           <span>Deselect All</span>
+        </button>
+        <button
+          type="button"
+          rounded-md
+          border
+          px3 py1
+          text-sm
+          inline-flex items-center gap-1
+          transition outline-none
+          class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
+          @click="selectRandomLocations()"
+        >
+          <Icon name="ph:shuffle-duotone" :size="16" />
+          <span>Random</span>
         </button>
       </div>
       <div flex flex-wrap justify-center gap-2>
