@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { PhotoMeta, PhotoWithLocation } from '~/types/photo'
+import type { PhotoGridItem, PhotoMeta, PhotoWithLocation } from '~/types/photo'
 import { parseFilename } from 'ufo'
+import { imgRE } from '~/shared/constants'
 
 interface LocationTag {
   key: string
@@ -15,10 +16,32 @@ for (const [path, module] of Object.entries(sidecarFiles)) {
   metaMap[name] = module.default
 }
 
+const photoFiles = import.meta.glob<{ default: string }>('../../public/photos/*', { eager: true })
+
+const photos = computed<PhotoGridItem[]>(() => {
+  return Object.entries(photoFiles)
+    .map(([path]) => {
+      const name = parseFilename(path)!
+      const stem = name.replace(imgRE, '')
+      const location = getPhotoLocation(metaMap[stem] ?? {})
+      return {
+        name,
+        stem,
+        url: `/photos/${name}`,
+        locationKey: location?.key,
+      }
+    })
+    .filter(photo => imgRE.test(photo.name))
+    .reverse()
+})
+
 const locationTags = computed<LocationTag[]>(() => {
   const map = new Map<string, LocationTag>()
-  for (const meta of Object.values(metaMap)) {
-    const location = getPhotoLocation(meta)
+  for (const photo of photos.value) {
+    if (!photo.locationKey)
+      continue
+
+    const location = getPhotoLocation(metaMap[photo.stem] ?? {})
     if (!location)
       continue
 
@@ -58,9 +81,9 @@ watch(locationTags, (tags) => {
   activeLocationKeys.value = new Set([...activeLocationKeys.value].filter(key => nextKeys.has(key)))
 }, { immediate: true })
 
-const activeLocationKeyList = computed(() => [...activeLocationKeys.value])
 const hasSelectedAllLocations = computed(() => activeLocationKeys.value.size === locationTags.value.length)
 const hasSelectedLocations = computed(() => activeLocationKeys.value.size > 0)
+const filteredPhotos = computed(() => photos.value.filter(photo => !photo.locationKey || activeLocationKeys.value.has(photo.locationKey)))
 
 function isLocationActive(key: string): boolean {
   return activeLocationKeys.value.has(key)
@@ -89,13 +112,17 @@ const photosWithLocation = computed<PhotoWithLocation[]>(() => {
       const location = getPhotoLocation(meta)
       return location && activeLocationKeys.value.has(location.key)
     })
-    .map(([name, meta]) => ({
-      path: `/photos/${name}.jpg`,
-      location: meta.location!,
-      blurhash: meta.blurhash,
-      rotate: meta.rotate,
-      place: getPhotoLocation(meta)?.label,
-    }))
+    .map(([name, meta]) => {
+      const location = getPhotoLocation(meta)!
+      return {
+        path: `/photos/${name}.jpg`,
+        location: meta.location!,
+        blurhash: meta.blurhash,
+        rotate: meta.rotate,
+        place: location.label,
+        locationKey: location.key,
+      }
+    })
 })
 
 const showGlobe = ref(false)
@@ -206,9 +233,9 @@ function toggleLocationFilters() {
       </div>
     </div>
     <PhotoGrid
+      :photos="filteredPhotos"
       :meta-map="metaMap"
       :display-mode="displayMode"
-      :active-location-keys="activeLocationKeyList"
       :show-info="showPhotoInfo"
     />
   </div>

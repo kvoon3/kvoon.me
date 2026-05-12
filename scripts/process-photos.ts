@@ -17,6 +17,9 @@ interface ImageMeta {
 interface PhotoMeta extends ImageMeta {
   location?: [number, number]
   rotate?: number
+  place?: string
+  name?: string
+  text?: string
 }
 
 const publicFolder = fileURLToPath(new URL('../public', import.meta.url))
@@ -57,11 +60,10 @@ let files = (await glob('**/*.{jpg,png,jpeg}', {
 }))
   .sort((a, b) => a.localeCompare(b))
 
-// Compress photos
 for (const filepath of files) {
-  if (basename(filepath).startsWith('p-')) {
+  if (basename(filepath).startsWith('p-'))
     continue
-  }
+
   let writepath = filepath
   let { ext } = parse(filepath.toLowerCase())
   if (ext === '.jpeg')
@@ -76,18 +78,15 @@ for (const filepath of files) {
     dateRaw = dateRaw[0] as string
   dateRaw = String(dateRaw)
 
-  // convert 2025:02:02 10:07:10 to date object
   let date = new Date(dateRaw.replace(/:/g, (x, idx) => {
     if (idx < 10)
       return '-'
     return x
   }))
-  if (Number.isNaN(+date)) {
+  if (Number.isNaN(+date))
     date = new Date()
-  }
 
   const timeDiff = Date.now() - +date
-  // 1 hour
   if (timeDiff < 1000 * 60 * 60) {
     console.warn(`Date of ${filepath} is too recent: ${dateRaw}`)
     continue
@@ -106,7 +105,6 @@ for (const filepath of files) {
     await fs.unlink(filepath)
 }
 
-// Generate blurhash and extract location
 files = (await glob('**/*.{jpg,png,jpeg}', {
   caseSensitiveMatch: false,
   absolute: true,
@@ -132,21 +130,26 @@ function extractGps(exif: Tags): [number, number] | null {
   return null
 }
 
+function rotationForLocation(location: [number, number]): number {
+  const key = location.join(',')
+  let hash = 0
+  for (const char of key)
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0
+  return Math.round(((hash / 0xFFFFFFFF) * 20 - 10) * 100) / 100
+}
+
 for (const filepath of files) {
-  if (!basename(filepath).startsWith('p-')) {
+  if (!basename(filepath).startsWith('p-'))
     continue
-  }
+
   const configFile = filepath.replace(/\.\w+$/, '.json')
   let config: PhotoMeta = {}
-  if (existsSync(configFile)) {
-    config = JSON.parse(await fs.readFile(configFile, 'utf-8'))
-  }
+  if (existsSync(configFile))
+    config = JSON.parse(await fs.readFile(configFile, 'utf-8')) as PhotoMeta
 
   const buffer = await fs.readFile(filepath)
-
   let changed = false
 
-  // Extract GPS location from EXIF if not already in config
   if (!config.location) {
     try {
       const exif = await ExifReader.load(buffer)
@@ -158,8 +161,9 @@ for (const filepath of files) {
     changed = true
   }
 
-  if (config.rotate === undefined) {
-    config.rotate = Math.round((Math.random() * 20 - 10) * 100) / 100
+  const rotate = rotationForLocation(config.location!)
+  if (config.rotate !== rotate) {
+    config.rotate = rotate
     changed = true
   }
 
@@ -167,12 +171,10 @@ for (const filepath of files) {
     config.blurhash = await createBlurhash(buffer)
     changed = true
   }
-  if (changed) {
+  if (changed)
     await fs.writeFile(configFile, stringifyJson(config))
-  }
 }
 
-// Clean up json files that don't have a corresponding image
 for (const json of await glob('**/*.json', {
   caseSensitiveMatch: false,
   absolute: true,

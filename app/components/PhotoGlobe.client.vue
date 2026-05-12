@@ -18,6 +18,7 @@ interface LocationGroup {
 const MIN_SCALE = 0.4
 const MAX_SCALE = 2.0
 const DEFAULT_SCALE = 0.95
+const AUTO_ROTATE_SPEED = 0.00025
 
 const colorMode = useColorMode()
 const canvas = ref<HTMLCanvasElement>()
@@ -34,6 +35,8 @@ const markerColor = computed<[number, number, number]>(() => isDark.value
   ? [160 / 255, 240 / 255, 236 / 255]
   : [2 / 255, 158 / 255, 145 / 255],
 )
+
+const photoIndices = reactive<Record<string, number>>({})
 
 const locationGroups = computed<LocationGroup[]>(() => {
   const map = new Map<string, LocationGroup>()
@@ -54,33 +57,19 @@ const locationGroups = computed<LocationGroup[]>(() => {
   return [...map.values()]
 })
 
-const photoIndices = reactive<Record<string, number>>({})
-let rotationIntervals: ReturnType<typeof setInterval>[] = []
-
-function stopRotation() {
-  for (const id of rotationIntervals)
-    clearInterval(id)
-  rotationIntervals = []
-}
-
-function startRotation() {
+function resetPhotoIndices() {
   for (const group of locationGroups.value) {
-    if (group.photos.length <= 1)
-      continue
-    photoIndices[group.id] = 0
-    // Jitter prevents all markers from cycling simultaneously
-    const interval = 5000 + Math.random() * 3000
-    const id = setInterval(() => {
-      photoIndices[group.id] = ((photoIndices[group.id] ?? 0) + 1) % group.photos.length
-    }, interval)
-    rotationIntervals.push(id)
+    photoIndices[group.id] = Math.floor(Math.random() * group.photos.length)
   }
 }
 
-watch(locationGroups, () => {
-  stopRotation()
-  startRotation()
-}, { immediate: true })
+function switchPhoto(group: LocationGroup) {
+  if (group.photos.length <= 1)
+    return
+  photoIndices[group.id] = ((photoIndices[group.id] ?? 0) + 1) % group.photos.length
+}
+
+watch(locationGroups, resetPhotoIndices, { immediate: true })
 
 const markers = computed(() =>
   locationGroups.value.map(g => ({
@@ -199,7 +188,7 @@ function animate() {
     }
     else {
       velocityPhi = 0
-      phi += 0.005
+      phi += AUTO_ROTATE_SPEED
     }
     if (Math.abs(velocityTheta) > 0.0005) {
       theta += velocityTheta
@@ -254,7 +243,6 @@ onUnmounted(() => {
   globe?.destroy()
   ro?.disconnect()
   ro = null
-  stopRotation()
 })
 
 watch(isDark, (dark) => {
@@ -287,6 +275,7 @@ watch(markers, (m) => {
       :photo="group.photos[photoIndices[group.id] ?? 0]"
       :place="group.place"
       :photo-count="group.photos.length"
+      @switch-photo="switchPhoto(group)"
     />
 
     <div

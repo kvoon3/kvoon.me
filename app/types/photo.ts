@@ -13,4 +13,12 @@ export interface PhotoWithLocation {
   blurhash?: string
   rotate?: number
   place?: string
+  locationKey: string
+}
+
+export interface PhotoGridItem {
+  name: string
+  stem: string
+  url: string
+  locationKey?: string
 }

@@ -1,12 +1,22 @@
 <script setup lang="ts">
 import type { PhotoWithLocation } from '~/types/photo'
 
-defineProps<{
+const props = defineProps<{
   cobeId: string
   photo?: PhotoWithLocation
   place?: string
   photoCount: number
 }>()
+
+const emit = defineEmits<{
+  switchPhoto: []
+}>()
+
+function switchPhoto() {
+  if (props.photoCount <= 1)
+    return
+  emit('switchPhoto')
+}
 </script>
 
 <template>
@@ -18,6 +28,8 @@ defineProps<{
       transform: `rotate(${photo?.rotate ?? 0}deg)`,
     }"
     class="photo-label"
+    @click.stop="switchPhoto"
+    @pointerdown.stop
   >
     <Transition name="photo-switch" mode="out-in">
       <div
@@ -65,7 +77,7 @@ defineProps<{
   bottom: anchor(top);
   left: anchor(center);
   translate: -50% -20px;
-  pointer-events: none;
+  pointer-events: auto;
   transition: opacity 0.3s, filter 0.3s;
 }
 </style>
