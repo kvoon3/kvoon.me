@@ -1,6 +1,5 @@
 import type { AppConfig } from './config'
 import type { ActivitySnapshot } from './types'
-import process from 'node:process'
 
 export async function postSnapshot(snapshot: ActivitySnapshot, config: AppConfig): Promise<boolean> {
   try {
@@ -23,14 +22,4 @@ export async function postSnapshot(snapshot: ActivitySnapshot, config: AppConfig
     console.warn(`Upload failed: ${message}`)
     return false
   }
-}
-
-export function printUploadSuccess(snapshot: ActivitySnapshot): void {
-  process.stdout.write([
-    'Uploaded activity:',
-    `App: ${snapshot.appName}`,
-    `Icon: ${snapshot.appIconDataUrl ?? 'Not Send'}`,
-    `Window: ${snapshot.windowTitle ?? ''}`,
-    '',
-  ].join('\n'))
 }
