@@ -9,6 +9,15 @@ bun install
 bun run start
 ```
 
+To report with Bun's production environment loading:
+
+```bash
+pnpm --filter nowd prod
+```
+
+That script runs with `NODE_ENV=production`, so Bun loads `.env.production`
+using its native env-file precedence.
+
 Optional environment variables:
 
 ```bash

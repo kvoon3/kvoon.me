@@ -12,6 +12,7 @@
     "postinstall": "nuxt prepare",
     "nowd": "pnpm --filter nowd start",
     "nowd:dev": "pnpm --filter nowd dev",
+    "nowd:prod": "pnpm --filter nowd prod",
     "nowd:check": "pnpm --filter nowd check",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
