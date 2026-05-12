@@ -103,7 +103,7 @@ onUnmounted(() => {
     >
       No photos selected.
     </div>
-    <TransitionGroup name="photo-grid" tag="div" p4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-4">
+    <TransitionGroup name="photo-grid" tag="div" px4 grid="~ cols-1 sm:cols-2 md:cols-3 lg:cols-4 gap-4">
       <div
         v-for="photo in props.photos"
         :key="photo.name"
