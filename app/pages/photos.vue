@@ -201,78 +201,80 @@ function toggleLocationFilters() {
     <Transition name="globe-drawer">
       <PhotoGlobe v-if="showGlobe" class="h-[min(400px,40vh)]" :photos="photosWithLocation" />
     </Transition>
-    <div v-if="showLocationFilters && locationTags.length > 0" px4 pb2>
-      <div flex flex-wrap justify-center gap-2 pb2>
-        <button
-          type="button"
-          :disabled="hasSelectedAllLocations"
-          rounded-md
-          border
-          px3 py1
-          text-sm
-          inline-flex items-center gap-1
-          transition outline-none
-          :class="hasSelectedAllLocations
-            ? 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'
-            : 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'"
-          @click="selectAllLocations()"
-        >
-          <Icon name="ph:checks-duotone" :size="16" />
-          <span>Select All</span>
-        </button>
-        <button
-          type="button"
-          :disabled="!hasSelectedLocations"
-          rounded-md
-          border
-          px3 py1
-          text-sm
-          inline-flex items-center gap-1
-          transition outline-none
-          :class="hasSelectedLocations
-            ? 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'
-            : 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'"
-          @click="deselectAllLocations()"
-        >
-          <Icon name="ph:x-circle-duotone" :size="16" />
-          <span>Deselect All</span>
-        </button>
-        <button
-          type="button"
-          rounded-md
-          border
-          px3 py1
-          text-sm
-          inline-flex items-center gap-1
-          transition outline-none
-          class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
-          @click="selectRandomLocations()"
-        >
-          <Icon name="ph:shuffle-duotone" :size="16" />
-          <span>Random</span>
-        </button>
+    <Transition name="filter-drawer">
+      <div v-if="showLocationFilters && locationTags.length > 0" px4 pb2>
+        <div flex flex-wrap justify-center gap-2 pb2>
+          <button
+            type="button"
+            :disabled="hasSelectedAllLocations"
+            rounded-md
+            border
+            px3 py1
+            text-sm
+            inline-flex items-center gap-1
+            transition outline-none
+            :class="hasSelectedAllLocations
+              ? 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'
+              : 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'"
+            @click="selectAllLocations()"
+          >
+            <Icon name="ph:checks-duotone" :size="16" />
+            <span>Select All</span>
+          </button>
+          <button
+            type="button"
+            :disabled="!hasSelectedLocations"
+            rounded-md
+            border
+            px3 py1
+            text-sm
+            inline-flex items-center gap-1
+            transition outline-none
+            :class="hasSelectedLocations
+              ? 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'
+              : 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'"
+            @click="deselectAllLocations()"
+          >
+            <Icon name="ph:x-circle-duotone" :size="16" />
+            <span>Deselect All</span>
+          </button>
+          <button
+            type="button"
+            rounded-md
+            border
+            px3 py1
+            text-sm
+            inline-flex items-center gap-1
+            transition outline-none
+            class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
+            @click="selectRandomLocations()"
+          >
+            <Icon name="ph:shuffle-duotone" :size="16" />
+            <span>Random</span>
+          </button>
+        </div>
+        <div flex flex-wrap justify-center gap-2>
+          <button
+            v-for="tag in locationTags"
+            :key="tag.key"
+            type="button"
+            :aria-pressed="isLocationActive(tag.key)"
+            rounded-md
+            border
+            px3 py1
+            text-sm
+            transition outline-none
+            :class="isLocationActive(tag.key)
+              ? 'border-primary color-primary bg-primary/10 focus-visible:ring-1 focus-visible:ring-primary'
+              : 'border-neutral-300 color-neutral-400 bg-neutral/5 op-70 focus-visible:ring-1 focus-visible:ring-neutral-400 dark:border-neutral-700 dark:color-neutral-500 dark:focus-visible:ring-neutral-600'"
+            @click="toggleLocation(tag.key)"
+          >
+            <span>{{ tag.label }}</span>
+            <span ml1 font-mono text-xs>({{ tag.count }})</span>
+          </button>
+        </div>
       </div>
-      <div flex flex-wrap justify-center gap-2>
-        <button
-          v-for="tag in locationTags"
-          :key="tag.key"
-          type="button"
-          :aria-pressed="isLocationActive(tag.key)"
-          rounded-md
-          border
-          px3 py1
-          text-sm
-          transition outline-none
-          :class="isLocationActive(tag.key)
-            ? 'border-primary color-primary bg-primary/10 focus-visible:ring-1 focus-visible:ring-primary'
-            : 'border-neutral-300 color-neutral-400 bg-neutral/5 op-70 focus-visible:ring-1 focus-visible:ring-neutral-400 dark:border-neutral-700 dark:color-neutral-500 dark:focus-visible:ring-neutral-600'"
-          @click="toggleLocation(tag.key)"
-        >
-          <span>{{ tag.label }}</span>
-          <span ml1 font-mono text-xs>({{ tag.count }})</span>
-        </button>
-      </div>
-    </div>
+    </Transition>
     <PhotoGrid
       :photos="filteredPhotos"
       :meta-map="metaMap"
@@ -297,5 +299,16 @@ function toggleLocationFilters() {
   max-height: 0;
   margin-bottom: 0;
   transform: translateY(-16px);
+}
+
+.filter-drawer-enter-active,
+.filter-drawer-leave-active {
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.filter-drawer-enter-from,
+.filter-drawer-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
