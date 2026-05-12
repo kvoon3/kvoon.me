@@ -24,7 +24,9 @@ function isActive(path: string) {
 </script>
 
 <template>
-  <nav p4 bg-neutral:10 flex="~ items-center gap4">
+  <nav p4 bg-neutral:10 flex="~ items-center gap2">
+    <ActivityAppButton />
+
     <NuxtLink to="/" class="sm:block hidden">
       kvoon.me
     </NuxtLink>
@@ -33,7 +35,7 @@ function isActive(path: string) {
 
     <NavigationMenuRoot class="relative">
       <NavigationMenuList
-        class="flex items-center gap4 overflow-x-auto scrollbar-hide max-w-60 sm:max-w-80 md:max-w-100 flex-shrink-1 min-w-0 whitespace-nowrap"
+        class="flex items-center gap2 overflow-x-auto scrollbar-hide max-w-60 sm:max-w-80 md:max-w-100 flex-shrink-1 min-w-0 whitespace-nowrap"
       >
         <NavigationMenuItem v-for="item in navItems" :key="item.path">
           <NavigationMenuLink as-child>
