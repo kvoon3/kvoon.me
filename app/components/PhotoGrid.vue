@@ -116,7 +116,7 @@ onUnmounted(() => {
       >
         <LazyNuxtImg
           loading="lazy"
-          :quality="70"
+          :quality="100"
           :width="720"
           :src="photo.url"
           alt="photo"
@@ -176,6 +176,7 @@ onUnmounted(() => {
         >
           <NuxtImg
             :src="selectedPhoto.url"
+            :quality="100"
             alt="photo"
             class="w-full h-full object-contain cursor-pointer"
             @click.stop="selectedPhoto = null"
