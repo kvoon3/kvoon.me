@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@pinia/nuxt',
     'reka-ui/nuxt',
+    './modules/nowd',
   ],
 
   devtools: { enabled: true },
