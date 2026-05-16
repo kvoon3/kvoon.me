@@ -11,7 +11,7 @@ export function useMatrixChars<T extends HTMLElement = HTMLElement>(
 ) {
   const {
     once = false,
-    interval = () => (Math.random() * 100),
+    interval = () => (Math.random() * 1000) / 3,
     hover = true,
   } = options ?? {}
 
@@ -37,20 +37,27 @@ export function useMatrixChars<T extends HTMLElement = HTMLElement>(
     if (!el.value)
       return
 
-    el.value.innerHTML = line.value.split('').map(i => `<span class="char">${i}</span>`).join('')
+    el.value.innerHTML = line.value.split('').map(i => `<span class="char" style="transition: opacity .15s ease">${i}</span>`).join('')
 
-    el.value.querySelectorAll('.char')?.forEach(async (char, idx) => {
+    el.value.querySelectorAll<T>('.char')?.forEach(async (char, idx) => {
+      char.style.opacity = '.25'
+
       for (const _ of Array.from({ length: 4 })) {
         await sleep(toValue(interval), () => char.textContent = genRandomChar())
       }
 
-      await sleep(toValue(interval), () => char.textContent = line.value[idx]!)
+      await sleep(toValue(interval), () => {
+        char.textContent = line.value[idx]!
+        char.style.opacity = '1'
+      })
     })
   }
 
   onMounted(() => {
-    line.value = el.value!.textContent
-    animateLine()
+    if (el.value) {
+      line.value = el.value.textContent
+      animateLine()
+    }
 
     const onMouseEnter = () => {
       animateLine()

@@ -128,7 +128,7 @@ onBeforeUnmount(() => {
 
 html:not(.dark) .cursor-glow-light {
   background:
-    radial-gradient(circle, rgb(2 158 145 / 0.22) 0%, rgb(2 158 145 / 0.1) 36%, transparent 70%);
+    radial-gradient(circle, rgb(2 158 145 / 0.1) 0%, rgb(2 158 145 / 0.03) 36%, transparent 70%);
   mix-blend-mode: multiply;
 }
 
