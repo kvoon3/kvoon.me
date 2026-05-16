@@ -36,6 +36,7 @@ export default defineConfig({
         // sans: ['Pixelify Sans', 'DM Sans'],
         serif: 'DM Serif Display',
         mono: 'DM Mono',
+        pixel: ['Geist Pixel Line', 'Pixelify Sans', 'Doto', 'DM Sans'],
       },
     }),
     presetAttributify(),
@@ -47,13 +48,6 @@ export default defineConfig({
   theme: {
     colors: {
       primary: 'var(--c-primary)',
-    },
-    font: {
-      'pixel-square': 'GeistPixelSquare',
-      'pixel-grid': 'GeistPixelGrid',
-      'pixel-circle': 'GeistPixelCircle',
-      'pixel-triangle': 'GeistPixelTriangle',
-      'pixel-line': 'GeistPixelLine',
     },
   },
   transformers: [
