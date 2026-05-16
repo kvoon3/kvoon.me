@@ -20,7 +20,7 @@ export default defineConfig({
     ['position-x-center', 'left-1/2 -translate-x-1/2'],
     ['position-y-center', 'top-1/2 -translate-y-1/2'],
     ['position-center', 'position-x-center position-y-center'],
-    ['border-base', 'border border-neutral-300 dark:border-neutral-500 border-op-75 hover:border-op-100 transition-colors duration-300'],
+    ['border-base', 'border-neutral-300 dark:border-neutral-500 border-op-75 hover:border-op-100 transition-colors duration-300'],
     ['shadow-highlight', 'shadow-[0_0_10px_#a0f0eccd] transition-shadow duration-300'],
   ],
   presets: [
@@ -46,17 +46,12 @@ export default defineConfig({
     }),
     presetTypography({
       cssExtend: {
-        'a': {
-          'padding': '2px 1px',
+        a: {
+          '--uno': 'md:border-b-1 border-neutral-300/30 dark:border-neutral-500/30 op75 hover:op100',
           'text-decoration': 'none',
-          'border-bottom': '1px solid #7d7d7d4d',
-          'opacity': '75%',
-          'transition': 'all .3s ease',
+          'transition': 'opacity .3s ease',
         },
-        'a:hover': {
-          opacity: '100%',
-        },
-        'ul': {
+        ul: {
           'list-style': 'none',
           'padding-left': '0',
         },
