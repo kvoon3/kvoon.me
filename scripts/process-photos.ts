@@ -1,8 +1,9 @@
-import type { Tags } from 'exifreader'
+import type { Tags, XmpTag, XmpTags } from 'exifreader'
 import type { Buffer } from 'node:buffer'
 import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import { toArray } from '@antfu/utils'
 import { encode as blurhashEncode } from 'blurhash'
 import ExifReader from 'exifreader'
 import { basename, join, parse } from 'pathe'
@@ -116,9 +117,9 @@ const DEFAULT_LOCATION: [number, number] = [22.5431, 114.0579]
 
 function extractGps(exif: Tags): [number, number] | null {
   const lat = exif.GPSLatitude?.value
-  const latRef = exif.GPSLatitudeRef?.value?.[0]
+  const latRef = toArray<string | XmpTags | string[] | XmpTag[] | undefined>(exif.GPSLatitudeRef?.value)?.[0]
   const lng = exif.GPSLongitude?.value
-  const lngRef = exif.GPSLongitudeRef?.value?.[0]
+  const lngRef = toArray<string | XmpTags | string[] | XmpTag[] | undefined>(exif.GPSLongitudeRef?.value)?.[0]
   if (lat && lng && Array.isArray(lat) && Array.isArray(lng)) {
     const latDec = lat[0] + lat[1] / 60 + lat[2] / 3600
     const lngDec = lng[0] + lng[1] / 60 + lng[2] / 3600

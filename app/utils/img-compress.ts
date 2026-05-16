@@ -1,9 +1,6 @@
 /* eslint-disable node/prefer-global/buffer */
-/* eslint-disable no-console */
 
-import fs from 'node:fs/promises'
-import c from 'ansis'
-import sharp from 'sharp'
+import type sharp from 'sharp'
 
 const maxSize = 1440
 
@@ -41,24 +38,4 @@ export async function compressSharp(image: sharp.Sharp, inBuffer: Buffer, inFile
     inFile,
     outFile,
   }
-}
-
-export async function compressImages(files: string[]) {
-  await Promise.all(files.map(async (file) => {
-    const buffer = await fs.readFile(file)
-    const image = sharp(buffer)
-    const { percent, size, outSize, inFile, outFile, outBuffer } = await compressSharp(image, buffer, file, file)
-    if (percent > -0.10) {
-      console.log(c.dim`[SKIP] ${bytesToHuman(size)} -> ${bytesToHuman(outSize)} ${(percent * 100).toFixed(1).padStart(5, ' ')}%  ${inFile}`)
-    }
-    else {
-      await fs.writeFile(outFile, outBuffer)
-      console.log(`[COMP] ${bytesToHuman(size)} -> ${bytesToHuman(outSize)} ${c.green`${(percent * 100).toFixed(1).padStart(5, ' ')}%`}  ${inFile}`)
-    }
-  }))
-}
-
-function bytesToHuman(size: number) {
-  const i = Math.floor(Math.log(size) / Math.log(1024))
-  return `${(size / 1024 ** i).toFixed(2)} ${['B', 'kB', 'MB', 'GB', 'TB'][i]}`.padStart(10, ' ')
 }

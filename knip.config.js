@@ -6,14 +6,12 @@ export default {
     config: ['unocss.config.ts'],
   },
 
+  // Entry files — includes standalone scripts that import from devDependencies
+  entry: ['scripts/process-photos.ts'],
+
   // Ignore global components and config files (not tracked by plugins)
   // Note: *.md files are ignored by default in knip
   ignoreFiles: ['**/*.global.vue', 'content.config.ts'],
-
-  // Entry files - mark build scripts and shared utilities as entry points
-  entry: [
-    'scripts/process-photos.ts',
-  ],
 
   // Icon collections are loaded by @nuxt/icon at runtime
   // ESLint is managed by @nuxt/eslint
