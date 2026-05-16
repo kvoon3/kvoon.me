@@ -4,7 +4,9 @@ defineProps<{
 }>()
 
 const el = useTemplateRef('header')
-useMatrixChars(el, { hover: true })
+useMatrixTransition(el, {
+  immediate: true,
+})
 </script>
 
 <template>
