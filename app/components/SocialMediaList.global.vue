@@ -10,11 +10,19 @@ const list = computed(() => Array.from(Object.entries(props.items)))
 </script>
 
 <template>
-  <ul>
-    <li v-for="[title, { url, icon }] in list" :key="title" color-neutral:40 my4>
-      <a :href="url" :title w-fit flex="~ gap2 items-center" color-base>
+  <ul flex="~ wrap gap2" md:flex-col md:gap-0>
+    <li v-for="[title, { url, icon }] in list" :key="title">
+      <a
+        :href="url"
+        :title
+        md:w-fit
+        flex="~ items-center"
+        gap2
+        bg-neutral:15 md:bg-transparent
+        max-md="m0 rounded-full px2 py1"
+      >
         <Icon :name="icon" />
-        <span>{{ title }}</span>
+        <span text-sm md:text-base>{{ title }}</span>
       </a>
     </li>
   </ul>

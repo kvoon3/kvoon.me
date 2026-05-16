@@ -11,7 +11,7 @@ export default {
 
   // Ignore global components and config files (not tracked by plugins)
   // Note: *.md files are ignored by default in knip
-  ignoreFiles: ['**/*.global.vue', 'content.config.ts'],
+  ignoreFiles: ['**/*.global.vue', 'content.config.ts', '**/components/*.vue'],
 
   // Icon collections are loaded by @nuxt/icon at runtime
   // ESLint is managed by @nuxt/eslint

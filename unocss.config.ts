@@ -44,7 +44,24 @@ export default defineConfig({
     presetIcons({
       scale: 1.4,
     }),
-    presetTypography(),
+    presetTypography({
+      cssExtend: {
+        'a': {
+          'padding': '2px 1px',
+          'text-decoration': 'none',
+          'border-bottom': '1px solid #7d7d7d4d',
+          'opacity': '75%',
+          'transition': 'all .3s ease',
+        },
+        'a:hover': {
+          opacity: '100%',
+        },
+        'ul': {
+          'list-style': 'none',
+          'padding-left': '0',
+        },
+      },
+    }),
   ],
   theme: {
     colors: {
