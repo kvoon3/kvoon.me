@@ -15,7 +15,7 @@ const MATRIX_CHARS = [
 
 const CHANGE_CHAR_TIMES = 4
 
-interface Options {
+export interface UseMatrixTransitionOptions {
   immediate?: boolean
   times?: Times
   interval?: MaybeRefOrGetter<number>
@@ -32,7 +32,7 @@ type Times = number | 'infinity'
 
 export function useMatrixTransition<T extends HTMLElement = HTMLElement>(
   el: TemplateRef<T>,
-  options?: Options,
+  options?: UseMatrixTransitionOptions,
 ) {
   const {
     immediate = false,

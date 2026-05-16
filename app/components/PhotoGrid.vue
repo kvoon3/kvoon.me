@@ -126,12 +126,14 @@ onUnmounted(() => {
           :style="props.displayMode === 'cover' ? getBlurhashStyle(photo.stem) : ''"
         />
         <Transition name="photo-info">
-          <div
+          <MatrixText
             v-if="props.showInfo && getPhotoTagLabel(photo.stem)"
+            immediate
+            font-dot
             absolute bottom-0 left-0 right-0 bg-black:60 text-white text-xs px-2 py-1 truncate
           >
             {{ getPhotoTagLabel(photo.stem) }}
-          </div>
+          </MatrixText>
         </Transition>
         <ClientOnly v-if="canCopyPhotoName">
           <Transition name="photo-info">
