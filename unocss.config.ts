@@ -37,6 +37,7 @@ export default defineConfig({
         serif: 'DM Serif Display',
         mono: 'DM Mono',
         pixel: ['Geist Pixel Line', 'Pixelify Sans', 'Doto', 'DM Sans'],
+        dot: ['Doto', 'DM Mono'],
       },
     }),
     presetAttributify(),
