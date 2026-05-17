@@ -171,8 +171,8 @@ function toggleLocationFilters() {
 </script>
 
 <template>
-  <div space-y-4>
-    <div pt6 px4 flex justify-center gap-4>
+  <div space-y-4 py4>
+    <div flex justify-center gap-4>
       <button
         type="button"
         icon-btn
