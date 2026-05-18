@@ -51,10 +51,6 @@ export default defineConfig({
           'text-decoration': 'none',
           'transition': 'opacity .3s ease',
         },
-        ul: {
-          'list-style': 'none',
-          'padding-left': '0',
-        },
       },
     }),
   ],

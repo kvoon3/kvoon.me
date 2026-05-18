@@ -23,7 +23,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div prose prose-neutral dark:prose-invert grid="~ md:cols-2 gap-8" container mxa pt12>
+  <div id="index-page" prose prose-neutral dark:prose-invert grid="~ md:cols-2 gap-8" container mxa pt12>
     <div px4>
       <div relative isolate>
         <NuxtImg src="/avatar_cropped.jpg" :quality="70" alt="avatar" relative z-1 object-cover rounded-full border-base size-30 :style="avatarPlaceholderStyle" />
@@ -56,6 +56,13 @@ useSeoMeta({
     <LicenseLink px4 py8 />
   </div>
 </template>
+
+<style>
+#index-page :where(ul):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style: none !important;
+  padding-left: 0 !important;
+}
+</style>
 
 <style scoped>
 #icon {
