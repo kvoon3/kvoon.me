@@ -36,3 +36,21 @@ body.dark,
 ::-webkit-scrollbar-thumb:hover {
   background: var(--c-scrollbar-hover);
 }
+
+#index-page :where(ul):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style: none !important;
+  padding-left: 0 !important;
+}
+
+del {
+  opacity: 50%;
+}
+
+code::before,
+code::after {
+  display: none;
+}
+
+code {
+  --uno: 'px1 rounded bg-neutral-500:10 dark:bg-neutral-500:30';
+}

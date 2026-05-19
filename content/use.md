@@ -31,7 +31,7 @@ Things I am using
 - [Vimium](https://www.vimium.com/) - if Vim is your OS
 - [Catppuccin for Web File Explorer Icons](https://github.com/catppuccin/web-file-explorer-icons) - Soothing pastel icons
 - [Refined GitHub](https://github.com/refined-github/refined-github) - Make GitHub better
-- [Minimal Theme for Twitter](https://x-theme.world/) - Bring cleaner interface
+- [Minimal Theme for Twitter](https://chromewebstore.google.com/detail/minimal-theme-for-twitter/pobhoodpcipjmedfenaigbeloiidbflp) - Bring cleaner interface
 - [Obsidian Web Clipper](https://obsidian.md/clipper) - Save any page into markdown
 - [Picture-in-Picture Extension (by Google)](https://chromewebstore.google.com/detail/picture-in-picture-extens/hkgfoiooedgoejojocmhlaklaeopbecg) - PiP for youtube video
 - [Tab Manager Plus for Chrome](https://chromewebstore.google.com/detail/tab-manager-plus-for-chro/cnkdjjdmfiffagllbiiilooaoofcoeff) - Enhance browser tab manage

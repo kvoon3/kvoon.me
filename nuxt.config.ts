@@ -14,6 +14,12 @@ export default defineNuxtConfig({
     './modules/nowd',
   ],
 
+  mdc: {
+    headings: {
+      anchorLinks: true,
+    },
+  },
+
   devtools: { enabled: true },
 
   css: [

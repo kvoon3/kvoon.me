@@ -57,13 +57,6 @@ useSeoMeta({
   </div>
 </template>
 
-<style>
-#index-page :where(ul):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
-  list-style: none !important;
-  padding-left: 0 !important;
-}
-</style>
-
 <style scoped>
 #icon {
   --blur-min-range: 2px;
