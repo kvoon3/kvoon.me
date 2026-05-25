@@ -6,7 +6,7 @@ description: Kevin Kwong's recent activity and projects
 ::SectionHeader{title="Recent Active"}
 ::
 
-- :IconLink{href="https://my-pull-requests.kvoon.me" icon="ph:git-pull-request" label="My Open Pull Requests"}
+- :IconLink{href="https://prs-kvoon.vercel.app" icon="ph:git-pull-request" label="My Open Pull Requests"}
 - :IconLink{href="https://releases-bmz.pages.dev" icon="ph:git-commit-duotone" label="My Releases"}
 
 
