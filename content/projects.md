@@ -42,3 +42,14 @@ items:
     icon: ph:key-duotone
 ---
 ::
+
+::ProjectList{class="not-prose"}
+---
+category: Utilities
+items:
+  - name: Zod Arco Rules
+    desc: Transform Zod / Valibot schemas into Arco Design rules
+    link: https://github.com/kvoon3/zod-arco-rules
+    icon: ph:ruler-duotone
+---
+::
