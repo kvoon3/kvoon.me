@@ -9,6 +9,7 @@ export default defineNuxtModule({
   },
   defaults: {
     command: 'dev',
+    silent: false,
   },
   setup(options, nuxt) {
     if (!nuxt.options.dev) {
@@ -20,7 +21,7 @@ export default defineNuxtModule({
     nuxt.hook('ready', () => {
       child = spawn('pnpm', ['--filter', 'nowd', options.command], {
         cwd: nuxt.options.rootDir,
-        stdio: 'inherit',
+        stdio: options.silent ? ['inherit', 'ignore', 'inherit'] : 'inherit',
         env: {
           ...process.env,
           NODE_ENV: 'development',
