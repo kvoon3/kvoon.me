@@ -15,6 +15,17 @@ description: Kevin Kwong's recent activity and projects
 
 ::ProjectList{class="not-prose"}
 ---
+category: Website / Online Tools
+items:
+  - name: Oduck
+    desc: Local-first search engine for !bang users
+    link: https://github.com/kvoon3/oduck
+    icon: ph:magnifying-glass-duotone
+---
+::
+
+::ProjectList{class="not-prose"}
+---
 category: VS Code Plugin
 items:
   - name: ESLint Codemod
