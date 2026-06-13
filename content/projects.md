@@ -15,21 +15,6 @@ description: Kevin Kwong's recent activity and projects
 
 ::ProjectList{class="not-prose"}
 ---
-category: Website / Online Tools
-items:
-  - name: Oduck
-    desc: Local-first search engine for !bang users
-    link: https://github.com/kvoon3/oduck
-    icon: ph:magnifying-glass-duotone
-  - name: Bookmark Bridge
-    desc: AI-native browser bookmark access using a local bridge
-    link: https://github.com/kvoon3/bb
-    icon: ph:bookmark-simple-duotone
----
-::
-
-::ProjectList{class="not-prose"}
----
 category: VS Code Plugin
 items:
   - name: ESLint Codemod
@@ -44,6 +29,28 @@ items:
     desc: Generate VS Code Which Key config automatically
     link: https://github.com/kvoon3/vscode-which-key-config-gen
     icon: ph:key-duotone
+---
+::
+
+::ProjectList{class="not-prose"}
+---
+category: CLI
+items:
+  - name: Bookmark Bridge
+    desc: AI-native browser bookmark access using a local bridge
+    link: https://github.com/kvoon3/bb
+    icon: ph:bookmark-simple-duotone
+---
+::
+
+::ProjectList{class="not-prose"}
+---
+category: Website / Online Tools
+items:
+  - name: Oduck
+    desc: Local-first search engine for !bang users
+    link: https://github.com/kvoon3/oduck
+    icon: ph:magnifying-glass-duotone
 ---
 ::
 
