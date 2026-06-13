@@ -21,6 +21,10 @@ items:
     desc: Local-first search engine for !bang users
     link: https://github.com/kvoon3/oduck
     icon: ph:magnifying-glass-duotone
+  - name: Bookmark Bridge
+    desc: AI-native browser bookmark access using a local bridge
+    link: https://github.com/kvoon3/bb
+    icon: ph:bookmark-simple-duotone
 ---
 ::
 
