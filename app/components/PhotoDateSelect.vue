@@ -27,18 +27,24 @@ const selectedKey = computed(() => formatDate(props.selected))
         type="button"
         rounded-md
         border
-        px3
+        px2
+        sm:px3
         py1
         text-sm
         inline-flex
         items-center
         gap-2
+        whitespace-nowrap
         transition
         outline-none
+        :aria-label="`${label} date`"
         class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary data-[state=open]:border-primary data-[state=open]:color-primary data-[state=open]:bg-primary/10 dark:border-neutral-700 dark:color-neutral-200"
       >
         <Icon name="ph:calendar-blank-duotone" :size="16" />
-        <span>{{ label }}: {{ selectedKey }}</span>
+        <span>
+          <span class="hidden sm:inline">{{ label }}: </span>
+          {{ selectedKey }}
+        </span>
         <Icon name="ph:caret-down-duotone" :size="14" />
       </button>
     </PopoverTrigger>

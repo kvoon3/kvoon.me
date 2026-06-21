@@ -270,7 +270,7 @@ function toggleLocationFilters() {
     </Transition>
     <Transition name="filter-drawer">
       <div v-if="showLocationFilters && (uniquePhotoDates.length > 0 || locationTags.length > 0)" space-y-4 px4 pb2>
-        <div v-if="uniquePhotoDates.length > 0" flex justify-center gap-4>
+        <div v-if="uniquePhotoDates.length > 0" flex flex-wrap justify-center gap-2 sm:gap-4>
           <PhotoDateSelect label="Start" :dates="uniquePhotoDates" :selected="startDate" @select="setStartDate" />
           <PhotoDateSelect label="End" :dates="uniquePhotoDates" :selected="endDate" @select="setEndDate" />
           <button
@@ -278,9 +278,12 @@ function toggleLocationFilters() {
             type="button"
             rounded-md
             border
-            px3 py1
+            px2
+            sm:px3
+            py1
             text-sm
             inline-flex items-center gap-1
+            whitespace-nowrap
             transition outline-none
             class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
             @click="resetDateRange()"
