@@ -3,6 +3,7 @@ import type { PhotoGridItem, PhotoMeta, PhotoWithLocation } from '~/types/photo'
 import { useRouteQuery } from '@vueuse/router'
 import { parseFilename } from 'ufo'
 import { imgRE } from '~/shared/constants'
+import { formatDate, getPhotoDate, parseDate } from '~/utils/photo-date'
 
 interface LocationTag {
   key: string
@@ -30,10 +31,11 @@ const photos = computed<PhotoGridItem[]>(() => {
         stem,
         url: `/photos/${name}`,
         locationKey: location?.key,
+        date: getPhotoDate(name) ?? new Date(0),
       }
     })
     .filter(photo => imgRE.test(photo.name))
-    .reverse()
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
 })
 
 const locationTags = computed<LocationTag[]>(() => {
@@ -98,7 +100,72 @@ const activeLocationKeys = computed<Set<string>>({
 
 const hasSelectedAllLocations = computed(() => activeLocationKeys.value.size === locationTags.value.length)
 const hasSelectedLocations = computed(() => activeLocationKeys.value.size > 0)
-const filteredPhotos = computed(() => photos.value.filter(photo => !photo.locationKey || activeLocationKeys.value.has(photo.locationKey)))
+
+const startQuery = useRouteQuery('start')
+const endQuery = useRouteQuery('end')
+
+const photoDateRange = computed<{ min: Date, max: Date } | undefined>(() => {
+  const times = photos.value.map(photo => photo.date.getTime()).filter(time => time > 0)
+  if (times.length === 0)
+    return undefined
+  return {
+    min: new Date(Math.min(...times)),
+    max: new Date(Math.max(...times)),
+  }
+})
+
+const startDate = computed<Date>({
+  get() {
+    return parseDate(startQuery.value) ?? photoDateRange.value?.min ?? new Date()
+  },
+  set(date) {
+    startQuery.value = formatDate(date)
+  },
+})
+
+const endDate = computed<Date>({
+  get() {
+    return parseDate(endQuery.value, true) ?? photoDateRange.value?.max ?? new Date()
+  },
+  set(date) {
+    endQuery.value = formatDate(date)
+  },
+})
+
+const uniquePhotoDates = computed(() => {
+  const datesByKey = new Map<string, Date>()
+  for (const photo of photos.value) {
+    if (photo.date.getTime() > 0)
+      datesByKey.set(formatDate(photo.date), photo.date)
+  }
+  return [...datesByKey.values()].sort((a, b) => b.getTime() - a.getTime())
+})
+
+function setStartDate(date: Date) {
+  startDate.value = date
+  if (date.getTime() > endDate.value.getTime())
+    endDate.value = date
+}
+
+function setEndDate(date: Date) {
+  endDate.value = date
+  if (date.getTime() < startDate.value.getTime())
+    startDate.value = date
+}
+
+function resetDateRange() {
+  startQuery.value = undefined
+  endQuery.value = undefined
+}
+
+const filteredPhotos = computed(() => {
+  return photos.value.filter((photo) => {
+    const locationMatch = !photo.locationKey || activeLocationKeys.value.has(photo.locationKey)
+    const time = photo.date.getTime()
+    const dateMatch = time >= startDate.value.getTime() && time <= endDate.value.getTime()
+    return locationMatch && dateMatch
+  })
+})
 
 function isLocationActive(key: string): boolean {
   return activeLocationKeys.value.has(key)
@@ -202,43 +269,12 @@ function toggleLocationFilters() {
       <PhotoGlobe v-if="showGlobe" class="h-[min(400px,40vh)]" :photos="photosWithLocation" />
     </Transition>
     <Transition name="filter-drawer">
-      <div v-if="showLocationFilters && locationTags.length > 0" px4 pb2>
-        <div flex flex-wrap justify-center gap-2 pb2>
+      <div v-if="showLocationFilters && (uniquePhotoDates.length > 0 || locationTags.length > 0)" space-y-4 px4 pb2>
+        <div v-if="uniquePhotoDates.length > 0" flex justify-center gap-4>
+          <PhotoDateSelect label="Start" :dates="uniquePhotoDates" :selected="startDate" @select="setStartDate" />
+          <PhotoDateSelect label="End" :dates="uniquePhotoDates" :selected="endDate" @select="setEndDate" />
           <button
-            type="button"
-            :disabled="hasSelectedAllLocations"
-            rounded-md
-            border
-            px3 py1
-            text-sm
-            inline-flex items-center gap-1
-            transition outline-none
-            :class="hasSelectedAllLocations
-              ? 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'
-              : 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'"
-            @click="selectAllLocations()"
-          >
-            <Icon name="ph:checks-duotone" :size="16" />
-            <span>Select All</span>
-          </button>
-          <button
-            type="button"
-            :disabled="!hasSelectedLocations"
-            rounded-md
-            border
-            px3 py1
-            text-sm
-            inline-flex items-center gap-1
-            transition outline-none
-            :class="hasSelectedLocations
-              ? 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'
-              : 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'"
-            @click="deselectAllLocations()"
-          >
-            <Icon name="ph:x-circle-duotone" :size="16" />
-            <span>Deselect All</span>
-          </button>
-          <button
+            v-if="startQuery != null || endQuery != null"
             type="button"
             rounded-md
             border
@@ -247,31 +283,83 @@ function toggleLocationFilters() {
             inline-flex items-center gap-1
             transition outline-none
             class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
-            @click="selectRandomLocations()"
+            @click="resetDateRange()"
           >
-            <Icon name="ph:shuffle-duotone" :size="16" />
-            <span>Random</span>
+            <Icon name="ph:arrow-counter-clockwise-duotone" :size="16" />
+            <span>Reset</span>
           </button>
         </div>
-        <div flex flex-wrap justify-center gap-2>
-          <button
-            v-for="tag in locationTags"
-            :key="tag.key"
-            type="button"
-            :aria-pressed="isLocationActive(tag.key)"
-            rounded-md
-            border
-            px3 py1
-            text-sm
-            transition outline-none
-            :class="isLocationActive(tag.key)
-              ? 'border-primary color-primary bg-primary/10 focus-visible:ring-1 focus-visible:ring-primary'
-              : 'border-neutral-300 color-neutral-400 bg-neutral/5 op-70 focus-visible:ring-1 focus-visible:ring-neutral-400 dark:border-neutral-700 dark:color-neutral-500 dark:focus-visible:ring-neutral-600'"
-            @click="toggleLocation(tag.key)"
-          >
-            <span>{{ tag.label }}</span>
-            <span ml1 font-mono text-xs>({{ tag.count }})</span>
-          </button>
+        <div v-if="locationTags.length > 0" space-y-2>
+          <div flex flex-wrap justify-center gap-2>
+            <button
+              type="button"
+              :disabled="hasSelectedAllLocations"
+              rounded-md
+              border
+              px3 py1
+              text-sm
+              inline-flex items-center gap-1
+              transition outline-none
+              :class="hasSelectedAllLocations
+                ? 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'
+                : 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'"
+              @click="selectAllLocations()"
+            >
+              <Icon name="ph:checks-duotone" :size="16" />
+              <span>Select All</span>
+            </button>
+            <button
+              type="button"
+              :disabled="!hasSelectedLocations"
+              rounded-md
+              border
+              px3 py1
+              text-sm
+              inline-flex items-center gap-1
+              transition outline-none
+              :class="hasSelectedLocations
+                ? 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'
+                : 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'"
+              @click="deselectAllLocations()"
+            >
+              <Icon name="ph:x-circle-duotone" :size="16" />
+              <span>Deselect All</span>
+            </button>
+            <button
+              type="button"
+              rounded-md
+              border
+              px3 py1
+              text-sm
+              inline-flex items-center gap-1
+              transition outline-none
+              class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
+              @click="selectRandomLocations()"
+            >
+              <Icon name="ph:shuffle-duotone" :size="16" />
+              <span>Random</span>
+            </button>
+          </div>
+          <div flex flex-wrap justify-center gap-2>
+            <button
+              v-for="tag in locationTags"
+              :key="tag.key"
+              type="button"
+              :aria-pressed="isLocationActive(tag.key)"
+              rounded-md
+              border
+              px3 py1
+              text-sm
+              transition outline-none
+              :class="isLocationActive(tag.key)
+                ? 'border-primary color-primary bg-primary/10 focus-visible:ring-1 focus-visible:ring-primary'
+                : 'border-neutral-300 color-neutral-400 bg-neutral/5 op-70 focus-visible:ring-1 focus-visible:ring-neutral-400 dark:border-neutral-700 dark:color-neutral-500 dark:focus-visible:ring-neutral-600'"
+              @click="toggleLocation(tag.key)"
+            >
+              <span>{{ tag.label }}</span>
+              <span ml1 font-mono text-xs>({{ tag.count }})</span>
+            </button>
+          </div>
         </div>
       </div>
     </Transition>

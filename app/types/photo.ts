@@ -21,4 +21,5 @@ export interface PhotoGridItem {
   stem: string
   url: string
   locationKey?: string
+  date: Date
 }
