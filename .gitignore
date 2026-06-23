@@ -29,3 +29,6 @@ logs
 .codex/environments/environment.toml
 
 .obsidian
+
+# Generated Protomaps basemap extract
+public/photos-basemap.pmtiles

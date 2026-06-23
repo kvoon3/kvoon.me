@@ -219,9 +219,18 @@ const photosWithLocation = computed<PhotoWithLocation[]>(() => {
     })
 })
 
-const showGlobe = ref(false)
-function toggleGlobe() {
-  showGlobe.value = !showGlobe.value
+const latestPhotoCenter = computed<[number, number]>(() => {
+  const photo = photos.value.find(p => p.locationKey && activeLocationKeys.value.has(p.locationKey))
+  if (!photo)
+    return [114.0579, 22.5431]
+
+  const [lat, lng] = metaMap[photo.stem]?.location ?? [22.5431, 114.0579]
+  return [lng, lat]
+})
+
+const showMaps = ref(false)
+function toggleMaps() {
+  showMaps.value = !showMaps.value
 }
 const displayMode = ref<'cover' | 'contain'>('cover')
 function toggleDisplayMode() {
@@ -252,7 +261,17 @@ function toggleLocationFilters() {
         <Icon :size="25" name="ph:funnel-duotone" />
       </button>
       <Icon :size="25" :name="displayMode === 'cover' ? 'ph:crop-duotone' : 'ph:image-duotone'" icon-btn transition-all @click="toggleDisplayMode()" />
-      <Icon :size="25" name="ph:globe-duotone" icon-btn transition-all :class="{ 'text-primary': showGlobe }" @click="toggleGlobe()" />
+      <button
+        type="button"
+        icon-btn
+        transition-all
+        :aria-pressed="showMaps"
+        :aria-label="showMaps ? 'Hide maps' : 'Show maps'"
+        :class="{ 'text-primary': showMaps }"
+        @click="toggleMaps()"
+      >
+        <Icon :size="25" name="ph:globe-duotone" />
+      </button>
       <button
         type="button"
         icon-btn
@@ -266,7 +285,17 @@ function toggleLocationFilters() {
       </button>
     </div>
     <Transition name="globe-drawer">
-      <PhotoGlobe v-if="showGlobe" class="h-[min(400px,40vh)]" :photos="photosWithLocation" />
+      <div
+        v-show="showMaps"
+        class="mx-auto max-w-5xl px-4"
+      >
+        <div
+          class="grid grid-cols-1 grid-rows-2 divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 bg-white md:grid-cols-2 md:grid-rows-1 md:divide-x md:divide-y-0 dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900 h-[min(700px,70vh)] md:h-[min(600px,50vh)]"
+        >
+          <PhotoGlobe class="min-h-0 overflow-hidden" :photos="photosWithLocation" />
+          <PhotoMap class="min-h-0 overflow-hidden" :photos="photosWithLocation" :initial-center="latestPhotoCenter" />
+        </div>
+      </div>
     </Transition>
     <Transition name="filter-drawer">
       <div v-if="showLocationFilters && (uniquePhotoDates.length > 0 || locationTags.length > 0)" space-y-4 px4 pb2>
@@ -388,8 +417,11 @@ function toggleLocationFilters() {
 .globe-drawer-leave-to {
   opacity: 0;
   max-height: 0;
-  margin-bottom: 0;
   transform: translateY(-16px);
+}
+.globe-drawer-enter-to,
+.globe-drawer-leave-from {
+  max-height: 600px;
 }
 
 .filter-drawer-enter-active,

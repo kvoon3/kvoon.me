@@ -16,8 +16,8 @@ interface LocationGroup {
 }
 
 const MIN_SCALE = 0.4
-const MAX_SCALE = 2.0
-const DEFAULT_SCALE = 0.95
+const MAX_SCALE = 4.0
+const DEFAULT_SCALE = 1.0
 const AUTO_ROTATE_SPEED = 0.00025
 
 const colorMode = useColorMode()
@@ -25,9 +25,6 @@ const canvas = ref<HTMLCanvasElement>()
 const container = ref<HTMLDivElement>()
 const size = reactive({ width: 0, height: 0 })
 const currentScale = ref(DEFAULT_SCALE)
-const active = ref(true)
-
-useScrollOutside(container, () => active.value = false)
 
 let globe: ReturnType<typeof createGlobe> | null = null
 const animationId = 0
@@ -115,8 +112,6 @@ let velocityPhi = 0
 let velocityTheta = 0
 
 function onPointerDown(e: PointerEvent) {
-  if (!active.value)
-    return
   pointerOrigin = { x: e.clientX, y: e.clientY }
   phiAtDragStart = phi
   thetaAtDragStart = theta
@@ -148,7 +143,7 @@ function applyScale(s: number) {
 }
 
 function onWheel(e: WheelEvent) {
-  if (!active.value)
+  if (!e.metaKey && !e.ctrlKey)
     return
   e.preventDefault()
   applyScale(currentScale.value - e.deltaY * 0.001)
@@ -165,8 +160,6 @@ function getTouchDistance(e: TouchEvent): number {
 }
 
 function onTouchStart(e: TouchEvent) {
-  if (!active.value)
-    return
   if (e.touches.length === 2) {
     pointerOrigin = null
     pinchStartDistance = getTouchDistance(e)
@@ -266,8 +259,7 @@ watch(markers, (m) => {
 <template>
   <div
     ref="container"
-    relative w-full max-sm:h100
-    :class="{ 'touch-none': active }"
+    relative h-full w-full touch-none
     @pointerdown="onPointerDown"
     @pointermove="onPointerMove"
     @pointerup="onPointerUp"
@@ -289,17 +281,6 @@ watch(markers, (m) => {
       @switch-photo="switchPhoto(group)"
     />
 
-    <Transition name="globe-mask">
-      <div
-        v-if="!active && locationGroups.length > 0"
-        class="absolute inset-0 z-10 flex items-center justify-center bg-black/30 text-sm text-white font-medium uppercase tracking-wider pointer-events-auto"
-        @click.stop="active = true"
-        @pointerdown.stop
-      >
-        click to zoom
-      </div>
-    </Transition>
-
     <div
       v-if="locationGroups.length === 0"
       absolute inset-0 flex items-center justify-center text-sm text-neutral
@@ -308,15 +289,3 @@ watch(markers, (m) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.globe-mask-enter-active,
-.globe-mask-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.globe-mask-enter-from,
-.globe-mask-leave-to {
-  opacity: 0;
-}
-</style>

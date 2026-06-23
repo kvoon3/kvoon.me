@@ -44,6 +44,7 @@ export default defineNuxtConfig({
         'ph:crop-duotone',
         'ph:globe-duotone',
         'ph:image-duotone',
+        'ph:map-trifold-duotone',
         'ph:info-duotone',
         'ph:shuffle-duotone',
         'ph:sun',
