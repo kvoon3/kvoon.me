@@ -27,12 +27,7 @@ const size = reactive({ width: 0, height: 0 })
 const currentScale = ref(DEFAULT_SCALE)
 const active = ref(true)
 
-onClickOutside(container, () => active.value = false)
-
-useEventListener(window, 'wheel', (e) => {
-  if (!container.value?.contains(e.target as Node))
-    active.value = false
-}, { passive: true })
+useScrollOutside(container, () => active.value = false)
 
 let globe: ReturnType<typeof createGlobe> | null = null
 const animationId = 0
