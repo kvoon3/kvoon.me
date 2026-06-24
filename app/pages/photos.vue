@@ -38,10 +38,47 @@ const photos = computed<PhotoGridItem[]>(() => {
     .sort((a, b) => b.date.getTime() - a.date.getTime())
 })
 
+const startQuery = useRouteQuery('start')
+const endQuery = useRouteQuery('end')
+
+const photoDateRange = computed<{ min: Date, max: Date } | undefined>(() => {
+  const times = photos.value.map(photo => photo.date.getTime()).filter(time => time > 0)
+  if (times.length === 0)
+    return undefined
+  return {
+    min: new Date(Math.min(...times)),
+    max: new Date(Math.max(...times)),
+  }
+})
+
+const startDate = computed<Date>({
+  get() {
+    return parseDate(startQuery.value) ?? photoDateRange.value?.min ?? new Date()
+  },
+  set(date) {
+    startQuery.value = formatDate(date)
+  },
+})
+
+const endDate = computed<Date>({
+  get() {
+    return parseDate(endQuery.value, true) ?? photoDateRange.value?.max ?? new Date()
+  },
+  set(date) {
+    endQuery.value = formatDate(date)
+  },
+})
+
 const locationTags = computed<LocationTag[]>(() => {
   const map = new Map<string, LocationTag>()
+  const startTime = startDate.value.getTime()
+  const endTime = endDate.value.getTime()
   for (const photo of photos.value) {
     if (!photo.locationKey)
+      continue
+
+    const time = photo.date.getTime()
+    if (time < startTime || time > endTime)
       continue
 
     const location = getPhotoLocation(metaMap[photo.stem] ?? {})
@@ -100,37 +137,6 @@ const activeLocationKeys = computed<Set<string>>({
 
 const hasSelectedAllLocations = computed(() => activeLocationKeys.value.size === locationTags.value.length)
 const hasSelectedLocations = computed(() => activeLocationKeys.value.size > 0)
-
-const startQuery = useRouteQuery('start')
-const endQuery = useRouteQuery('end')
-
-const photoDateRange = computed<{ min: Date, max: Date } | undefined>(() => {
-  const times = photos.value.map(photo => photo.date.getTime()).filter(time => time > 0)
-  if (times.length === 0)
-    return undefined
-  return {
-    min: new Date(Math.min(...times)),
-    max: new Date(Math.max(...times)),
-  }
-})
-
-const startDate = computed<Date>({
-  get() {
-    return parseDate(startQuery.value) ?? photoDateRange.value?.min ?? new Date()
-  },
-  set(date) {
-    startQuery.value = formatDate(date)
-  },
-})
-
-const endDate = computed<Date>({
-  get() {
-    return parseDate(endQuery.value, true) ?? photoDateRange.value?.max ?? new Date()
-  },
-  set(date) {
-    endQuery.value = formatDate(date)
-  },
-})
 
 const uniquePhotoDates = computed(() => {
   const datesByKey = new Map<string, Date>()
@@ -201,10 +207,15 @@ function selectRandomLocations() {
 }
 
 const photosWithLocation = computed<PhotoWithLocation[]>(() => {
+  const startTime = startDate.value.getTime()
+  const endTime = endDate.value.getTime()
   return Object.entries(metaMap)
-    .filter(([, meta]) => {
+    .filter(([name, meta]) => {
       const location = getPhotoLocation(meta)
-      return location && activeLocationKeys.value.has(location.key)
+      if (!location || !activeLocationKeys.value.has(location.key))
+        return false
+      const time = getPhotoDate(name)?.getTime() ?? 0
+      return time >= startTime && time <= endTime
     })
     .map(([name, meta]) => {
       const location = getPhotoLocation(meta)!
@@ -240,9 +251,9 @@ const showPhotoInfo = ref(false)
 function togglePhotoInfo() {
   showPhotoInfo.value = !showPhotoInfo.value
 }
-const showLocationFilters = ref(false)
-function toggleLocationFilters() {
-  showLocationFilters.value = !showLocationFilters.value
+const showDateFilters = ref(false)
+function toggleDateFilters() {
+  showDateFilters.value = !showDateFilters.value
 }
 </script>
 
@@ -253,12 +264,12 @@ function toggleLocationFilters() {
         type="button"
         icon-btn
         transition-all
-        :aria-pressed="showLocationFilters"
-        :aria-label="showLocationFilters ? 'Hide location filters' : 'Show location filters'"
-        :class="{ 'text-primary': showLocationFilters }"
-        @click="toggleLocationFilters()"
+        :aria-pressed="showDateFilters"
+        :aria-label="showDateFilters ? 'Hide date filters' : 'Show date filters'"
+        :class="{ 'text-primary': showDateFilters }"
+        @click="toggleDateFilters()"
       >
-        <Icon :size="25" name="ph:funnel-duotone" />
+        <Icon :size="25" name="ph:calendar-duotone" />
       </button>
       <Icon :size="25" :name="displayMode === 'cover' ? 'ph:crop-duotone' : 'ph:image-duotone'" icon-btn transition-all @click="toggleDisplayMode()" />
       <button
@@ -284,22 +295,9 @@ function toggleLocationFilters() {
         <Icon :size="25" name="ph:info-duotone" />
       </button>
     </div>
-    <Transition name="globe-drawer">
-      <div
-        v-show="showMaps"
-        class="mx-auto max-w-5xl px-4"
-      >
-        <div
-          class="grid grid-cols-1 grid-rows-2 divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 bg-white md:grid-cols-2 md:grid-rows-1 md:divide-x md:divide-y-0 dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900 h-[min(700px,70vh)] md:h-[min(600px,50vh)]"
-        >
-          <PhotoGlobe class="min-h-0 overflow-hidden" :photos="photosWithLocation" />
-          <PhotoMap class="min-h-0 overflow-hidden" :photos="photosWithLocation" :initial-center="latestPhotoCenter" />
-        </div>
-      </div>
-    </Transition>
     <Transition name="filter-drawer">
-      <div v-if="showLocationFilters && (uniquePhotoDates.length > 0 || locationTags.length > 0)" space-y-4 px4 pb2>
-        <div v-if="uniquePhotoDates.length > 0" flex flex-wrap justify-center gap-2 sm:gap-4>
+      <div v-if="showDateFilters && uniquePhotoDates.length > 0" space-y-4 px4 pb2>
+        <div flex flex-wrap justify-center gap-2 sm:gap-4>
           <PhotoDateSelect label="Start" :dates="uniquePhotoDates" :selected="startDate" @select="setStartDate" />
           <PhotoDateSelect label="End" :dates="uniquePhotoDates" :selected="endDate" @select="setEndDate" />
           <button
@@ -321,16 +319,24 @@ function toggleLocationFilters() {
             <span>Reset</span>
           </button>
         </div>
+      </div>
+    </Transition>
+    <Transition name="globe-drawer">
+      <div
+        v-show="showMaps"
+        class="mx-auto max-w-5xl space-y-4 px-4"
+      >
         <div v-if="locationTags.length > 0" space-y-2>
           <div flex flex-wrap justify-center gap-2>
             <button
               type="button"
               :disabled="hasSelectedAllLocations"
+              aria-label="Select all locations"
               rounded-md
               border
-              px3 py1
+              p2
               text-sm
-              inline-flex items-center gap-1
+              inline-flex items-center
               transition outline-none
               :class="hasSelectedAllLocations
                 ? 'border-neutral-200 color-neutral-400 bg-neutral/5 op-50 dark:border-neutral-800 dark:color-neutral-600'
@@ -338,16 +344,16 @@ function toggleLocationFilters() {
               @click="selectAllLocations()"
             >
               <Icon name="ph:checks-duotone" :size="16" />
-              <span>Select All</span>
             </button>
             <button
               type="button"
               :disabled="!hasSelectedLocations"
+              aria-label="Deselect all locations"
               rounded-md
               border
-              px3 py1
+              p2
               text-sm
-              inline-flex items-center gap-1
+              inline-flex items-center
               transition outline-none
               :class="hasSelectedLocations
                 ? 'border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200'
@@ -355,24 +361,23 @@ function toggleLocationFilters() {
               @click="deselectAllLocations()"
             >
               <Icon name="ph:x-circle-duotone" :size="16" />
-              <span>Deselect All</span>
             </button>
             <button
               type="button"
+              aria-label="Select random locations"
               rounded-md
               border
-              px3 py1
+              p2
               text-sm
-              inline-flex items-center gap-1
+              inline-flex items-center
               transition outline-none
               class="border-neutral-300 color-neutral-700 bg-neutral/5 hover:border-primary hover:color-primary focus-visible:ring-1 focus-visible:ring-primary dark:border-neutral-700 dark:color-neutral-200"
               @click="selectRandomLocations()"
             >
               <Icon name="ph:shuffle-duotone" :size="16" />
-              <span>Random</span>
             </button>
           </div>
-          <div flex flex-wrap justify-center gap-2>
+          <div flex flex-nowrap gap-2 overflow-x-auto md:flex-wrap md:overflow-x-visible class="tags-scroll">
             <button
               v-for="tag in locationTags"
               :key="tag.key"
@@ -382,6 +387,7 @@ function toggleLocationFilters() {
               border
               px3 py1
               text-sm
+              whitespace-nowrap
               transition outline-none
               :class="isLocationActive(tag.key)
                 ? 'border-primary color-primary bg-primary/10 focus-visible:ring-1 focus-visible:ring-primary'
@@ -392,6 +398,12 @@ function toggleLocationFilters() {
               <span ml1 font-mono text-xs>({{ tag.count }})</span>
             </button>
           </div>
+        </div>
+        <div
+          class="grid grid-cols-1 grid-rows-2 divide-y divide-neutral-200 overflow-hidden rounded-xl border border-neutral-200 bg-white md:grid-cols-2 md:grid-rows-1 md:divide-x md:divide-y-0 dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900 h-[min(700px,70vh)] md:h-[min(600px,50vh)]"
+        >
+          <PhotoGlobe class="min-h-0 overflow-hidden" :photos="photosWithLocation" />
+          <PhotoMap class="min-h-0 overflow-hidden" :photos="photosWithLocation" :initial-center="latestPhotoCenter" />
         </div>
       </div>
     </Transition>
@@ -433,5 +445,33 @@ function toggleLocationFilters() {
 .filter-drawer-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+@media (max-width: 767.9px) {
+  .tags-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(163 163 163) transparent;
+  }
+
+  .dark .tags-scroll {
+    scrollbar-color: rgb(115 115 115) transparent;
+  }
+
+  .tags-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .tags-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .tags-scroll::-webkit-scrollbar-thumb {
+    background: rgb(163 163 163);
+    border-radius: 3px;
+  }
+
+  .dark .tags-scroll::-webkit-scrollbar-thumb {
+    background: rgb(115 115 115);
+  }
 }
 </style>

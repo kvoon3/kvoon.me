@@ -142,9 +142,13 @@ function applyScale(s: number) {
   }
 }
 
+const { showHint, triggerHint } = useScrollHint()
+
 function onWheel(e: WheelEvent) {
-  if (!e.metaKey && !e.ctrlKey)
+  if (!e.metaKey && !e.ctrlKey) {
+    triggerHint()
     return
+  }
   e.preventDefault()
   applyScale(currentScale.value - e.deltaY * 0.001)
 }
@@ -270,6 +274,8 @@ watch(markers, (m) => {
     @touchend="onTouchEnd"
   >
     <canvas ref="canvas" w-full h-full />
+
+    <PhotoScrollHint :show="showHint" />
 
     <PhotoGlobeLabel
       v-for="group in locationGroups"

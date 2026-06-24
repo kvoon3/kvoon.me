@@ -2,7 +2,6 @@
 import type { PhotoWithLocation } from '~/types/photo'
 
 defineProps<{
-  cobeId: string
   photo?: PhotoWithLocation
   place?: string
   photoCount: number
@@ -15,12 +14,7 @@ const emit = defineEmits<{
 
 <template>
   <PhotoLabel
-    class="photo-globe"
-    :style="{
-      positionAnchor: `--cobe-${cobeId}`,
-      opacity: `var(--cobe-visible-${cobeId}, 0)`,
-      filter: `blur(calc((1 - var(--cobe-visible-${cobeId}, 0)) * 8px))`,
-    }"
+    class="photo-map"
     :photo="photo"
     :place="place"
     :photo-count="photoCount"
@@ -29,11 +23,7 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
-.photo-globe {
-  position: absolute;
-  top: anchor(center);
-  left: anchor(center);
-  translate: -50% -50%;
-  transition: opacity 0.3s, filter 0.3s;
+.photo-map {
+  position: relative;
 }
 </style>
