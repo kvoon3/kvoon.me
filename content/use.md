@@ -10,7 +10,6 @@ Things I am using
 - Head/Earphone: Airpods Pro 2 / Sony H900N / ~~EDIFIER W280X~~ / ~~Vsonic GR02 bass~~
 - Monitor: LG 27UP850K
 - Mouse: Logitech M720
-- Cellular: ZTE F50 + ESTKme / ~~Plan B~~
 
 ### Gaming
 
@@ -23,8 +22,8 @@ Things I am using
 
 ## Development
 
-- Editor: [VS Code](https://code.visualstudio.com/) / [NeoVim](https://neovim.io/)
-- Terminal: [Ghostty](https://ghostty.org/) / ~~[Alacritty](https://alacritty.org/)~~
+- Editor: [NeoVim](https://neovim.io/) / [VS Code](https://code.visualstudio.com/)
+- Terminal: [Kitty](https://sw.kovidgoyal.net/kitty/) / ~~[Ghostty](https://ghostty.org/)~~ / ~~[Alacritty](https://alacritty.org/)~~
 
 ## Browser Extensions
 
@@ -41,6 +40,7 @@ Things I am using
 
 - [Raycast](https://www.raycast.com/) + [Karabiner Elements](https://karabiner-elements.pqrs.org/) - Reducing mouse touching
 - [Typeless](https://www.typeless.com/) - When I don't want to typing
+- [Herdr](https://herdr.dev/) - Agent multiplexer for coding agents
 - [Obsidian](https://obsidian.md/) - Local-first Markdown notes
 - [LocalSend](https://localsend.org/) - Local network file sharing
 - [Mole](https://mole.fit) - Saving Hard Drive Space
@@ -63,13 +63,3 @@ Things I am using
 - [`lazygit`](https://lazygit.dev/) - TUI for Git
 - [`opencli`](https://opencli.co/) - directory of official command-line tools
 
-## AI
-
-- [Codex Desktop](https://openai.com/index/introducing-the-codex-app/) - OpenAI coding agent desktop app
-- [Conductor](https://www.conductor.build/) - run parallel agents
-- [Alma](https://alma.now/) - Elegant AI Provider
-
-### Skills
-
-- [Socratic Teaching Scaffolds](https://www.skills.sh/lyndonkl/claude/socratic-teaching-scaffolds)
-- [Socratic Notes](https://github.com/kvoon3/skills/blob/main/skills/socratic-notes/SKILL.md)
