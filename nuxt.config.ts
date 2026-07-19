@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
-    '@pinia/nuxt',
     'reka-ui/nuxt',
     './modules/nowd',
   ],
