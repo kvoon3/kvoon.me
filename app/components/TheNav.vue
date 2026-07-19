@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRoute } from '#imports'
 import {
   NavigationMenuIndicator,
   NavigationMenuItem,
@@ -7,6 +6,7 @@ import {
   NavigationMenuList,
   NavigationMenuRoot,
 } from 'reka-ui'
+import { useRoute } from '#imports'
 
 const route = useRoute()
 

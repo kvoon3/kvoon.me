@@ -1,10 +1,10 @@
 /* eslint-disable node/prefer-global/buffer */
 
-import type sharp from 'sharp'
+import type { Sharp } from 'sharp'
 
 const maxSize = 1440
 
-export async function compressSharp(image: sharp.Sharp, inBuffer: Buffer, inFile: string, outFile: string) {
+export async function compressSharp(image: Sharp, inBuffer: Buffer, inFile: string, outFile: string) {
   const { format, width, height } = await image.metadata()
   if (!format)
     throw new Error(`Could not determine format of ${inFile}`)
