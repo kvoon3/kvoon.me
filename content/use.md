@@ -6,7 +6,7 @@ Things I am using
 
 - Camera: RICOH GR IIIx
 - Laptop: MacBook Pro 16' M1 Max 64GB / MacBook Air 13' m5 / ~~HP ZHAN 66 Pro 14 G2~~
-- Keyboard: Nuphy Air75 V3 / ~~KBDfans D60 Lite~~ / ~~Keychron K12 Pro~~
+- Keyboard: Nuphy Air75 V3 / NuPhy Air60 HE / ~~KBDfans D60 Lite~~ / ~~Keychron K12 Pro~~
 - Head/Earphone: Airpods Pro 2 / Sony H900N / ~~EDIFIER W280X~~ / ~~Vsonic GR02 bass~~
 - Monitor: LG 27UP850K
 - Mouse: Logitech M720
