@@ -49,6 +49,7 @@ Things I am using
 - [MonitorControl](https://monitorcontrol.app/) - External display brightness and volume control
 - [KeyCastr](https://github.com/keycastr/keycastr) - On-screen keystroke visualizer
 - [LinearMouse](https://linearmouse.app/) - Mouse and trackpad tuning for macOS
+- [Moves](https://github.com/mikker/moves.app) - Move and resize windows with the mouse
 - [MiniLPA](https://github.com/EsimMoe/MiniLPA) - Write my eSIM card
 
 ### Entertainment
