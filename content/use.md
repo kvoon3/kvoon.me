@@ -5,6 +5,7 @@ Things I am using
 ## Hardware
 
 - Camera: RICOH GR IIIx
+- E-reader: Xteink X3
 - Laptop: MacBook Pro 16' M1 Max 64GB / MacBook Air 13' m5 / ~~HP ZHAN 66 Pro 14 G2~~
 - Keyboard: Nuphy Air75 V3 / NuPhy Air60 HE / ~~KBDfans D60 Lite~~ / ~~Keychron K12 Pro~~
 - Head/Earphone: Airpods Pro 2 / Sony H900N / ~~EDIFIER W280X~~ / ~~Vsonic GR02 bass~~
@@ -53,6 +54,8 @@ Things I am using
 ### Entertainment
 
 - [Animeko](https://myani.org/) - Watching anime
+- [Bangumi](https://bangumi.tv/) - Tracking anime
+- [NeoDB](https://neodb.social/) - Tracking books, movies, music, and games
 
 ## CLI
 

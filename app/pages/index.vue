@@ -31,7 +31,7 @@ useSeoMeta({
           <MyIcon id="icon" :size="120" :weight="50" />
         </div>
       </div>
-      <div>
+      <div max-w-120>
         <div v-if="error" flex items-center my8 py4 px2 bg-neutral:10 role="alert">
           <Icon name="ph:warning-circle" size="24" class="mr-2" />
           <span>Failed to load content. Please try again later.</span>

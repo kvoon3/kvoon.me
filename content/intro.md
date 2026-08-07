@@ -4,9 +4,11 @@ description: Kevin Kwong's personal website
 layout: home
 ---
 
-Hi, I am Kevin Kwong. Welcome to my space.
+Hi, I am Kevin Kwong. Welcome to my corner of the internet, where I share the projects I build and the things I enjoy.
 
-You can find me on
+Outside of coding, I spend a lot of time watching anime and listening to rock and hip-hop. I also keep a record of [what I watch, read, and listen to](https://consume.kvoon.me), along with the [hardware and software I use](/use).
+
+You can also find me on
 
 ::SocialMediaList
 ---
