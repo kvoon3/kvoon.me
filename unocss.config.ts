@@ -12,7 +12,6 @@ import {
 export default defineConfig({
   shortcuts: [
     ['btn', 'inline-flex items-center justify-center px-3 py-2 rounded-md transition-colors hover:bg-active'],
-    ['link', 'text-primary hover:text-active transition-colors'],
     ['icon-btn', 'inline-block flex transition-all duration-300 op-75 hover:op-90 items-center justify-center gap2'],
     ['color-base', 'color-$c-base'],
     ['bg-base', 'bg-$c-bg'],
@@ -30,14 +29,11 @@ export default defineConfig({
       },
     }),
     presetWebFonts({
+      provider: 'google',
       fonts: {
-        provider: 'google',
-        sans: ['DM Sans'],
-        // sans: ['Pixelify Sans', 'DM Sans'],
-        serif: 'DM Serif Display',
+        sans: 'DM Sans',
         mono: 'DM Mono',
-        pixel: ['Geist Pixel Line', 'Pixelify Sans', 'Doto', 'DM Sans'],
-        dot: ['Doto', 'DM Mono'],
+        dot: 'Doto',
       },
     }),
     presetAttributify(),
