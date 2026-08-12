@@ -54,16 +54,3 @@ code::after {
 code {
   --uno: 'px1 rounded bg-neutral-500:10 dark:bg-neutral-500:30';
 }
-
-.thing-image {
-  view-transition-class: thing;
-}
-
-::view-transition-group(*.thing) {
-  animation-duration: 420ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-::view-transition-image-pair(*.thing) {
-  isolation: isolate;
-}
