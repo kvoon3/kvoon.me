@@ -25,8 +25,6 @@ function isActive(path: string) {
 
 <template>
   <nav p4 bg-neutral:10 flex="~ items-center gap2">
-    <ActivityAppButton />
-
     <NuxtLink to="/" class="sm:block hidden">
       kvoon.me
     </NuxtLink>

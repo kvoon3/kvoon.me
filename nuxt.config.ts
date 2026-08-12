@@ -10,12 +10,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image',
     'reka-ui/nuxt',
-    './modules/nowd',
   ],
-
-  nowd: {
-    silent: true,
-  },
 
   mdc: {
     headings: {
