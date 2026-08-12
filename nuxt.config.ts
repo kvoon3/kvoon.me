@@ -25,6 +25,10 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
+  experimental: {
+    viewTransition: true,
+  },
+
   css: [
     '~/styles/global.css',
   ],
@@ -64,6 +68,7 @@ export default defineNuxtConfig({
 
   // Page transitions
   app: {
+    viewTransition: false,
     pageTransition: {
       name: 'page',
       mode: 'out-in',

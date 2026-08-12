@@ -13,6 +13,7 @@ const route = useRoute()
 const navItems = [
   { path: '/', label: 'Home' },
   { path: '/photos', label: 'Photos' },
+  { path: '/things', label: 'Things' },
 ]
 
 function isActive(path: string) {
