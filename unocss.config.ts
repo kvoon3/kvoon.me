@@ -47,9 +47,9 @@ export default defineConfig({
     presetTypography({
       cssExtend: {
         a: {
-          '--uno': 'md:border-b-1 border-neutral-300/30 dark:border-neutral-500/30 op75 hover:op100',
+          '--uno': 'border-b-1 border-neutral-400/40 dark:border-neutral-500/40 hover:border-primary',
           'text-decoration': 'none',
-          'transition': 'opacity .3s ease',
+          'transition': 'border-color .3s ease',
         },
       },
     }),
