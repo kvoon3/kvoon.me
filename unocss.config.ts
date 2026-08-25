@@ -42,10 +42,13 @@ export default defineConfig({
     }),
     presetTypography({
       cssExtend: {
-        a: {
-          '--uno': 'border-b-1 border-neutral-400/40 dark:border-neutral-500/40 hover:border-primary',
+        'a': {
           'text-decoration': 'none',
+          'border-bottom': '1px solid color-mix(in srgb, var(--colors-neutral-400) 60%, transparent)',
           'transition': 'border-color .3s ease',
+        },
+        'a:hover': {
+          'border-color': 'var(--c-primary)',
         },
       },
     }),
