@@ -42,12 +42,17 @@ function toggleColorMode() {
 
 <template>
   <button p2 rounded flex="~ items-center justify-center" hover:bg-active :aria-label="themeLabel" @click="toggleColorMode">
-    <Icon
-      :name="themeIconName"
-      px2 py1 border-1 rounded text-5
-      class="transition-all duration-200 ease-in-out hover:scale-105"
-      :class="{ 'opacity-70': isTransitioning }"
-      aria-hidden="true"
-    />
+    <ColorScheme>
+      <Icon
+        :name="themeIconName"
+        px2 py1 border-1 rounded text-5
+        class="transition-all duration-200 ease-in-out hover:scale-105"
+        :class="{ 'opacity-70': isTransitioning }"
+        aria-hidden="true"
+      />
+      <template #placeholder>
+        <span class="iconify" px2 py1 border-1 border-transparent rounded text-5 aria-hidden="true" />
+      </template>
+    </ColorScheme>
   </button>
 </template>
