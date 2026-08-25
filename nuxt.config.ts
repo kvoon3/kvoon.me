@@ -43,7 +43,6 @@ export default defineNuxtConfig({
         'ph:shuffle-duotone',
         'ph:sun',
         'ph:moon',
-        'ph:monitor',
       ],
     },
   },

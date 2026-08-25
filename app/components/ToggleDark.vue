@@ -6,20 +6,20 @@ const isTransitioning = ref(false)
 
 const themeTransitionDuration = useCssVar('--theme-transition-duration')
 
-const themeIconName = computed(() => {
-  if (colorMode.preference === 'dark')
-    return 'ph:moon'
-  if (colorMode.preference === 'light')
-    return 'ph:sun'
-  return 'ph:monitor'
-})
+const explicitPreference = computed<'light' | 'dark' | null>(() =>
+  colorMode.preference === 'light' || colorMode.preference === 'dark'
+    ? colorMode.preference
+    : null,
+)
+
+const themeIconName = computed(() =>
+  colorMode.value === 'dark' ? 'ph:moon' : 'ph:sun',
+)
 
 const themeLabel = computed(() => {
-  if (colorMode.preference === 'dark')
+  if (explicitPreference.value)
     return 'Switch to system theme'
-  if (colorMode.preference === 'light')
-    return 'Switch to dark theme'
-  return 'Switch to light theme'
+  return colorMode.value === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
 })
 
 function toggleColorMode() {
@@ -28,15 +28,9 @@ function toggleColorMode() {
 
   isTransitioning.value = true
 
-  if (colorMode.preference === 'system') {
-    colorMode.preference = 'light'
-  }
-  else if (colorMode.preference === 'light') {
-    colorMode.preference = 'dark'
-  }
-  else {
-    colorMode.preference = 'system'
-  }
+  colorMode.preference = explicitPreference.value
+    ? 'system'
+    : (colorMode.value === 'dark' ? 'light' : 'dark')
 
   if (themeTransitionDuration.value) {
     sleep(Number.parseInt(themeTransitionDuration.value, 10)).then(() => {

@@ -29,7 +29,7 @@ const currentScale = ref(DEFAULT_SCALE)
 let globe: ReturnType<typeof createGlobe> | null = null
 const animationId = 0
 
-const isDark = computed(() => colorMode.preference === 'dark' || colorMode.value === 'dark')
+const isDark = computed(() => colorMode.value === 'dark')
 
 const markerColor = computed<[number, number, number]>(() => isDark.value
   ? [160 / 255, 240 / 255, 236 / 255]
