@@ -51,7 +51,7 @@ function toggleColorMode() {
         aria-hidden="true"
       />
       <template #placeholder>
-        <span class="iconify" px2 py1 border-1 border-transparent rounded text-5 aria-hidden="true" />
+        <span class="size-[1em]" inline-block px2 py1 border-1 border-transparent rounded text-5 aria-hidden="true" />
       </template>
     </ColorScheme>
   </button>
