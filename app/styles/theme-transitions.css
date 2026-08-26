@@ -5,6 +5,16 @@
   --theme-transition-delay: 0ms;
 }
 
+/* Fade-in for the client-rendered theme toggle icon */
+@keyframes theme-icon-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Theme transitions for HTML elements */
 html {
   transition:

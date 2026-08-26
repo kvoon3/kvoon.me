@@ -46,7 +46,7 @@ function toggleColorMode() {
       <Icon
         :name="themeIconName"
         px2 py1 border-1 rounded text-5
-        class="transition-all duration-200 ease-in-out hover:scale-105"
+        class="transition-all duration-200 ease-in-out hover:scale-105 animate-[theme-icon-fade-in_var(--theme-transition-duration)_var(--theme-transition-timing)]"
         :class="{ 'opacity-70': isTransitioning }"
         aria-hidden="true"
       />
