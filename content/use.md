@@ -86,8 +86,8 @@ items:
 
 - [Raycast](https://www.raycast.com/) + [Karabiner Elements](https://karabiner-elements.pqrs.org/) - Reducing mouse touching
 - [Typeless](https://www.typeless.com/) - When I don't want to typing
-- [Herdr](https://herdr.dev/) - Agent multiplexer for coding agents
 - [Obsidian](https://obsidian.md/) - Local-first Markdown notes
+- [UU Remote](https://uuyc.163.com) - Control my Windows PC
 - [LocalSend](https://localsend.org/) - Local network file sharing
 - [Mole](https://mole.fit) - Saving Hard Drive Space
 - [Ice](https://github.com/jordanbaird/Ice) - Menu bar item manager
@@ -112,4 +112,6 @@ items:
 - [`mole`](https://davrodpin.github.io/mole/) - keep my Mac clean
 - [`lazygit`](https://lazygit.dev/) - TUI for Git
 - [`opencli`](https://opencli.co/) - directory of official command-line tools
+- [`terminal-browser`](https://terminal-browser.com) - a real browser running inside the terminal
+- [`herdr`](https://herdr.dev/) - agent multiplexer for coding agents
 

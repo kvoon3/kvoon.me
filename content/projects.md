@@ -56,6 +56,25 @@ items:
 
 ::ProjectList{class="not-prose"}
 ---
+category: Pi Extensions
+items:
+  - name: pi-split-fork
+    desc: Fork the current Pi session into a new agent in a Herdr pane
+    link: https://www.npmjs.com/package/@kvoon/pi-split-fork
+    icon: ph:git-fork-duotone
+  - name: pi-minimal-footer
+    desc: Minimal footer with context gauge and subscription usage bars
+    link: https://www.npmjs.com/package/@kvoon/pi-minimal-footer
+    icon: ph:gauge-duotone
+  - name: pi-macos-notify
+    desc: macOS notification with a session summary when Pi finishes
+    link: https://www.npmjs.com/package/@kvoon/pi-macos-notify
+    icon: ph:bell-ringing-duotone
+---
+::
+
+::ProjectList{class="not-prose"}
+---
 category: Utilities
 items:
   - name: Zod Arco Rules
